@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Apsitvarkom.Api\Apsitvarkom.Api.csproj" />
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
   </ItemGroup>
 
