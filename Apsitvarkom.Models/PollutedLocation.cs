@@ -8,6 +8,7 @@ namespace Apsitvarkom.Models;
 public class PollutedLocation
 {
     private int _progress;
+    private int _radius;
 
     /// <summary>Unique identifier of the given record.</summary>
     public string Id { get; init; } = null!;
@@ -16,7 +17,17 @@ public class PollutedLocation
     public Location Location { get; set; } = null!;
 
     /// <summary>Rough size estimate of the given record area in meters from the center.</summary>
-    public int Radius { get; set; }
+    public int Radius
+    {
+        get => _radius;
+        set
+        {
+            if (value >= 1)
+                _radius = value;
+            else
+                throw new ArgumentOutOfRangeException(nameof(Radius), "Radius can only be higher than 0.");
+        }
+    }
 
     /// <summary>Estimated current pollution level of the record.</summary>
     public LocationSeverityLevel Severity { get; set; }
@@ -30,9 +41,11 @@ public class PollutedLocation
         get => _progress;
         set
         {
-            if (value >= 0 && value <= 100)
+            if (value is >= 0 and <= 100)
                 _progress = value;
-            throw new ArgumentOutOfRangeException(nameof(Progress), "Progress is depicted in percentages and can only have values between 0 and 100.");
+            else 
+                throw new ArgumentOutOfRangeException(nameof(Progress),
+                    "Progress is depicted in percentages and can only have values between 0 and 100.");
         }
     }
 

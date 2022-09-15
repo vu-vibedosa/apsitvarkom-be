@@ -16,10 +16,11 @@ public class Location
         get => _latitude;
         set
         {
-            if (value >= -90.0 && value <= 90.0)
+            if (value is >= -90.0 and <= 90.0)
                 _latitude = value;
             else
-                throw new ArgumentOutOfRangeException(nameof(Latitude), "Latitude cannot be less than -90.0 or exceed 90.0 degrees.");
+                throw new ArgumentOutOfRangeException(nameof(Latitude),
+                    "Latitude cannot be less than -90.0 or exceed 90.0 degrees.");
         }
     }
 
@@ -31,10 +32,11 @@ public class Location
         get => _longitude;
         set
         {
-            if (value >= -180.0 && value <= 180.0)
+            if (value is >= -180.0 and <= 180.0)
                 _longitude = value;
             else
-                throw new ArgumentOutOfRangeException(nameof(Longitude), "Longitude cannot be less than -180.0 or exceed 180.0 degrees.");
+                throw new ArgumentOutOfRangeException(nameof(Longitude),
+                    "Longitude cannot be less than -180.0 or exceed 180.0 degrees.");
         }
     }
 }

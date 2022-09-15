@@ -5,7 +5,9 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.Api", "Apsitvarkom.Api\Apsitvarkom.Api.csproj", "{E8C10E23-05F5-4A6F-BB6D-0504A26F22BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.Models", "Apsitvarkom.Models\Apsitvarkom.Models.csproj", "{116D34CA-35A8-4632-BAA8-DD10C02C1669}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.Models", "Apsitvarkom.Models\Apsitvarkom.Models.csproj", "{116D34CA-35A8-4632-BAA8-DD10C02C1669}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.UnitTests", "Apsitvarkom.UnitTests\Apsitvarkom.UnitTests.csproj", "{942A3B98-CBDC-43F9-BD9C-D8ABA7380FB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{116D34CA-35A8-4632-BAA8-DD10C02C1669}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{116D34CA-35A8-4632-BAA8-DD10C02C1669}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{116D34CA-35A8-4632-BAA8-DD10C02C1669}.Release|Any CPU.Build.0 = Release|Any CPU
+		{942A3B98-CBDC-43F9-BD9C-D8ABA7380FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{942A3B98-CBDC-43F9-BD9C-D8ABA7380FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{942A3B98-CBDC-43F9-BD9C-D8ABA7380FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{942A3B98-CBDC-43F9-BD9C-D8ABA7380FB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
