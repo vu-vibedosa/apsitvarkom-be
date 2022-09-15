@@ -11,7 +11,7 @@ public class PollutedLocation
     private int _radius;
 
     /// <summary>Unique identifier of the given record.</summary>
-    public string Id { get; init; } = null!;
+    public Guid Id { get; init; }
 
     /// <summary>Geolocation of the given record.</summary>
     public Location Location { get; set; } = null!;

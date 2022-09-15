@@ -8,22 +8,22 @@ public class PollutedLocationTests
     [TestCase(-1)]
     [TestCase(101)]
     public void Constructor_InvalidProgressPassed_ThrowsArgumentOutOfRangeException(int progress) =>
-        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new PollutedLocation { Id = Guid.NewGuid().ToString(), Progress = progress}).ParamName,
-            Is.EqualTo("Progress"));
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new PollutedLocation { Id = Guid.NewGuid(), Progress = progress}).ParamName,
+            Is.EqualTo(nameof(PollutedLocation.Progress)));
 
     [Test]
     [TestCase(0)]
     [TestCase(-5)]
     public void Constructor_InvalidRadiusPassed_ThrowsArgumentOutOfRangeException(int radius) =>
-        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new PollutedLocation { Id = Guid.NewGuid().ToString(), Radius = radius }).ParamName,
-            Is.EqualTo("Radius"));
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new PollutedLocation { Id = Guid.NewGuid(), Radius = radius }).ParamName,
+            Is.EqualTo(nameof(PollutedLocation.Radius)));
 
     [Test]
     public void Constructor_HappyPath_ValidArgumentsPassed_IsSuccess() =>
         Assert.That(
             new PollutedLocation
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Location = new Location
                 {
                     Latitude = 12.0,
