@@ -9,6 +9,7 @@ public class PollutedLocation
 {
     private int _progress;
     private int _radius;
+    private LocationSeverityLevel _severity;
 
     /// <summary>Unique identifier of the given record.</summary>
     public Guid Id { get; init; }
@@ -25,12 +26,22 @@ public class PollutedLocation
             if (value >= 1)
                 _radius = value;
             else
-                throw new ArgumentOutOfRangeException(nameof(Radius), "Radius can only be higher than 0.");
+                throw new ArgumentOutOfRangeException(nameof(Radius), $"Radius can only be higher than 0, but was {value}.");
         }
     }
 
     /// <summary>Estimated current pollution level of the record.</summary>
-    public LocationSeverityLevel Severity { get; set; }
+    public LocationSeverityLevel Severity
+    {
+        get => _severity;
+        set
+        {
+            if (Enum.IsDefined(typeof(LocationSeverityLevel), value))
+                _severity = value;
+            else
+                throw new ArgumentOutOfRangeException(nameof(Severity), $"The pollution severity state {value} was invalid.");
+        }
+    }
 
     /// <summary><see cref="DateTime" /> of when the record was created.</summary>
     public DateTime Spotted { get; init; }
@@ -43,9 +54,8 @@ public class PollutedLocation
         {
             if (value is >= 0 and <= 100)
                 _progress = value;
-            else 
-                throw new ArgumentOutOfRangeException(nameof(Progress),
-                    "Progress is depicted in percentages and can only have values between 0 and 100.");
+            else
+                throw new ArgumentOutOfRangeException(nameof(Progress), $"Progress is depicted in percentages and can only have values between 0 and 100, but was {value}.");
         }
     }
 

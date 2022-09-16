@@ -1,4 +1,5 @@
 ﻿using Apsitvarkom.Models;
+using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.Models;
 
@@ -19,6 +20,13 @@ public class PollutedLocationTests
             Is.EqualTo(nameof(PollutedLocation.Radius)));
 
     [Test]
+    [TestCase((LocationSeverityLevel)0)]
+    [TestCase((LocationSeverityLevel)5)]
+    public void Constructor_InvalidSeverityPassed_ThrowsArgumentOutOfRangeException(LocationSeverityLevel severity) =>
+        Assert.That(Assert.Throws<ArgumentOutOfRangeException>(() => new PollutedLocation { Id = Guid.NewGuid(), Severity = severity }).ParamName,
+            Is.EqualTo(nameof(PollutedLocation.Severity)));
+
+    [Test]
     public void Constructor_HappyPath_ValidArgumentsPassed_IsSuccess() =>
         Assert.That(
             new PollutedLocation
@@ -30,7 +38,7 @@ public class PollutedLocationTests
                     Longitude = -140.0
                 },
                 Radius = 4,
-                Severity = Enumerations.LocationSeverityLevel.High,
+                Severity = LocationSeverityLevel.High,
                 Spotted = DateTime.Now,
                 Progress = 57,
                 Notes = "Lorem ipsum"
