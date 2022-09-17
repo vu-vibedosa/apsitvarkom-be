@@ -9,5 +9,5 @@ public interface IPollutedLocationDTORepository
 {
     /// <summary>Gets all <see cref="PollutedLocationDTO" /> records from the data source.</summary>
     /// <returns><see cref="Enumerable" /> of <see cref="PollutedLocationDTO" /> instances.</returns>
-    public IEnumerable<PollutedLocationDTO> GetAllPollutedLocations();
+    public Task<IEnumerable<PollutedLocationDTO>> GetAllPollutedLocationsAsync();
 }

@@ -23,9 +23,9 @@ public class PollutedLocationsFileStoreTests
             $"\"progress\":{progress}," +
             "}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = dataManager.GetAllPollutedLocationsAsync().Result.ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(1));
 
@@ -64,9 +64,9 @@ public class PollutedLocationsFileStoreTests
             $"\"notes\":\"{notes}\"" +
             "}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = dataManager.GetAllPollutedLocationsAsync().Result.ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(1));
 
@@ -95,9 +95,9 @@ public class PollutedLocationsFileStoreTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id4}\"}}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = dataManager.GetAllPollutedLocationsAsync().Result.ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(4));
         Assert.That(instances.Select(instance => instance.Id?.ToString()), Is.EqualTo(new[] { id1, id2, id3, id4 }));
