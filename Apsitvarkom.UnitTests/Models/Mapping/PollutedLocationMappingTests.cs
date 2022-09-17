@@ -31,7 +31,11 @@ public class PollutedLocationMappingTests
         var objectDTO = new PollutedLocationDTO
         {
             Id = guidString,
-            Location = new LocationDTO(longitude, latitude),
+            Location = new LocationDTO
+            {
+                Longitude = longitude,
+                Latitude = latitude
+            },
             Radius = radius,
             Severity = severity.ToString(),
             Spotted = dateTimeString,

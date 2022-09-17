@@ -5,8 +5,6 @@
 /// </summary>
 public struct LocationDTO
 {
-    public LocationDTO(double? longitude, double? latitude) => (Longitude, Latitude) = (longitude, latitude);
-
     /// <summary>Property equivalent to <see cref="Location.Longitude" /></summary>
     public double? Longitude { get; set; }
 
