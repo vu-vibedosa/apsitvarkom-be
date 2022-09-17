@@ -25,15 +25,16 @@ public class PollutedLocationsFileStoreTests
             "]";
         var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations();
+        var instances = dataManager.GetAllPollutedLocations().ToArray();
+
         Assert.That(instances, Has.Length.EqualTo(1));
 
         var instance = instances.Single();
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location.Latitude, Is.Null);
+            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Location?.Latitude, Is.Null);
             Assert.That(instance.Radius, Is.Null);
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -65,15 +66,16 @@ public class PollutedLocationsFileStoreTests
             "]";
         var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations();
+        var instances = dataManager.GetAllPollutedLocations().ToArray();
+
         Assert.That(instances, Has.Length.EqualTo(1));
 
         var instance = instances.Single();
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location.Latitude, Is.EqualTo(latitude));
+            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Location?.Latitude, Is.EqualTo(latitude));
             Assert.That(instance.Radius, Is.EqualTo(radius));
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -95,9 +97,9 @@ public class PollutedLocationsFileStoreTests
             "]";
         var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations();
+        var instances = dataManager.GetAllPollutedLocations().ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(4));
-        Assert.That(instances.Select(instance => instance.Id.ToString()), Is.EqualTo(new[] { id1, id2, id3, id4 }));
-        }
+        Assert.That(instances.Select(instance => instance.Id?.ToString()), Is.EqualTo(new[] { id1, id2, id3, id4 }));
+    }
 }

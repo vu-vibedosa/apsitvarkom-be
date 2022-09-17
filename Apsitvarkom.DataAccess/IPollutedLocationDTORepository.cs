@@ -8,6 +8,6 @@ namespace Apsitvarkom.DataAccess;
 public interface IPollutedLocationDTORepository
 {
     /// <summary>Gets all <see cref="PollutedLocationDTO" /> records from the data source.</summary>
-    /// <returns>Array of all <see cref="PollutedLocationDTO" /> instances.</returns>
-    public PollutedLocationDTO[] GetAllPollutedLocations();
+    /// <returns><see cref="Enumerable" /> of <see cref="PollutedLocationDTO" /> instances.</returns>
+    public IEnumerable<PollutedLocationDTO> GetAllPollutedLocations();
 }

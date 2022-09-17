@@ -28,15 +28,10 @@ public class PollutedLocationMappingTests
     [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, LocationSeverityLevel.Low, "09/16/2022 21:43:31", 25, "Hello world")]
     public void MappingToPollutedLocation_HappyPath(string guidString, double longitude, double latitude, int radius, LocationSeverityLevel severity, string dateTimeString, int progress, string notes)
     {
-        var guid = new Guid(guidString);
         var objectDTO = new PollutedLocationDTO
         {
-            Id = guid.ToString(),
-            Location = new LocationDTO
-            {
-                Longitude = longitude,
-                Latitude = latitude
-            },
+            Id = guidString,
+            Location = new LocationDTO(longitude, latitude),
             Radius = radius,
             Severity = severity.ToString(),
             Spotted = dateTimeString,
@@ -47,7 +42,7 @@ public class PollutedLocationMappingTests
         var pollutedLocation = m_mapper.Map<PollutedLocation>(objectDTO);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Id, Is.EqualTo(guid));
+            Assert.That(pollutedLocation.Id, Is.EqualTo(Guid.Parse(guidString)));
             Assert.That(pollutedLocation.Location.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Location.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
@@ -83,9 +78,9 @@ public class PollutedLocationMappingTests
         var pollutedLocation = m_mapper.Map<PollutedLocationDTO>(businessLogicObject);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Id, Is.EqualTo(guid.ToString()));
-            Assert.That(pollutedLocation.Location.Longitude, Is.EqualTo(longitude));
-            Assert.That(pollutedLocation.Location.Latitude, Is.EqualTo(latitude));
+            Assert.That(pollutedLocation.Id, Is.EqualTo(guidString));
+            Assert.That(pollutedLocation.Location?.Longitude, Is.EqualTo(longitude));
+            Assert.That(pollutedLocation.Location?.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
             Assert.That(pollutedLocation.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(pollutedLocation.Spotted, Is.EqualTo(dateTimeString));
