@@ -1,11 +1,12 @@
-﻿using static Apsitvarkom.Models.Enumerations;
+﻿using Apsitvarkom.Models.DTO;
+using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.Models;
 
 /// <summary>
 /// Class for storing captured polluted location records.
 /// </summary>
-public class PollutedLocation
+public class PollutedLocation : PollutedLocationDTOBase
 {
     private int _progress;
     private int _radius;
