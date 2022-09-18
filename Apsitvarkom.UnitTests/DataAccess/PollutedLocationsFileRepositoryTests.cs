@@ -111,6 +111,17 @@ public class PollutedLocationsFileRepositoryTests
     }
 
     [Test]
+    public async Task GetAllPollutedLocationsDTO_JsonIncludesNoInstances_EmptyListReturned()
+    {
+        var jsonString = "[]";
+        using var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
+
+        var instances = (await dataManager.GetAllPollutedLocationsAsync()).ToArray();
+
+        Assert.That(instances, Is.Empty);
+    }
+
+    [Test]
     public void GetAllPollutedLocationsDTO_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
     {
         using var dataManager = PollutedLocationsDTOFileRepository.FromFile(ValidDataSourcePath);
