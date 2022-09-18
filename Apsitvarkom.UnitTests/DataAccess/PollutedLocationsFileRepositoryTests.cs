@@ -7,17 +7,10 @@ namespace Apsitvarkom.UnitTests.DataAccess;
 public class PollutedLocationsFileRepositoryTests
 {
     // Existing mock data file, containing invalid json data.
-    private string m_invalidDataSourcePath;
+    private static readonly string InvalidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockInvalid.json");
 
     // Existing mock data file, containing three valid instances with unique property values.
-    private string m_validDataSourcePath;
-
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        m_validDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockValid.json");
-        m_invalidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockInvalid.json");
-    }
+    private static readonly string ValidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockValid.json");
 
     [Test]
     [TestCase("9719d4ef-5cde-4370-a510-53af84bdede2", -181.12311, LocationSeverityLevel.High, "2015-05-16T05:50:06", 100)]
@@ -120,14 +113,14 @@ public class PollutedLocationsFileRepositoryTests
     [Test]
     public void GetAllPollutedLocationsDTO_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
     {
-        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(m_validDataSourcePath);
+        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(ValidDataSourcePath);
         Assert.DoesNotThrowAsync(async () => await dataManager.GetAllPollutedLocationsAsync());
     }
 
     [Test]
     public void GetAllPollutedLocationsDTO_ReadFromFile_JsonIncludesInvalidData_Throws()
     {
-        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(m_invalidDataSourcePath);
+        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(InvalidDataSourcePath);
         Assert.ThrowsAsync<JsonException>(async () => await dataManager.GetAllPollutedLocationsAsync());
     }
 
