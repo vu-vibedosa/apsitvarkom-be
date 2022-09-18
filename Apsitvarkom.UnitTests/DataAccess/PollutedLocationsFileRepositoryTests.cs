@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using Apsitvarkom.DataAccess;
 using static Apsitvarkom.Models.Enumerations;
 
@@ -23,7 +24,7 @@ public class PollutedLocationsFileRepositoryTests
             $"\"id\":\"{id}\"," +
             "\"location\":" +
             "{" +
-            $"\"longitude\":{longitude}," +
+            $"\"longitude\":{longitude.ToString(CultureInfo.InvariantCulture)}," +
             "}," +
             $"\"severity\":\"{severity}\"," +
             $"\"spotted\":\"{creationTime}\"," +
@@ -61,8 +62,8 @@ public class PollutedLocationsFileRepositoryTests
             $"\"id\":\"{id}\"," +
             "\"location\":" +
             "{" +
-            $"\"longitude\":{longitude}," +
-            $"\"latitude\":{latitude}" +
+            $"\"longitude\":{longitude.ToString(CultureInfo.InvariantCulture)}," +
+            $"\"latitude\":{latitude.ToString(CultureInfo.InvariantCulture)}" +
             "}," +
             $"\"radius\":{radius}," +
             $"\"severity\":\"{severity}\"," +
