@@ -1,4 +1,6 @@
-﻿namespace Apsitvarkom.Models.DTO;
+﻿using FluentValidation;
+
+namespace Apsitvarkom.Models.DTO;
 
 /// <summary>
 /// Data Transfer Object for <see cref="PollutedLocation" />
@@ -25,4 +27,19 @@ public class PollutedLocationDTO
 
     /// <summary>Property equivalent to <see cref="PollutedLocation.Notes" /></summary>
     public string? Notes { get; set; }
+}
+
+public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO>
+{
+    public PollutedLocationDTOValidator()
+    {
+        RuleFor(dto => dto.Id).NotNull();
+        RuleFor(dto => dto.Location).NotNull();
+        RuleFor(dto => dto.Location!.Value).SetValidator(new LocationDTOValidator()).When(dto => dto.Location.HasValue);
+        RuleFor(dto => dto.Radius).NotNull();
+        RuleFor(dto => dto.Severity).NotNull();
+        RuleFor(dto => dto.Spotted).NotNull();
+        RuleFor(dto => dto.Progress).NotNull();
+        RuleFor(dto => dto.Notes).NotNull();
+    }
 }
