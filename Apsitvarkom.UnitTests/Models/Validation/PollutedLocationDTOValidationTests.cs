@@ -5,7 +5,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationDTOValidationTests
 {
-    private static readonly IValidator<PollutedLocationDTO> _validator = new PollutedLocationDTOValidator();
+    private static readonly IValidator<PollutedLocationDTO> Validator = new PollutedLocationDTOValidator();
 
     private static readonly PollutedLocationDTO[] ValidInputDTOs =
     {
@@ -73,7 +73,7 @@ public class PollutedLocationDTOValidationTests
         {
             // Location (special case - not a primitive) fields are not initialized
             Id = "hey",
-            Location = new(),
+            Location = new LocationDTO(),
             Notes = "",
             Progress = 0,
             Radius = 0,
@@ -86,7 +86,7 @@ public class PollutedLocationDTOValidationTests
     [TestCaseSource(nameof(ValidInputDTOs))]
     public async Task ValidInputShouldSucceedValidation(PollutedLocationDTO inputDTO)
     {
-        var result = await _validator.ValidateAsync(inputDTO);
+        var result = await Validator.ValidateAsync(inputDTO);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Empty);
@@ -97,7 +97,7 @@ public class PollutedLocationDTOValidationTests
     [TestCaseSource(nameof(InvalidInputDTOs))]
     public async Task InvalidInputShouldFailValidation(PollutedLocationDTO inputDTO)
     {
-        var result = await _validator.ValidateAsync(inputDTO);
+        var result = await Validator.ValidateAsync(inputDTO);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Not.Empty);
