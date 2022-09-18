@@ -1,13 +1,20 @@
-﻿using Apsitvarkom.DataAccess;
+﻿using System.Text.Json;
+using Apsitvarkom.DataAccess;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
-public class PollutedLocationsFileStoreTests
+public class PollutedLocationsFileRepositoryTests
 {
+    // Existing mock data file, containing invalid json data.
+    private static readonly string InvalidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockInvalid.json");
+
+    // Existing mock data file, containing three valid instances with unique property values.
+    private static readonly string ValidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockValid.json");
+
     [Test]
     [TestCase("9719d4ef-5cde-4370-a510-53af84bdede2", -181.12311, LocationSeverityLevel.High, "2015-05-16T05:50:06", 100)]
-    public void GetAllPollutedLocationsDTO_SomePropertiesMissing_DeserializingSuccessful_MissingPropertiesSetToNull(string id, double longitude, LocationSeverityLevel severity, string creationTime, int progress)
+    public async Task GetAllPollutedLocationsDTO_SomePropertiesMissing_DeserializingSuccessful_MissingPropertiesSetToNull(string id, double longitude, LocationSeverityLevel severity, string creationTime, int progress)
     {
         // No radius, latitude and notes passed.
         var jsonString =
@@ -23,9 +30,9 @@ public class PollutedLocationsFileStoreTests
             $"\"progress\":{progress}," +
             "}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        using var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = (await dataManager.GetAllPollutedLocationsAsync()).ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(1));
 
@@ -46,7 +53,7 @@ public class PollutedLocationsFileStoreTests
     [Test]
     [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, LocationSeverityLevel.Moderate, "2022-09-14T17:35:23Z", 16, "Lorem ipsum")]
     [TestCase("c3aca40c-0ed7-4b78-82b1-496d76b5e61f", 87.499999, -159.412971, 1, LocationSeverityLevel.Low, "2015-05-16T05:50:06.7199222-04:00", 0, "")]
-    public void GetAllPollutedLocationsDTO_DeserializingOfAllPropertiesSuccessful_OneInstanceReturned(string id, double longitude, double latitude, int radius, LocationSeverityLevel severity, string creationTime, int progress, string notes)
+    public async Task GetAllPollutedLocationsDTO_DeserializingOfAllPropertiesSuccessful_OneInstanceReturned(string id, double longitude, double latitude, int radius, LocationSeverityLevel severity, string creationTime, int progress, string notes)
     {
         var jsonString =
             "[" +
@@ -64,9 +71,9 @@ public class PollutedLocationsFileStoreTests
             $"\"notes\":\"{notes}\"" +
             "}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        using var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = (await dataManager.GetAllPollutedLocationsAsync()).ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(1));
 
@@ -86,7 +93,7 @@ public class PollutedLocationsFileStoreTests
 
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb", "71009336-9133-47c8-b577-d755c8c371ee")]
-    public void GetAllPollutedLocationsDTO_JsonIncludesMultipleInstances_AllInstancesReturnedWithCorrectProperties(string id1, string id2, string id3, string id4)
+    public async Task GetAllPollutedLocationsDTO_JsonIncludesMultipleInstances_AllInstancesReturnedWithCorrectProperties(string id1, string id2, string id3, string id4)
     {
         var jsonString =
             "[" +
@@ -95,11 +102,43 @@ public class PollutedLocationsFileStoreTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id4}\"}}" +
             "]";
-        var dataManager = PollutedLocationsDTOFileStore.FromContent(jsonString);
+        using var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
 
-        var instances = dataManager.GetAllPollutedLocations().ToArray();
+        var instances = (await dataManager.GetAllPollutedLocationsAsync()).ToArray();
 
         Assert.That(instances, Has.Length.EqualTo(4));
         Assert.That(instances.Select(instance => instance.Id?.ToString()), Is.EqualTo(new[] { id1, id2, id3, id4 }));
+    }
+
+    [Test]
+    public async Task GetAllPollutedLocationsDTO_JsonIncludesNoInstances_EmptyListReturned()
+    {
+        var jsonString = "[]";
+        using var dataManager = PollutedLocationsDTOFileRepository.FromContent(jsonString);
+
+        var instances = (await dataManager.GetAllPollutedLocationsAsync()).ToArray();
+
+        Assert.That(instances, Is.Empty);
+    }
+
+    [Test]
+    public void GetAllPollutedLocationsDTO_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
+    {
+        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(ValidDataSourcePath);
+        Assert.DoesNotThrowAsync(async () => await dataManager.GetAllPollutedLocationsAsync());
+    }
+
+    [Test]
+    public void GetAllPollutedLocationsDTO_ReadFromFile_JsonIncludesInvalidData_Throws()
+    {
+        using var dataManager = PollutedLocationsDTOFileRepository.FromFile(InvalidDataSourcePath);
+        Assert.ThrowsAsync<JsonException>(async () => await dataManager.GetAllPollutedLocationsAsync());
+    }
+
+    [Test]
+    public void GetAllPollutedLocationsDTO_ReadFromFile_CouldNotFindSourceFile_Throws()
+    {
+        var notExistingSourcePath = Guid.NewGuid() + ".json";
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationsDTOFileRepository.FromFile(notExistingSourcePath));
     }
 }
