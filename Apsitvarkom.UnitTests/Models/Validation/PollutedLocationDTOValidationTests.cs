@@ -5,7 +5,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationDTOValidationTests
 {
-    private IValidator<PollutedLocationDTO> _validator;
+    private static readonly IValidator<PollutedLocationDTO> _validator = new PollutedLocationDTOValidator();
 
     private static readonly PollutedLocationDTO[] ValidInputDTOs =
     {
@@ -81,12 +81,6 @@ public class PollutedLocationDTOValidationTests
             Spotted = "timestamp"
         },
     };
-
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        _validator = new PollutedLocationDTOValidator();
-    }
 
     [Test]
     [TestCaseSource(nameof(ValidInputDTOs))]
