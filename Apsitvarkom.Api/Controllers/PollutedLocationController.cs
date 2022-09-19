@@ -2,22 +2,22 @@
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 
+namespace Apsitvarkom.Api.Controllers;
 
-namespace Apsitvarkom.Api.Controllers  
+[ApiController]
+[Route("/api/[controller]")]
+public class PollutedLocationController : ControllerBase
 {
-    [ApiController]
-    [Route("/api/[controller]")]
+    private readonly ILogger<PollutedLocationController> _logger;
 
-    public class PollutedLocationController : ControllerBase
+    public PollutedLocationController(ILogger<PollutedLocationController> logger)
     {
-        /*temporary list PollutedLocations. Latter on we will have stored data in file or database. Then we will create
-        static DataContext object _context and in constructor
-        declare _context value to DataContext object
-        */
-        
-        private static IEnumerable<PollutedLocationDTO> PollutedLocations = new List<PollutedLocationDTO>
-        {
+        _logger = logger;
+    }
 
+
+    private static IEnumerable<PollutedLocationDTO> pollutedLocations = new List<PollutedLocationDTO>
+        {
             new PollutedLocationDTO
             {
                 Id = "5be2354e-2500-4289-bbe2-66210592e17f",
@@ -34,82 +34,63 @@ namespace Apsitvarkom.Api.Controllers
 
             }
         };
-        /*@Parameters : Object Id 
-         * @Returns : List of objects that are still in List
-         * @Action : Deleted object from list
-         */
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PollutedLocationDTO>> GetById(string id)
+    [HttpGet("{id}")]
+    public ActionResult<PollutedLocationDTO> GetById(string id)
+    {
+        var pollutedLocation = pollutedLocations.FirstOrDefault(PollutedPlace => PollutedPlace.Id == id);
+        if (pollutedLocation == null)
         {
-            var PollutedLocation = PollutedLocations.FirstOrDefault(PollutedPlace => PollutedPlace.Id == id);
-            if (PollutedLocation == null)
-            {
-                return BadRequest("Polluted location is not found - wrong id provided or id is not provided at all");
-            }
+            return BadRequest("Polluted location is not found - wrong id provided or id is not provided at all");
+        }
+        return Ok(pollutedLocation);
+    }
+
+    [HttpGet]
+    [Route("/[controller]/All")]
+    public ActionResult<List<PollutedLocationDTO>> GetAll()
+    {
+
+        return Ok(pollutedLocations);
+    }
+
+    [HttpPost]
+    public ActionResult<IEnumerable<PollutedLocationDTO>> Insert(PollutedLocationDTO PolutedLocation)
+    {
+
+        var list = pollutedLocations.ToList();
+        list.Add(PolutedLocation);
+
+        pollutedLocations = list;
+        return Ok(PolutedLocation);
+    }
+
+    [HttpPut]
+    public ActionResult<List<PollutedLocation>> Update(PollutedLocationDTO PollutedLocation)
+    {
+
+        var list = pollutedLocations.ToList();
+        if (list.Remove(list.Where(predicate: x => x.Id == PollutedLocation.Id).FirstOrDefault()))
+        {
+            list.Add(PollutedLocation);
+            pollutedLocations = list;
             return Ok(PollutedLocation);
         }
-        /*@Parameters : 
-         * @Returns : List of all objects
-         * @Action : Returns all list of objects 
-         */
-        [HttpGet]
-        public async Task<ActionResult<List<PollutedLocationDTO>>> GetAll()
+        return BadRequest();
+
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult<PollutedLocationDTO> Delete(string id)
+    {
+        var foundPollutionLocation = pollutedLocations.FirstOrDefault(pollutedPlace => pollutedPlace.Id == id);
+        if (foundPollutionLocation == null)
         {
-
-            return Ok(PollutedLocations);
+            return BadRequest("Heroe not found");
         }
-        /*@Parameters : Object
-         * @Returns : Inserted Object
-         * @Action : Inserts Object into List
-         */
-
-        [HttpPost]
-        public async Task<ActionResult<IEnumerable<PollutedLocationDTO>>> Insert(PollutedLocationDTO PolutedLocation)
-        {
-
-            var List = PollutedLocations.ToList();
-            List.Add(PolutedLocation);
-
-            PollutedLocations = List;
-            return Ok(PolutedLocation);
-        }
-
-        /*@Parameters : Object 
-         * @Returns : Updated Object
-         * @Action : Updates given object by its Id 
-         */
-
-        [HttpPut]
-        public async Task<ActionResult<List<PollutedLocation>>> Update(PollutedLocationDTO PollutedLocation)
-        {
-
-            var list = PollutedLocations.ToList();
-            if(list.Remove(list.Where(predicate: x => x.Id == PollutedLocation.Id).FirstOrDefault())){
-                list.Add(PollutedLocation);
-                PollutedLocations = list;
-                return Ok(PollutedLocation);
-            }
-            return BadRequest();
-
-        }
-        /*@Parameters : Object Id 
-         * @Returns : List of objects that are still in List
-         * @Action : Deleted object from list
-         */
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<PollutedLocationDTO>> Delete(string id)
-        {
-            var FoundPollutionLocation = PollutedLocations.FirstOrDefault(PollutedPlace => PollutedPlace.Id == id);
-            if (FoundPollutionLocation == null)
-            {
-                return BadRequest("Heroe not found");
-            }
-            var PollutedLocationList = PollutedLocations.ToList();
-            PollutedLocationList.Remove(FoundPollutionLocation);
-            PollutedLocations = PollutedLocationList;
-            return Ok(PollutedLocations);
-        }
+        var pollutedLocationList = pollutedLocations.ToList();
+        pollutedLocationList.Remove(foundPollutionLocation);
+        pollutedLocations = pollutedLocationList;
+        return Ok(pollutedLocations);
     }
 }
