@@ -1,7 +1,6 @@
 ﻿using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Apsitvarkom.Api.Controllers;
 
 [ApiController]
