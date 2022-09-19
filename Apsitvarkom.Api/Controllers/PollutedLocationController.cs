@@ -1,10 +1,9 @@
-﻿using Apsitvarkom.DataAccess;
-using Apsitvarkom.Models;
+﻿using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
 
-namespace Apsitvarkom.Api.Controllers
+
+namespace Apsitvarkom.Api.Controllers  
 {
     [ApiController]
     [Route("/api/[controller]")]
