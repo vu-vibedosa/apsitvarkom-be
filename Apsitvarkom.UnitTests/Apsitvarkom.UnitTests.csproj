@@ -25,4 +25,13 @@
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="DataAccess\PollutedLocationDTOMockInvalid.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DataAccess\PollutedLocationDTOMockValid.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

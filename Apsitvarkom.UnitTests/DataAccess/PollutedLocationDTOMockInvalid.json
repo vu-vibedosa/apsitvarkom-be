@@ -1,0 +1,14 @@
+[
+  {
+    "id": "02f16033-232b-42e4-bfe7-1f9a223a1446",
+    "location": {
+      "longitude": -101.137812,
+      "latitude": 81.981041
+    ,
+    "radius": 18,
+    "severity": "Moderate",
+    "spotted": "2022-08-23T14:05:43Z",
+    "progress": 41,
+    "notes": ""
+  }
+]
