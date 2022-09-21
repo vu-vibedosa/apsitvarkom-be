@@ -203,8 +203,7 @@ public class PollutedLocationDTOFileRepositoryTests
 
         var requestId = id2;
 
-        Assert.That(Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId))!.Message, 
-            Is.EqualTo("Sequence contains more than one matching element"));
+       Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
     }
     #endregion
 }

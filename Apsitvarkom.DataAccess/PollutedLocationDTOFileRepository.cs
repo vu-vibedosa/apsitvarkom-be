@@ -34,8 +34,8 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <inheritdoc />
     public async Task<PollutedLocationDTO?> GetByIdAsync(string id)
     {
-        var result = await GetAllAsync();
-        return result.SingleOrDefault(loc => loc.Id == id); 
+        var allLocations = await GetAllAsync();
+        return allLocations.SingleOrDefault(loc => loc.Id == id); 
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>
