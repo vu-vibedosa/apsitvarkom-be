@@ -1,5 +1,4 @@
-﻿using Apsitvarkom.Models.DTO;
-using FluentValidation;
+﻿using FluentValidation;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.Models;
@@ -38,9 +37,8 @@ public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
         // There is no need to perform validation on Severity, Id and Spotted since they are parsed during mapping.
         RuleFor(data => data.Radius).GreaterThanOrEqualTo(1);
         RuleFor(data => data.Severity).IsInEnum();
-        RuleFor(data => data.Progress).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100);
+        RuleFor(data => data.Progress).InclusiveBetween(0, 100);
         // Validate all Location fields using its validator if it has a Value
         RuleFor(data => data.Location).SetValidator(new LocationValidator());
     }
-
 }

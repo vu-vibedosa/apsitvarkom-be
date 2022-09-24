@@ -18,7 +18,7 @@ public class LocationValidator : AbstractValidator<Location>
 {
     public LocationValidator()
     {
-        RuleFor(data => data.Longitude).GreaterThanOrEqualTo(-180.0).LessThanOrEqualTo(180.0);
-        RuleFor(data => data.Latitude).GreaterThanOrEqualTo(-90.0).LessThanOrEqualTo(90.0);
+        RuleFor(data => data.Longitude).InclusiveBetween(-180.0, 180.0);
+        RuleFor(data => data.Latitude).InclusiveBetween(-90.0, 90.0);
     }
 }
