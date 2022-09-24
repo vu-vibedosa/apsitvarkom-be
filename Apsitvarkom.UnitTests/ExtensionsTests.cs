@@ -1,5 +1,4 @@
 ﻿using Apsitvarkom.Models;
-using static Apsitvarkom.Api.Extensions;
 
 namespace Apsitvarkom.UnitTests;
 

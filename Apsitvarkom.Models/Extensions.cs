@@ -1,9 +1,7 @@
-﻿using Apsitvarkom.Models;
-
-namespace Apsitvarkom.Api;
+﻿namespace Apsitvarkom.Models;
 
 /// <summary>
-/// Class for extensions used in this solution.
+/// Class for extensions used in the Models project.
 /// </summary>
 public static class Extensions
 {
