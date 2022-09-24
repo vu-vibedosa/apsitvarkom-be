@@ -18,17 +18,17 @@ public class LocationDTOValidator : AbstractValidator<LocationDTO>
 {
     public LocationDTOValidator()
     {
-        RuleFor(dto => dto.Longitude).Must(BeValidLongitude);
-        RuleFor(dto => dto.Latitude).NotNull();
+        RuleFor(dto => dto.Longitude).NotNull().Must(BeValidLongitude);
+        RuleFor(dto => dto.Latitude).NotNull().Must(BeValidLatitude);
     }
 
     private bool BeValidLongitude(double? longitude)
     {
-        return longitude is >= -180.0 and <= 180.0;
+        return longitude is not null && longitude is >= -180.0 and <= 180.0;
     }
 
-    private bool BeValidLatitude(double latitude)
+    private bool BeValidLatitude(double? latitude)
     {
-        return latitude is >= -90.0 and <= 90.0;
+        return latitude is not null && latitude is >= -90.0 and <= 90.0;
     }
 }

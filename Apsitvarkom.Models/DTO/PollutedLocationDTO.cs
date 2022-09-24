@@ -39,7 +39,7 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
         RuleFor(dto => dto.Severity).NotEmpty().Must(BeDefinedSeverity);
         RuleFor(dto => dto.Spotted).NotEmpty().Must(BeDateOfValidFormat);
         RuleFor(dto => dto.Progress).NotNull().Must(BeValidProgress);
-        RuleFor(dto => dto.Notes).NotNull().Must(BeValidNotes);
+        RuleFor(dto => dto.Notes).Must(BeValidNotes);
 
         // Make sure Location itself is not null
         RuleFor(dto => dto.Location).NotNull();
@@ -52,7 +52,7 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    private bool BeValidGuid(string id)
+    private bool BeValidGuid(string? id)
     {
         return Guid.TryParse(id, out var parsedId);
     }
@@ -62,9 +62,9 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="radius"></param>
     /// <returns></returns>
-    private bool BeAboveMininumRadius(int radius)
+    private bool BeAboveMininumRadius(int? radius)
     {
-        return radius >= 1 ? true : false;
+        return radius >= 1;
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="severity"></param>
     /// <returns></returns>
-    private bool BeDefinedSeverity(string severity)
+    private bool BeDefinedSeverity(string? severity)
     {
         return Enum.IsDefined(typeof(LocationSeverityLevel), severity);
     }
@@ -82,7 +82,7 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
-    private bool BeDateOfValidFormat(string date) // ask about what date we are going to use
+    private bool BeDateOfValidFormat(string? date)
     {
         DateTime tempDate; 
         return DateTime.TryParse(date, out tempDate);
@@ -93,7 +93,7 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="progress"></param>
     /// <returns></returns>
-    private bool BeValidProgress(int progress)
+    private bool BeValidProgress(int? progress)
     {
         return progress is >= 0 and <= 100;
     }
@@ -103,9 +103,9 @@ public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO
     /// </summary>
     /// <param name="notes"></param>
     /// <returns></returns>
-    private bool BeValidNotes(string notes)
+    private bool BeValidNotes(string? notes)
     {
-        return notes.Length <= 200;
+        return notes is not null && notes.Length <= 200;
     }
 
 
