@@ -1,4 +1,6 @@
-﻿namespace Apsitvarkom.Models;
+﻿using FluentValidation;
+
+namespace Apsitvarkom.Models;
 
 /// <summary>
 /// Class for storing locations.
@@ -10,4 +12,13 @@ public class Location
     
     /// <summary>Longitude of the location. Cannot be less than -180 degrees or exceed 180 degrees.</summary>
     public double Longitude { get; set; }
+}
+
+public class LocationValidator : AbstractValidator<Location>
+{
+    public LocationValidator()
+    {
+        RuleFor(data => data.Longitude).GreaterThanOrEqualTo(-180.0).LessThanOrEqualTo(180.0);
+        RuleFor(data => data.Latitude).GreaterThanOrEqualTo(-90.0).LessThanOrEqualTo(90.0);
+    }
 }
