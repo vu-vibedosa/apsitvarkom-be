@@ -1,5 +1,6 @@
 ﻿using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace Apsitvarkom.Api.Controllers;
 
@@ -7,15 +8,7 @@ namespace Apsitvarkom.Api.Controllers;
 [Route("/api/[controller]")]
 public class PollutedLocationController : ControllerBase
 {
-    private readonly ILogger<PollutedLocationController> _logger;
-
-    public PollutedLocationController(ILogger<PollutedLocationController> logger)
-    {
-        _logger = logger;
-    }
-
-    [HttpGet]
-    [Route("/[controller]/All")]
+    [HttpGet("All")]
     public ActionResult<IEnumerable<PollutedLocationDTO>> GetAll()
     {
         IEnumerable<PollutedLocationDTO> testData = new List<PollutedLocationDTO>()
@@ -30,7 +23,7 @@ public class PollutedLocationController : ControllerBase
                 },
                 Radius = 10,
                 Severity = "MODERATE",
-                Spotted  =  DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ttt"),
+                Spotted  =  DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
                 Progress = 15,
                 Notes = "This is test notes Nr.1"
             },
@@ -44,12 +37,11 @@ public class PollutedLocationController : ControllerBase
                 },
                 Radius = 100,
                 Severity = "MODERATE",
-                Spotted  =  DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ttt"),
+                Spotted  =  DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
                 Progress = 55,
                 Notes = "This is test notes Nr.2"
             }
         };
-
         return Ok(testData);
     }
 }
