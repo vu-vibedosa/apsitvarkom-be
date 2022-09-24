@@ -1,6 +1,6 @@
 ﻿using Apsitvarkom.Models;
 
-namespace Apsitvarkom.UnitTests;
+namespace Apsitvarkom.UnitTests.Models;
 
 public class ExtensionsTests
 {
