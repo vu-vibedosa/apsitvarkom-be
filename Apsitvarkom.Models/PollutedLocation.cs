@@ -7,10 +7,6 @@ namespace Apsitvarkom.Models;
 /// </summary>
 public class PollutedLocation
 {
-    private int _progress;
-    private int _radius;
-    private LocationSeverityLevel _severity;
-
     /// <summary>Unique identifier of the given record.</summary>
     public Guid Id { get; init; }
 
@@ -18,46 +14,16 @@ public class PollutedLocation
     public Location Location { get; set; } = null!;
 
     /// <summary>Rough size estimate of the given record area in meters from the center.</summary>
-    public int Radius
-    {
-        get => _radius;
-        set
-        {
-            if (value >= 1)
-                _radius = value;
-            else
-                throw new ArgumentOutOfRangeException(nameof(Radius), $"Radius can only be higher than 0, but was {value}.");
-        }
-    }
+    public int Radius { get; set; }
 
     /// <summary>Estimated current pollution level of the record.</summary>
-    public LocationSeverityLevel Severity
-    {
-        get => _severity;
-        set
-        {
-            if (Enum.IsDefined(typeof(LocationSeverityLevel), value))
-                _severity = value;
-            else
-                throw new ArgumentOutOfRangeException(nameof(Severity), $"The pollution severity state {value} was invalid.");
-        }
-    }
+    public LocationSeverityLevel Severity { get; set; }
 
     /// <summary><see cref="DateTime" /> of when the record was created.</summary>
     public DateTime Spotted { get; init; }
 
     /// <summary>Current progress of the record's cleaning process in percentages.</summary>
-    public int Progress
-    {
-        get => _progress;
-        set
-        {
-            if (value is >= 0 and <= 100)
-                _progress = value;
-            else
-                throw new ArgumentOutOfRangeException(nameof(Progress), $"Progress is depicted in percentages and can only have values between 0 and 100, but was {value}.");
-        }
-    }
+    public int Progress { get; set; }
 
     /// <summary>Additional information about the record.</summary>
     public string Notes { get; set; } = null!;
