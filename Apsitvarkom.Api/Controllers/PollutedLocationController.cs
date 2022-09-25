@@ -15,6 +15,8 @@ public class PollutedLocationController : ControllerBase
         _repository = repository;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All")]
     public async Task<ActionResult<IEnumerable<PollutedLocationDTO>>> GetAll()
     {
