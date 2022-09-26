@@ -30,7 +30,7 @@ public class PollutedLocationDTO
     public string? Notes { get; set; }
 }
 
-public class PollutedLocationDTOValidator: AbstractValidator<PollutedLocationDTO>
+public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDTO>
 {
     public PollutedLocationDTOValidator()
     {
