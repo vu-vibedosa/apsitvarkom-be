@@ -27,7 +27,7 @@ public class PollutedLocationDTOValidationTests
         {
             // The DTO does not have to comply to business requirements
             // They should be handled when validating PollutedLocation (not the DTO)
-            Id = "hey",
+            Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
             Location = new LocationDTO
             {
                 Latitude = 0,
@@ -36,8 +36,8 @@ public class PollutedLocationDTOValidationTests
             Notes = "",
             Progress = 0,
             Radius = 0,
-            Severity = "Whatever",
-            Spotted = "timestamp"
+            Severity = "Low",
+            Spotted = "2020-11-14T12:10:21Z"
         },
     };
 
@@ -79,6 +79,51 @@ public class PollutedLocationDTOValidationTests
             Radius = 0,
             Severity = "Whatever",
             Spotted = "timestamp"
+        },
+        new()
+        { 
+            // Invalid Guid, DTOValidator should throw errors
+            Id = "Invalid Guid 69420",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Moderate",
+            Spotted = "2000-02-12"
+        },
+        new()
+        {
+            // Invalid Severity, DTOValidator should throw
+            Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Whatever",
+            Spotted = "1111-02-11"
+        },
+         new()
+        {
+            // Invalid Spotted date format, DTOValidator should throw
+            Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Low",
+            Spotted = "1nv4l1d d4t3"
         },
     };
 
