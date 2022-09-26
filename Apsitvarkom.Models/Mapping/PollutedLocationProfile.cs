@@ -15,9 +15,9 @@ public class PollutedLocationProfile : Profile
         // PollutedLocationDTO to PollutedLocation
         CreateMap<PollutedLocationDTO, PollutedLocation>()
             .ForMember(dest => dest.Id, opt => opt
-                .MapFrom(src => Guid.Parse(src.Id ?? string.Empty)))
+                .MapFrom(src => Guid.Parse(src.Id!)))
             .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => DateTime.Parse(src.Spotted ?? string.Empty, CultureInfo.InvariantCulture)));
+                .MapFrom(src => DateTime.Parse(src.Spotted!, CultureInfo.InvariantCulture)));
 
         // LocationDTO to Location
         CreateMap<LocationDTO, Location>();
