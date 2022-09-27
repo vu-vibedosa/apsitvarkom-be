@@ -52,18 +52,12 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
     /// </summary>
     /// <param name="id">String to be parsed.</param>
     /// <returns>Flag of whether the validation was successful.</returns>
-    private bool BeValidGuid(string? id)
-    {
-        return Guid.TryParse(id, out _);
-    }
+    private bool BeValidGuid(string? id) => Guid.TryParse(id, out _);
 
     /// <summary>
     /// Checks whether input string is parseable as <see cref="DateTime"/>.
     /// </summary>
     /// <param name="date">Input to be parsed.</param>
     /// <returns>Flag of whether the validation was successful</returns>
-    private bool BeDateOfValidFormat(string? date)
-    {
-        return DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
-    }
+    private bool BeDateOfValidFormat(string? date) => DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
 }
