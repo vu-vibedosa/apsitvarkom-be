@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using System.Globalization;
 
 namespace Apsitvarkom.Models.DTO;
 
@@ -33,10 +34,10 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
 {
     public PollutedLocationDTOValidator()
     {
-        RuleFor(dto => dto.Id).NotEmpty();
+        RuleFor(dto => dto.Id).NotEmpty().Must(BeValidGuid);
         RuleFor(dto => dto.Radius).NotNull();
-        RuleFor(dto => dto.Severity).NotEmpty();
-        RuleFor(dto => dto.Spotted).NotEmpty();
+        RuleFor(dto => dto.Severity).NotEmpty().IsEnumName(typeof(Enumerations.LocationSeverityLevel));
+        RuleFor(dto => dto.Spotted).NotEmpty().Must(BeDateOfValidFormat);
         RuleFor(dto => dto.Progress).NotNull();
         RuleFor(dto => dto.Notes).NotNull();
 
@@ -45,4 +46,18 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
         // Validate all Location fields using its validator if it has a value
         RuleFor(dto => dto.Location!.Value).SetValidator(new LocationDTOValidator()).When(dto => dto.Location.HasValue);
     }
+
+    /// <summary>
+    /// Checks whether the input Id is parseable as <see cref="Guid"/>.
+    /// </summary>
+    /// <param name="id">String to be parsed.</param>
+    /// <returns>Flag of whether the validation was successful.</returns>
+    private bool BeValidGuid(string? id) => Guid.TryParse(id, out _);
+
+    /// <summary>
+    /// Checks whether input string is parseable as <see cref="DateTime"/>.
+    /// </summary>
+    /// <param name="date">Input to be parsed.</param>
+    /// <returns>Flag of whether the validation was successful</returns>
+    private bool BeDateOfValidFormat(string? date) => DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out _);
 }
