@@ -37,7 +37,7 @@ public class PollutedLocationDTOValidationTests
             Progress = 0,
             Radius = 0,
             Severity = "Low",
-            Spotted = "1889-04-20"
+            Spotted = "2022-02-04T13:56:22Z"
         },
     };
 
@@ -62,7 +62,7 @@ public class PollutedLocationDTOValidationTests
         new()
         {
             // Location (special case - not a primitive) is missing
-            Id = "hey",
+            Id = "cc3e7aec-05cc-4aea-8d6f-47fe456536de",
             Notes = "",
             Progress = 0,
             Radius = 0,
@@ -72,7 +72,7 @@ public class PollutedLocationDTOValidationTests
         new()
         {
             // Location (special case - not a primitive) fields are not initialized
-            Id = "hey",
+            Id = "937327c5-3c8f-4ee1-b32b-43613f6bd0db",
             Location = new LocationDTO(),
             Notes = "",
             Progress = 0,
@@ -93,7 +93,7 @@ public class PollutedLocationDTOValidationTests
             Progress = 0,
             Radius = 0,
             Severity = "Moderate",
-            Spotted = "2000-02-12"
+            Spotted = "2022-02-04T13:56:22Z"
         },
         new()
         {
@@ -108,7 +108,7 @@ public class PollutedLocationDTOValidationTests
             Progress = 0,
             Radius = 0,
             Severity = "Whatever",
-            Spotted = "1111-02-11"
+            Spotted = "2002-04-04T13:12:22Z"
         },
          new()
         {

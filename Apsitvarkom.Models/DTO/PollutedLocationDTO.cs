@@ -58,7 +58,7 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
     }
 
     /// <summary>
-    /// Checks whether input string is parseable as Date.
+    /// Checks whether input string is parseable as <see cref="DateTime"/>.
     /// </summary>
     /// <param name="date">Input to be parsed.</param>
     /// <returns>Flag of whether the validation was successful</returns>
