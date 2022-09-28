@@ -27,7 +27,7 @@ public class PollutedLocationDTOValidationTests
         {
             // The DTO does not have to comply to business requirements
             // They should be handled when validating PollutedLocation (not the DTO)
-            Id = "hey",
+            Id = "378a4760-6fb9-42a9-87b2-1cece5913ffd",
             Location = new LocationDTO
             {
                 Latitude = 0,
@@ -36,8 +36,8 @@ public class PollutedLocationDTOValidationTests
             Notes = "",
             Progress = 0,
             Radius = 0,
-            Severity = "Whatever",
-            Spotted = "timestamp"
+            Severity = "Low",
+            Spotted = "2022-02-04T13:56:22Z"
         },
     };
 
@@ -62,7 +62,7 @@ public class PollutedLocationDTOValidationTests
         new()
         {
             // Location (special case - not a primitive) is missing
-            Id = "hey",
+            Id = "cc3e7aec-05cc-4aea-8d6f-47fe456536de",
             Notes = "",
             Progress = 0,
             Radius = 0,
@@ -72,13 +72,58 @@ public class PollutedLocationDTOValidationTests
         new()
         {
             // Location (special case - not a primitive) fields are not initialized
-            Id = "hey",
+            Id = "937327c5-3c8f-4ee1-b32b-43613f6bd0db",
             Location = new LocationDTO(),
             Notes = "",
             Progress = 0,
             Radius = 0,
             Severity = "Whatever",
             Spotted = "timestamp"
+        },
+        new()
+        { 
+            // Invalid Guid, DTOValidator should throw errors
+            Id = "Invalid Guid 45621e-9898-sd-565",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Moderate",
+            Spotted = "2022-02-04T13:56:22Z"
+        },
+        new()
+        {
+            // Invalid Severity, DTOValidator should throw
+            Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Whatever",
+            Spotted = "2002-04-04T13:12:22Z"
+        },
+         new()
+        {
+            // Invalid Spotted date format, DTOValidator should throw
+            Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
+            Location = new LocationDTO
+            {
+                Latitude = 1,
+                Longitude = 2,
+            },
+            Notes = "",
+            Progress = 0,
+            Radius = 0,
+            Severity = "Low",
+            Spotted = "1nv4l1d d4t3"
         },
     };
 
