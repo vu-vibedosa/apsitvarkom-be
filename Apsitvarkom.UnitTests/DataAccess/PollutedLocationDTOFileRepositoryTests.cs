@@ -143,9 +143,16 @@ public class PollutedLocationDTOFileRepositoryTests
         var notExistingSourcePath = Guid.NewGuid() + ".json";
         Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
     }
-    #endregion
 
-    #region GetByIdAsync tests
+    [Test]
+    public void FromContent_ReturnsDefaultValueIfNoParamateresArePassed_DoesNotReturnDedaultValueWithEmptyParameteres_Thtow()
+    {
+        using var returnedData = PollutedLocationDTOFileRepository.FromContent().GetAllAsync();
+        Assert.IsEmpty(returnedData.Result);
+    }
+        #endregion
+
+        #region GetByIdAsync tests
 
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb", "71009336-9133-47c8-b577-d755c8c371ee")]
