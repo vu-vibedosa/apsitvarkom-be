@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Apsitvarkom.Models.DTO;
 
 namespace Apsitvarkom.DataAccess;
@@ -42,6 +44,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <param name="sourcePath">Relative location of the .json type source data file.</param>
     public static PollutedLocationDTOFileRepository FromFile(string sourcePath)
     {
+        CheckIfFileIsJson(sourcePath);
         var stream = File.OpenRead(sourcePath);
         return new PollutedLocationDTOFileRepository(stream);
     }
@@ -53,6 +56,17 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
         var byteArray = Encoding.UTF8.GetBytes(contents);
         var stream = new MemoryStream(byteArray);
         return new PollutedLocationDTOFileRepository(stream);
+    }
+    
+    /// <summary> Checks if file path ending is .json. </summary>
+    /// <param name="path">Path which is being cheked.</param>
+    private static void CheckIfFileIsJson(string path)
+    {
+        var regex = @"/*(\.json)";
+        var match = Regex.Match(path, regex);
+        if (!match.Success)
+            throw new FormatException("File extension is not .json!");
+
     }
 
     /// <inheritdoc />
