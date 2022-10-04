@@ -115,8 +115,7 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public async Task GetAllAsync_JsonIncludesNoInstances_EmptyListReturned()
     {
-        var jsonString = "[]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent();
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 

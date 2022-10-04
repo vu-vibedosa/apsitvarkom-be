@@ -49,7 +49,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
 
     /// <summary>Static factory constructor for reader from JSON string.</summary>
     /// <param name="contents">Contents to be parsed from JSON string.</param>
-    public static PollutedLocationDTOFileRepository FromContent(string contents)
+    public static PollutedLocationDTOFileRepository FromContent(string contents = "[]")
     {
         var byteArray = Encoding.UTF8.GetBytes(contents);
         var stream = new MemoryStream(byteArray);
