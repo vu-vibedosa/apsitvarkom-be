@@ -115,8 +115,7 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public async Task GetAllAsync_JsonIncludesNoInstances_EmptyListReturned()
     {
-        var jsonString = "[]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent();
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -206,11 +205,4 @@ public class PollutedLocationDTOFileRepositoryTests
        Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
     }
     #endregion
-
-    [Test]
-    public void FromContent_ReturnsDefaultValueIfNoParamateresArePassed_DoesNotReturnDedaultValueWithEmptyParameteres_Thtow()
-    {
-        using var returnedData = PollutedLocationDTOFileRepository.FromContent().GetAllAsync();
-        Assert.IsEmpty(returnedData.Result);
-    }
 }
