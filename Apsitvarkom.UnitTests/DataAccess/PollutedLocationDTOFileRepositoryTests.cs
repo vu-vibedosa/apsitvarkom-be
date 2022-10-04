@@ -206,4 +206,11 @@ public class PollutedLocationDTOFileRepositoryTests
        Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
     }
     #endregion
+
+    [Test]
+    public void FromContent_ReturnsDefaultValueIfNoParamateresArePassed_DoesNotReturnDedaultValueWithEmptyParameteres_Thtow()
+    {
+        using var returnedData = PollutedLocationDTOFileRepository.FromContent().GetAllAsync();
+        Assert.IsEmpty(returnedData.Result);
+    }
 }
