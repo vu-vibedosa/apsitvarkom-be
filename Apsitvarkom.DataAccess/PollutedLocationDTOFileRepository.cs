@@ -66,7 +66,6 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
         var match = Regex.Match(path, regex);
         if (!match.Success)
             throw new FormatException("File extension is not .json!");
-
     }
 
     /// <inheritdoc />
