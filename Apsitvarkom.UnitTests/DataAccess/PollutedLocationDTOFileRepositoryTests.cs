@@ -142,6 +142,13 @@ public class PollutedLocationDTOFileRepositoryTests
         var notExistingSourcePath = Guid.NewGuid() + ".json";
         Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
     }
+
+    [Test]
+    public void GetAllAsync_ReadFromFile_FileNameIsOfWrongFormat_Throws()
+    {
+        var notExistingSourcePath = Guid.NewGuid() + ".txt";
+        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
+    }
     #endregion
 
     #region GetByIdAsync tests
