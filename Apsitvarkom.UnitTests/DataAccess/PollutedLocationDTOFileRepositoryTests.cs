@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using Apsitvarkom.DataAccess;
+using Apsitvarkom.Models.DTO;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
@@ -149,10 +150,49 @@ public class PollutedLocationDTOFileRepositoryTests
         var notExistingSourcePath = Guid.NewGuid() + ".txt";
         Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
     }
+
+    [Test]
+    [TestCase(-1.5, 1.5, 2.5, -2.5, -1.0, 1.0)]
+    [TestCase(-41.21341, 44.44444, 81.49102, -89.149102, -28.97782, 29.58192)]
+    public async Task GetAllAsyncOrdered_ReadFromJson_InstancesReturnedInAscendingOrderByDistance(double longitude1, double latitude1,
+                                                                                                  double longitude2, double latitude2, 
+                                                                                                  double longitude3, double latitude3)
+    {
+        var id1 = Guid.NewGuid().ToString();
+        var id2 = Guid.NewGuid().ToString();
+        var id3 = Guid.NewGuid().ToString();
+
+        var jsonString =
+            "[" +
+            $"{{\"id\":\"{id1}\"," +
+            "\"location\":" +
+            $"{{\"longitude\":{longitude1.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude1.ToString(CultureInfo.InvariantCulture)}" +
+            "}}," +
+            $"{{\"id\":\"{id2}\"," +
+            "\"location\":" +
+            $"{{\"longitude\":{longitude2.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude2.ToString(CultureInfo.InvariantCulture)}" +
+            "}}," +
+            $"{{\"id\":\"{id3}\"," +
+            "\"location\":" +
+            $"{{\"longitude\":{longitude3.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude3.ToString(CultureInfo.InvariantCulture)}" +
+            "}}," +
+            "]";
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+
+        var referenceLocationPoint = new LocationDTO
+        {
+            Latitude = 0,
+            Longitude = 0
+        };
+
+        var instances = (await dataManager.GetAllAsync(referenceLocationPoint)).ToArray();
+
+        Assert.That(instances, Has.Length.EqualTo(3));
+        Assert.That(instances.Select(x => x.Id), Is.EqualTo(new[] { id3, id1, id2 }));
+    }
     #endregion
 
     #region GetByIdAsync tests
-
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb", "71009336-9133-47c8-b577-d755c8c371ee")]
     public async Task GetByIdAsync_JsonIncludesTheRequiredInstance_ReturnsInstance(string id1, string id2, string id3, string id4)

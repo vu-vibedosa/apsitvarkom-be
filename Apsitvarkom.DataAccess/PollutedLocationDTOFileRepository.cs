@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models.Mapping;
+using AutoMapper;
 
 namespace Apsitvarkom.DataAccess;
 
@@ -12,6 +15,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
 {
     private readonly JsonSerializerOptions _options;
     private readonly Stream _stream;
+    private readonly IMapper _mapper;
 
     /// <summary>Constructor for the reader.</summary>
     /// <param name="stream">Stream to be used for parsing.</param>
@@ -23,6 +27,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
             AllowTrailingCommas = true,
             PropertyNameCaseInsensitive = true
         };
+        _mapper = new MapperConfiguration(cfg => cfg.AddProfile<PollutedLocationProfile>()).CreateMapper();
     }
 
     /// <inheritdoc />
@@ -30,6 +35,15 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     {
         var result = await JsonSerializer.DeserializeAsync<IEnumerable<PollutedLocationDTO>>(_stream, _options);
         return result ?? Enumerable.Empty<PollutedLocationDTO>();
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(LocationDTO startingPoint)
+    {
+        return from pollutedLocation in await GetAllAsync()
+               where pollutedLocation != null
+               orderby _mapper.Map<Location>(startingPoint).DistanceTo(_mapper.Map<Location>(pollutedLocation.Location))
+               select pollutedLocation;
     }
 
     /// <inheritdoc />
