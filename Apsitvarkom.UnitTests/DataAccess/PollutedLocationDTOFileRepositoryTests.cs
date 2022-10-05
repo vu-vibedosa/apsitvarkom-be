@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using Apsitvarkom.DataAccess;
-using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
@@ -179,7 +179,7 @@ public class PollutedLocationDTOFileRepositoryTests
             "]";
         using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
 
-        var referenceLocationPoint = new LocationDTO
+        var referenceLocationPoint = new Location
         {
             Latitude = 0,
             Longitude = 0
