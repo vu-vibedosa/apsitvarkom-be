@@ -46,5 +46,6 @@ jobs:
       - name: Build Docker image and push to Google Artifact Registry
         uses: docker/build-push-action@v3
         with:
+          context: ./
           push: true
           tags: "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest"
