@@ -11,7 +11,7 @@ env:
   IMAGE: apsitvarkom-fe
 
 jobs:
-  build-test:
+  build-test-publish-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
       - name: Publish
-        run: dotnet publish -c Release --no-build Apsitvarkom.Api
+        run: dotnet publish -c Release Apsitvarkom.Api
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v0
