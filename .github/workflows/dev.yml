@@ -8,7 +8,7 @@ env:
   PROJECT_ID: apsitvarkom-dev
   GAR_LOCATION: us-east1
   REPOSITORY: docker-apsitvarkom-dev
-  IMAGE: apsitvarkom-fe
+  IMAGE: apsitvarkom-be
 
 jobs:
   build-test-publish-push:
