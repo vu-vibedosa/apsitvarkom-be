@@ -2,6 +2,8 @@
 using System.Text.Json;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
+using Apsitvarkom.Models.Mapping;
+using AutoMapper;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
@@ -10,12 +12,25 @@ public class PollutedLocationDTOFileRepositoryTests
 {
     // Existing mock data file, containing invalid json data.
     private static readonly string InvalidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockInvalid.json");
-
+    
     // Existing mock data file, containing three valid instances with unique property values.
     private static readonly string ValidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockValid.json");
 
-    #region GetAllAsync tests
-    [Test]
+    private IMapper m_mapper;
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
+    {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<PollutedLocationProfile>();
+        });
+        config.AssertConfigurationIsValid();
+        m_mapper = config.CreateMapper();
+    }
+
+#region GetAllAsync tests
+[Test]
     [TestCase("9719d4ef-5cde-4370-a510-53af84bdede2", -181.12311, LocationSeverityLevel.High, "2015-05-16T05:50:06", 100)]
     public async Task GetAllAsync_SomePropertiesMissing_DeserializingSuccessful_MissingPropertiesSetToNull(string id, double longitude, LocationSeverityLevel severity, string creationTime, int progress)
     {
@@ -33,7 +48,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"\"progress\":{progress}," +
             "}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -74,7 +89,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"\"notes\":\"{notes}\"" +
             "}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -105,7 +120,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id4}\"}}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -116,7 +131,7 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public async Task GetAllAsync_JsonIncludesNoInstances_EmptyListReturned()
     {
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent();
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -126,14 +141,14 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public void GetAllAsync_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
     {
-        using var dataManager = PollutedLocationDTOFileRepository.FromFile(ValidDataSourcePath);
+        using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath);
         Assert.DoesNotThrowAsync(async () => await dataManager.GetAllAsync());
     }
 
     [Test]
     public void GetAllAsync_ReadFromFile_JsonIncludesInvalidData_Throws()
     {
-        using var dataManager = PollutedLocationDTOFileRepository.FromFile(InvalidDataSourcePath);
+        using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, InvalidDataSourcePath);
         Assert.ThrowsAsync<JsonException>(async () => await dataManager.GetAllAsync());
     }
 
@@ -141,14 +156,14 @@ public class PollutedLocationDTOFileRepositoryTests
     public void GetAllAsync_ReadFromFile_CouldNotFindSourceFile_Throws()
     {
         var notExistingSourcePath = Guid.NewGuid() + ".json";
-        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
     }
 
     [Test]
     public void GetAllAsync_ReadFromFile_FileNameIsOfWrongFormat_Throws()
     {
         var notExistingSourcePath = Guid.NewGuid() + ".txt";
-        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(notExistingSourcePath));
+        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
     }
 
     [Test]
@@ -177,7 +192,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"{{\"longitude\":{longitude3.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude3.ToString(CultureInfo.InvariantCulture)}" +
             "}}," +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var referenceLocationPoint = new Location
         {
@@ -204,7 +219,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id4}\"}}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var requestId = id2;
 
@@ -225,7 +240,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id4}\"}}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var requestId = Guid.NewGuid().ToString();
 
@@ -245,7 +260,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"{{\"id\":\"{id3}\"}}," +
             $"{{\"id\":\"{id2}\"}}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var requestId = id2;
 
