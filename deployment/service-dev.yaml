@@ -1,0 +1,16 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: apsitvarkom-be
+  labels:
+    cloud.googleapis.com/location: us-east1
+spec:
+  template:
+    spec:
+      containers:
+        - image: us-east1-docker.pkg.dev/apsitvarkom-dev/docker-apsitvarkom-dev/apsitvarkom-be:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
