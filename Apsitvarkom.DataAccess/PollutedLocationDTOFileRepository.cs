@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models.Mapping;
+using AutoMapper;
 
 namespace Apsitvarkom.DataAccess;
 
@@ -12,10 +15,12 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
 {
     private readonly JsonSerializerOptions _options;
     private readonly Stream _stream;
+    private readonly IMapper _mapper;
 
     /// <summary>Constructor for the reader.</summary>
+    /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="stream">Stream to be used for parsing.</param>
-    private PollutedLocationDTOFileRepository(Stream stream)
+    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
     {
         _stream = stream;
         _options = new JsonSerializerOptions
@@ -23,6 +28,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
             AllowTrailingCommas = true,
             PropertyNameCaseInsensitive = true
         };
+        _mapper = mapper;
     }
 
     /// <inheritdoc />
@@ -33,6 +39,14 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     }
 
     /// <inheritdoc />
+    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Location inRelationTo)
+    {
+        return from pollutedLocation in await GetAllAsync()
+               orderby inRelationTo.DistanceTo(_mapper.Map<Location>(pollutedLocation.Location))
+               select pollutedLocation;
+    }
+
+    /// <inheritdoc />
     public async Task<PollutedLocationDTO?> GetByIdAsync(string id)
     {
         var allLocations = await GetAllAsync();
@@ -40,20 +54,22 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>
+    /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="sourcePath">Relative location of the .json type source data file.</param>
-    public static PollutedLocationDTOFileRepository FromFile(string sourcePath)
+    public static PollutedLocationDTOFileRepository FromFile(IMapper mapper, string sourcePath)
     {
         var stream = File.OpenRead(CheckIfFileIsJson(sourcePath));
-        return new PollutedLocationDTOFileRepository(stream);
+        return new PollutedLocationDTOFileRepository(mapper, stream);
     }
 
     /// <summary>Static factory constructor for reader from JSON string.</summary>
+    /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="contents">Contents to be parsed from JSON string.</param>
-    public static PollutedLocationDTOFileRepository FromContent(string contents = "[]")
+    public static PollutedLocationDTOFileRepository FromContent(IMapper mapper, string contents = "[]")
     {
         var byteArray = Encoding.UTF8.GetBytes(contents);
         var stream = new MemoryStream(byteArray);
-        return new PollutedLocationDTOFileRepository(stream);
+        return new PollutedLocationDTOFileRepository(mapper, stream);
     }
     
     /// <summary>Checks if the file path points to a file with .json extension.</summary>
