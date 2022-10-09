@@ -47,7 +47,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./
-          file: ./deployment/Dockerfile
           push: true
           tags: "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest"
 
@@ -64,8 +63,6 @@ jobs:
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
-      - uses: actions/checkout@v3
-
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v0
         with:
@@ -75,6 +72,9 @@ jobs:
         name: Deploy to Cloud Run
         uses: "google-github-actions/deploy-cloudrun@v0"
         with:
-          metadata: ./deployment/service-dev.yaml
+          service: ${{ env.IMAGE }}
+          image: "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest"
           region: ${{ env.LOCATION }}
-          flags: --allow-unauthenticated
+          flags: --allow-unauthenticated --port=80
+          env_vars: |
+            ASPNETCORE_ENVIRONMENT=Development
