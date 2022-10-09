@@ -64,6 +64,8 @@ jobs:
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v0
         with:
@@ -74,4 +76,5 @@ jobs:
         uses: "google-github-actions/deploy-cloudrun@v0"
         with:
           metadata: ./deployment/service-dev.yaml
+          region: ${{ env.LOCATION }}
           flags: --allow-unauthenticated
