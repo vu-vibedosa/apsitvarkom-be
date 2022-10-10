@@ -77,7 +77,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <returns>Path on success, <see cref="FormatException"/> otherwise.</returns>
     private static string CheckIfFileIsJson(string path)
     {   
-        const string regexPattern = @"(\.json)$";
+        const string regexPattern = @"(^[a-zA-Z0-9\.json-]+)$";
         var match = Regex.Match(path, regexPattern);
         if (!match.Success)
             throw new FormatException("File extension is not .json!");
