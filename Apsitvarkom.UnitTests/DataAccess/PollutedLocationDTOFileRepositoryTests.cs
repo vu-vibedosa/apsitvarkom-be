@@ -29,8 +29,38 @@ public class PollutedLocationDTOFileRepositoryTests
         m_mapper = config.CreateMapper();
     }
 
-#region GetAllAsync tests
-[Test]
+    #region Constructor tests
+    [Test]
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws()
+    {
+        var notExistingSourcePath = Guid.NewGuid() + ".json";
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
+    }
+
+    [Test]
+    [TestCase("fileNameWithWrongFileExtension.jsona")]
+    [TestCase("fileNameWithWrongFileExtension.txt")]
+    [TestCase("fileNameWithWrongFileExtension.ajson")]
+    [TestCase("fileNameWithInvalidSymbols<>|?*.json")]
+    public void PollutedLocationDTOFileRepositoryFromFile_FileNameIsOfWrongFormat_Throws(string fileName)
+    {
+        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, fileName));
+    }
+
+    [Test]
+    [TestCase("file/name/with/folders.json")]
+    [TestCase("file\\name\\with\\folders.json")]
+    [TestCase("C:/Full/Path.json")]
+    [TestCase("SpecialSymbols~!@#$%&^())  _+{.json")]
+    public void PollutedLocationDTOFileRepositoryFromFile_FileNameIsOfValidFormat_DoesNotThrowFormatException(string fileName)
+    {
+        // As the file is not found locally in the test directory, it throws FileNotFoundException instead of FormatException
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, fileName));
+    }
+    #endregion
+
+    #region GetAllAsync tests
+    [Test]
     [TestCase("9719d4ef-5cde-4370-a510-53af84bdede2", -181.12311, LocationSeverityLevel.High, "2015-05-16T05:50:06", 100)]
     public async Task GetAllAsync_SomePropertiesMissing_DeserializingSuccessful_MissingPropertiesSetToNull(string id, double longitude, LocationSeverityLevel severity, string creationTime, int progress)
     {
@@ -150,20 +180,6 @@ public class PollutedLocationDTOFileRepositoryTests
     {
         using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, InvalidDataSourcePath);
         Assert.ThrowsAsync<JsonException>(async () => await dataManager.GetAllAsync());
-    }
-
-    [Test]
-    public void GetAllAsync_ReadFromFile_CouldNotFindSourceFile_Throws()
-    {
-        var notExistingSourcePath = Guid.NewGuid() + ".json";
-        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
-    }
-
-    [Test]
-    public void GetAllAsync_ReadFromFile_FileNameIsOfWrongFormat_Throws()
-    {
-        var notExistingSourcePath = Guid.NewGuid() + ".txt";
-        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
     }
 
     [Test]
