@@ -6,13 +6,10 @@ namespace Apsitvarkom.Models.DTO;
 /// <summary>
 /// Data Transfer Object for <see cref="PollutedLocation" />
 /// </summary>
-public class PollutedLocationDTO
+public class PollutedLocationDTO : LocationDTO
 {
     /// <summary>Property equivalent to <see cref="PollutedLocation.Id" /></summary>
     public string? Id { get; init; }
-
-    /// <summary>Property equivalent to <see cref="PollutedLocation.Location" /></summary>
-    public LocationDTO? Location { get; set; }
 
     /// <summary>Property equivalent to <see cref="PollutedLocation.Radius" /></summary>
     public int? Radius { get; set; }
@@ -29,7 +26,9 @@ public class PollutedLocationDTO
     /// <summary>Property equivalent to <see cref="PollutedLocation.Notes" /></summary>
     public string? Notes { get; set; }
 }
-
+/// <summary>
+/// Validator for <see cref="PollutedLocationDTO"/>.
+/// </summary>
 public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDTO>
 {
     public PollutedLocationDTOValidator()
@@ -42,9 +41,9 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
         RuleFor(dto => dto.Notes).NotNull();
 
         // Make sure Location itself is not null
-        RuleFor(dto => dto.Location).NotNull();
-        // Validate all Location fields using its validator if it has a value
-        RuleFor(dto => dto.Location!.Value).SetValidator(new LocationDTOValidator()).When(dto => dto.Location.HasValue);
+        RuleFor(dto => dto.Coordinates).NotNull();
+        // Validate all Location fields using its validator.
+        // RuleFor(dto => dto.Coordinates).SetInheritanceValidator(new LocationDTOValidator());
     }
 
     /// <summary>

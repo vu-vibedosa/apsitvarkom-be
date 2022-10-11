@@ -12,7 +12,7 @@ public class PollutedLocationDTOValidationTests
         new()
         {
             Id = "5be2354e-2500-4289-bbe2-66210592e17f",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 35.929673,
                 Longitude = -78.948237,
@@ -28,7 +28,7 @@ public class PollutedLocationDTOValidationTests
             // The DTO does not have to comply to business requirements
             // They should be handled when validating PollutedLocation (not the DTO)
             Id = "378a4760-6fb9-42a9-87b2-1cece5913ffd",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 0,
                 Longitude = 0,
@@ -48,7 +48,7 @@ public class PollutedLocationDTOValidationTests
         {
             // All fields initialized, but fields have empty strings where content is required
             Id = "",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 0,
                 Longitude = 0,
@@ -73,7 +73,7 @@ public class PollutedLocationDTOValidationTests
         {
             // Location (special case - not a primitive) fields are not initialized
             Id = "937327c5-3c8f-4ee1-b32b-43613f6bd0db",
-            Location = new LocationDTO(),
+            Coordinates = new CoordinatesDTO(),
             Notes = "",
             Progress = 0,
             Radius = 0,
@@ -84,7 +84,7 @@ public class PollutedLocationDTOValidationTests
         { 
             // Invalid Guid, DTOValidator should throw errors
             Id = "Invalid Guid 45621e-9898-sd-565",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 1,
                 Longitude = 2,
@@ -99,7 +99,7 @@ public class PollutedLocationDTOValidationTests
         {
             // Invalid Severity, DTOValidator should throw
             Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 1,
                 Longitude = 2,
@@ -114,7 +114,7 @@ public class PollutedLocationDTOValidationTests
         {
             // Invalid Spotted date format, DTOValidator should throw
             Id = "771973aa-470f-4996-8b54-d4c0bcfff94b",
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 1,
                 Longitude = 2,

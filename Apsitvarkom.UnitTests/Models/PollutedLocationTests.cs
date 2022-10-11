@@ -11,7 +11,7 @@ public class PollutedLocationTests
             new PollutedLocation
             {
                 Id = Guid.NewGuid(),
-                Location = new Location
+                Coordinates = new Coordinates
                 {
                     Latitude = 12.0,
                     Longitude = -140.0

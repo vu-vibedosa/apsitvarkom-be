@@ -58,8 +58,8 @@ public class PollutedLocationDTOFileRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location?.Latitude, Is.Null);
+            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Coordinates?.Latitude, Is.Null);
             Assert.That(instance.Radius, Is.Null);
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -99,8 +99,8 @@ public class PollutedLocationDTOFileRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location?.Latitude, Is.EqualTo(latitude));
+            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Coordinates?.Latitude, Is.EqualTo(latitude));
             Assert.That(instance.Radius, Is.EqualTo(radius));
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -194,7 +194,7 @@ public class PollutedLocationDTOFileRepositoryTests
             "]";
         using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
-        var referenceLocationPoint = new Location
+        var referenceLocationPoint = new Coordinates
         {
             Latitude = 0,
             Longitude = 0

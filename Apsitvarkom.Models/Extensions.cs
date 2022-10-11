@@ -9,7 +9,7 @@ public static class Extensions
     /// <param name="source">Coordinate to calculate distance from.</param>
     /// <param name="destination">Coordinate to calculate distance to.</param>
     /// <returns>Distance from source to destination coordinates in meters.</returns>
-    public static double DistanceTo(this Location source, Location destination)
+    public static double DistanceTo(this Coordinates source, Coordinates destination)
     {
         const double earthRadius = 6364050.0; // Calculated to Vilnius's latitude on ground level
         var deltaLat = (destination.Latitude - source.Latitude) * (Math.PI / 180.0);

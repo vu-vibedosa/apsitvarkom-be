@@ -6,13 +6,10 @@ namespace Apsitvarkom.Models;
 /// <summary>
 /// Class for storing captured polluted location records.
 /// </summary>
-public class PollutedLocation
+public class PollutedLocation : Location
 {
     /// <summary>Unique identifier of the given record.</summary>
     public Guid Id { get; init; }
-
-    /// <summary>Geolocation of the given record.</summary>
-    public Location Location { get; set; } = null!;
 
     /// <summary>Rough size estimate of the given record area in meters from the center.</summary>
     public int Radius { get; set; }
@@ -34,11 +31,11 @@ public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
 {
     public PollutedLocationValidator()
     {
-        // There is no need to perform validation on Severity, Id and Spotted since they are parsed during mapping.
+        // There is no need to perform validation on Severity, Id and Spotted since they are parsed/validated in DTO before mapping.
         RuleFor(data => data.Radius).GreaterThanOrEqualTo(1);
         RuleFor(data => data.Severity).IsInEnum();
         RuleFor(data => data.Progress).InclusiveBetween(0, 100);
         // Validate all Location fields using its validator if it has a Value
-        RuleFor(data => data.Location).SetValidator(new LocationValidator());
+        RuleFor(data => data.Coordinates).SetValidator(new LocationValidator());
     }
 }

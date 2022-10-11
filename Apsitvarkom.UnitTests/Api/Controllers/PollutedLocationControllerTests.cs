@@ -17,10 +17,10 @@ public class PollutedLocationControllerTests
         new()
         {
             Id = Guid.NewGuid().ToString(),
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
-                Latitude = 35.929673,
-                Longitude = -78.948237
+              Longitude = 54,
+              Latitude = 23
             },
             Radius = 15,
             Severity = "Moderate",
@@ -31,7 +31,7 @@ public class PollutedLocationControllerTests
         new()
         {
             Id = Guid.NewGuid().ToString(),
-            Location = new LocationDTO
+            Coordinates = new CoordinatesDTO
             {
                 Latitude = 111.11111,
                 Longitude = 11.11111

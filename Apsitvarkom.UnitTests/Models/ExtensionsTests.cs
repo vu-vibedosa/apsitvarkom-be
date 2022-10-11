@@ -8,7 +8,7 @@ public class ExtensionsTests
     [Test]
     public void DistanceTo_LocationComparedToItself_ReturnsZero()
     {
-        var location = new Location
+        var location = new Coordinates
         {
             Latitude = 41.12121,
             Longitude = -31.1234
@@ -19,12 +19,12 @@ public class ExtensionsTests
     [Test]
     public void DistanceTo_DistanceSourceAndDestinationExchanged_ReturnsEqualDistances()
     {
-        var location1 = new Location
+        var location1 = new Coordinates
         {
             Latitude = 41.12121,
             Longitude = -31.1234
         };
-        var location2 = new Location
+        var location2 = new Coordinates
         {
             Latitude = -87.12121,
             Longitude = 1.14234
@@ -38,12 +38,12 @@ public class ExtensionsTests
     public void DistanceTo_ReturnsAccurateDistanceBetweenCoordinates(double latitude1, double longitude1, double latitude2, double longitude2, double expected, double delta)
     {
         // expected values are taken from https://www.movable-type.co.uk/scripts/latlong.html calculator, delta - this tool's estimated 0.3% inaccuracy rate
-        var location1 = new Location
+        var location1 = new Coordinates
         {
             Latitude = latitude1,
             Longitude = longitude1
         };
-        var location2 = new Location
+        var location2 = new Coordinates
         {
             Latitude = latitude2,
             Longitude = longitude2

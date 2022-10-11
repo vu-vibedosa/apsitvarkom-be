@@ -13,7 +13,7 @@ public class PollutedLocationValidationTests
         new()
         {
             Id = DummyGuid,
-            Location = new Location
+            Coordinates = new Coordinates
             {
                 Latitude = 35.929673,
                 Longitude = -78.948237
@@ -27,7 +27,7 @@ public class PollutedLocationValidationTests
         new()
         {
             Id = DummyGuid,
-            Location = new Location
+            Coordinates = new Coordinates
             {
                 Latitude = -90,
                 Longitude = 180
@@ -45,12 +45,12 @@ public class PollutedLocationValidationTests
         {
             // Invalid Location coordinates
             Id = DummyGuid,
-            Location = new Location
+            Coordinates = new Coordinates
             {
                 Latitude = 210,
                 Longitude = -720
             },
-            Notes = "I now know how to spell the word writing",
+            Notes = "gtfo with these cringy notes",
             Progress = 0,
             Radius = 0,
             Severity = Enumerations.LocationSeverityLevel.High,
@@ -70,7 +70,7 @@ public class PollutedLocationValidationTests
         { 
             // Invalid Progress
             Id = DummyGuid,
-            Location = new Location
+            Coordinates = new Coordinates
             {
                 Latitude = 89.9,
                 Longitude = 89.9
@@ -84,7 +84,7 @@ public class PollutedLocationValidationTests
         { 
             // Invalid Radius
             Id = DummyGuid,
-            Location = new Location
+            Coordinates = new Coordinates
             {
                 Latitude = 89.9,
                 Longitude = 89.9

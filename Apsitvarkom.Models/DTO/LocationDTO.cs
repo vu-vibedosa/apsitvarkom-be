@@ -2,19 +2,24 @@
 
 namespace Apsitvarkom.Models.DTO;
 
+/// <summary>DTO equivalent of <see cref="Coordinates"/>.</summary>
+public struct CoordinatesDTO
+{
+    public double? Longitude;
+    public double? Latitude;
+}
+
 /// <summary>
 /// Data Transfer Object for <see cref="Location" />
 /// </summary>
-public struct LocationDTO
+public class LocationDTO
 {
-    /// <summary>Property equivalent to <see cref="Location.Longitude" /></summary>
-    public double? Longitude { get; set; }
-
-    /// <summary>Property equivalent to <see cref="Location.Latitude" /></summary>
-    public double? Latitude { get; set; }
+    /// <summary>Property equivalent of <see cref="Location.Coordinates"/>.</summary>
+    public CoordinatesDTO? Coordinates { get; set; }
 }
 
-public class LocationDTOValidator : AbstractValidator<LocationDTO>
+/// <summary>Validator for <see cref="LocationDTO"/>.</summary>
+public class LocationDTOValidator : AbstractValidator<CoordinatesDTO>
 {
     public LocationDTOValidator()
     {

@@ -39,10 +39,10 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Location inRelationTo)
+    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Coordinates inRelationTo)
     {
         return from pollutedLocation in await GetAllAsync()
-               orderby inRelationTo.DistanceTo(_mapper.Map<Location>(pollutedLocation.Location))
+               orderby inRelationTo.DistanceTo(_mapper.Map<Coordinates>(pollutedLocation.Coordinates))
                select pollutedLocation;
     }
 
