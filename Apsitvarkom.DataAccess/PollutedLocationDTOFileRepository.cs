@@ -62,7 +62,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <param name="sourcePath">Relative location of the .json type source data file.</param>
     public static PollutedLocationDTOFileRepository FromFile(IMapper mapper, string sourcePath)
     {
-        var stream = File.OpenRead(CheckIfFileIsJson(sourcePath));
+        var stream = File.OpenRead(ValidateIfFilePathIsValid(sourcePath));
         return new PollutedLocationDTOFileRepository(mapper, stream);
     }
 
@@ -79,9 +79,9 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <summary>Checks if the file path points to a file with .json extension.</summary>
     /// <param name="path">Path being checked.</param>
     /// <returns>Path on success, <see cref="FormatException"/> otherwise.</returns>
-    private static string CheckIfFileIsJson(string path)
-    {
-        const string regexPattern = @"(\.json)$";
+    private static string ValidateIfFilePathIsValid(string path)
+    {   
+        const string regexPattern = @"^[\w `~!@#$%^&()_+\-=\]}\/\\:[{;',.]+(\.json)$";
         var match = Regex.Match(path, regexPattern);
         if (!match.Success)
             throw new FormatException("File extension is not .json!");
