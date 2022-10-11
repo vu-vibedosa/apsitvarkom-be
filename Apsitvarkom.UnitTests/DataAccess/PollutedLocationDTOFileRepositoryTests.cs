@@ -32,20 +32,12 @@ public class PollutedLocationDTOFileRepositoryTests
     #region Constructor tests
     [Test]
     [TestCase("SpecialSymbols~!@#$%&^())  _+{.json")]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_ThrowsFileNotFoundException(string filePath)
-    {
-        // If the file path is valid, but there are no such local files as in the test cases, it throws FileNotFoundException instead of FormatException
-        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, filePath));
-    }
-
-    [Test]
-    [TestCase("file/name/with/folders.json")]
     [TestCase("file\\name\\with\\folders.json")]
-    [TestCase("C:\\Full\\Path.json")]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_ThrowsDirectoryNotFoundException(string filePath)
+    [TestCase("C:/Full/Path.json")]
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws(string filePath)
     {
         // If the file path is valid, but there are no such local files as in the test cases, it throws FileNotFoundException instead of FormatException
-        Assert.Throws<DirectoryNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, filePath));
+        Assert.That(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, filePath), Throws.Exception);
     }
 
     [Test]
