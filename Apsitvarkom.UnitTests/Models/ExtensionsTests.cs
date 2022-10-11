@@ -10,8 +10,11 @@ public class ExtensionsTests
     {
         var location = new Location
         {
-            Latitude = 41.12121,
-            Longitude = -31.1234
+            Coordinates = new()
+            {
+                Latitude = 41.12121,
+                Longitude = -31.1234
+            }
         };
         Assert.That(location.DistanceTo(location), Is.Zero);
     }
@@ -21,13 +24,19 @@ public class ExtensionsTests
     {
         var location1 = new Location
         {
-            Latitude = 41.12121,
-            Longitude = -31.1234
+            Coordinates = new()
+            {
+                Latitude = 41.12121,
+                Longitude = -31.1234
+            }
         };
         var location2 = new Location
         {
-            Latitude = -87.12121,
-            Longitude = 1.14234
+            Coordinates = new()
+            {
+                Latitude = -87.12121,
+                Longitude = 1.14234
+            }
         };
         Assert.That(location1.DistanceTo(location2), Is.EqualTo(location2.DistanceTo(location1)));
     }
@@ -40,13 +49,19 @@ public class ExtensionsTests
         // expected values are taken from https://www.movable-type.co.uk/scripts/latlong.html calculator, delta - this tool's estimated 0.3% inaccuracy rate
         var location1 = new Location
         {
-            Latitude = latitude1,
-            Longitude = longitude1
+            Coordinates = new()
+            {
+                Latitude = latitude1,
+                Longitude = longitude1
+            }
         };
         var location2 = new Location
         {
-            Latitude = latitude2,
-            Longitude = longitude2
+            Coordinates = new()
+            {
+                Latitude = latitude2,
+                Longitude = longitude2
+            }
         };
         var actual = location1.DistanceTo(location2);
         Assert.That(Math.Abs(actual - expected), Is.LessThan(delta));
