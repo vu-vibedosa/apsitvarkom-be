@@ -40,7 +40,7 @@ public class PollutedLocationDTOFileRepositoryTests
 
     [Test]
     [TestCase("file/name/with/folders.json")]
-    [TestCase("file\\name\\with\\folders.json")]
+    [TestCase("file\\\\name\\\\with\\\\folders.json")]
     [TestCase("C:/Full/Path.json")]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_ThrowsDirectoryNotFoundException(string filePath)
     {
