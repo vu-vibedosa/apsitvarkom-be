@@ -35,8 +35,8 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     {
         return Task.Run(() =>
         {
-            StreamReader reader = new StreamReader(_stream);
-            string jsonString = reader.ReadToEnd();
+            var reader = new StreamReader(_stream);
+            var jsonString = reader.ReadToEnd();
             var result = JsonConvert.DeserializeObject<IEnumerable<PollutedLocationDTO>>(jsonString, _options);
             return result ?? Enumerable.Empty<PollutedLocationDTO>();
         });
