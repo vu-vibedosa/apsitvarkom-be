@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
@@ -13,7 +13,7 @@ namespace Apsitvarkom.DataAccess;
 /// </summary>
 public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository, IDisposable
 {
-    private readonly JsonSerializerOptions _options;
+    private readonly JsonSerializerSettings _options;
     private readonly Stream _stream;
     private readonly IMapper _mapper;
 
@@ -23,26 +23,30 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
     {
         _stream = stream;
-        _options = new JsonSerializerOptions
+        _options = new JsonSerializerSettings
         {
-            AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true
+            TypeNameHandling = TypeNameHandling.Auto
         };
         _mapper = mapper;
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
+    public Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
     {
-        var result = await JsonSerializer.DeserializeAsync<IEnumerable<PollutedLocationDTO>>(_stream, _options);
-        return result ?? Enumerable.Empty<PollutedLocationDTO>();
+        return Task.Run(() =>
+        {
+            StreamReader reader = new StreamReader(_stream);
+            string jsonString = reader.ReadToEnd();
+            var result = JsonConvert.DeserializeObject<IEnumerable<PollutedLocationDTO>>(jsonString, _options);
+            return result ?? Enumerable.Empty<PollutedLocationDTO>();
+        });
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Location inRelationTo)
     {
         return from pollutedLocation in await GetAllAsync()
-               orderby inRelationTo.DistanceTo(_mapper.Map<Location>(pollutedLocation.Location))
+               orderby inRelationTo.DistanceTo(_mapper.Map<Location>(pollutedLocation))
                select pollutedLocation;
     }
 
@@ -50,7 +54,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     public async Task<PollutedLocationDTO?> GetByIdAsync(string id)
     {
         var allLocations = await GetAllAsync();
-        return allLocations.SingleOrDefault(loc => loc.Id == id); 
+        return allLocations.SingleOrDefault(loc => loc.Id == id);
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>
@@ -71,7 +75,7 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
         var stream = new MemoryStream(byteArray);
         return new PollutedLocationDTOFileRepository(mapper, stream);
     }
-    
+
     /// <summary>Checks if the file path points to a file with .json extension.</summary>
     /// <param name="path">Path being checked.</param>
     /// <returns>Path on success, <see cref="FormatException"/> otherwise.</returns>

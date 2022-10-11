@@ -14,6 +14,7 @@ public class PollutedLocationProfile : Profile
     {
         // PollutedLocationDTO to PollutedLocation
         CreateMap<PollutedLocationDTO, PollutedLocation>()
+            .IncludeBase<LocationDTO, Location>()
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => Guid.Parse(src.Id!)))
             .ForMember(dest => dest.Spotted, opt => opt
@@ -21,10 +22,11 @@ public class PollutedLocationProfile : Profile
 
         // LocationDTO to Location
         CreateMap<LocationDTO, Location>();
-
+        CreateMap<CoordinatesDTO, Coordinates>();
 
         // PollutedLocation to PollutedLocationDTO
         CreateMap<PollutedLocation, PollutedLocationDTO>()
+            .IncludeBase<Location, LocationDTO>()
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => src.Id.ToString()))
             .ForMember(dest => dest.Spotted, opt => opt
@@ -32,5 +34,6 @@ public class PollutedLocationProfile : Profile
 
         // Location to LocationDTO
         CreateMap<Location, LocationDTO>();
+        CreateMap<Coordinates, CoordinatesDTO>();
     }
 }

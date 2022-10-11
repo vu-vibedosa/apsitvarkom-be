@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
-using System.Text.Json;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
 using AutoMapper;
+using Newtonsoft.Json;
 using static Apsitvarkom.Models.Enumerations;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
@@ -12,11 +12,11 @@ public class PollutedLocationDTOFileRepositoryTests
 {
     // Existing mock data file, containing invalid json data.
     private static readonly string InvalidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockInvalid.json");
-    
+
     // Existing mock data file, containing three valid instances with unique property values.
     private static readonly string ValidDataSourcePath = Path.Combine("DataAccess", "PollutedLocationDTOMockValid.json");
 
-    private IMapper m_mapper;
+    private IMapper m_mapper = null!;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -31,10 +31,14 @@ public class PollutedLocationDTOFileRepositoryTests
 
     #region Constructor tests
     [Test]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws()
+    [TestCase("file/name/with/folders.json")]
+    [TestCase("file\\name\\with\\folders.json")]
+    [TestCase("C:/Full/Path.json")]
+    [TestCase("SpecialSymbols~!@#$%&^())  _+{.json")]
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws(string filePath)
     {
-        var notExistingSourcePath = Guid.NewGuid() + ".json";
-        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, notExistingSourcePath));
+        // If the file path is valid, but there are no such local files as in the test cases, it throws FileNotFoundException instead of FormatException
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, filePath));
     }
 
     [Test]
@@ -42,23 +46,24 @@ public class PollutedLocationDTOFileRepositoryTests
     [TestCase("fileNameWithWrongFileExtension.txt")]
     [TestCase("fileNameWithWrongFileExtension.ajson")]
     [TestCase("fileNameWithInvalidSymbols<>|?*.json")]
-    public void PollutedLocationDTOFileRepositoryFromFile_FileNameIsOfWrongFormat_Throws(string fileName)
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_FileNameIsOfWrongFormat_Throws(string fileName)
     {
         Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, fileName));
     }
-
+    
     [Test]
-    [TestCase("file/name/with/folders.json")]
-    [TestCase("file\\name\\with\\folders.json")]
-    [TestCase("C:/Full/Path.json")]
-    [TestCase("SpecialSymbols~!@#$%&^())  _+{.json")]
-    public void PollutedLocationDTOFileRepositoryFromFile_FileNameIsOfValidFormat_DoesNotThrowFormatException(string fileName)
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_HappyPath()
     {
-        // As the file is not found locally in the test directory, it throws FileNotFoundException instead of FormatException
-        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, fileName));
+        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath));
+    }
+    
+    [Test]
+    public void PollutedLocationDTOFileRepositoryFromContentConstructor_HappyPath()
+    {
+        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromContent(m_mapper, "[]"));
     }
     #endregion
-
+    
     #region GetAllAsync tests
     [Test]
     [TestCase("9719d4ef-5cde-4370-a510-53af84bdede2", -181.12311, LocationSeverityLevel.High, "2015-05-16T05:50:06", 100)]
@@ -69,7 +74,7 @@ public class PollutedLocationDTOFileRepositoryTests
             "[" +
             "{" +
             $"\"id\":\"{id}\"," +
-            "\"location\":" +
+            "\"coordinates\":" +
             "{" +
             $"\"longitude\":{longitude.ToString(CultureInfo.InvariantCulture)}," +
             "}," +
@@ -88,8 +93,8 @@ public class PollutedLocationDTOFileRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location?.Latitude, Is.Null);
+            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Coordinates?.Latitude, Is.Null);
             Assert.That(instance.Radius, Is.Null);
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -107,7 +112,7 @@ public class PollutedLocationDTOFileRepositoryTests
             "[" +
             "{" +
             $"\"id\":\"{id}\"," +
-            "\"location\":" +
+            "\"coordinates\":" +
             "{" +
             $"\"longitude\":{longitude.ToString(CultureInfo.InvariantCulture)}," +
             $"\"latitude\":{latitude.ToString(CultureInfo.InvariantCulture)}" +
@@ -129,8 +134,8 @@ public class PollutedLocationDTOFileRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(id));
-            Assert.That(instance.Location?.Longitude, Is.EqualTo(longitude));
-            Assert.That(instance.Location?.Latitude, Is.EqualTo(latitude));
+            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(longitude));
+            Assert.That(instance.Coordinates?.Latitude, Is.EqualTo(latitude));
             Assert.That(instance.Radius, Is.EqualTo(radius));
             Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
             Assert.That(instance.Spotted, Is.EqualTo(creationTime));
@@ -179,14 +184,14 @@ public class PollutedLocationDTOFileRepositoryTests
     public void GetAllAsync_ReadFromFile_JsonIncludesInvalidData_Throws()
     {
         using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, InvalidDataSourcePath);
-        Assert.ThrowsAsync<JsonException>(async () => await dataManager.GetAllAsync());
+        Assert.ThrowsAsync<JsonReaderException>(async () => await dataManager.GetAllAsync());
     }
 
     [Test]
     [TestCase(-1.5, 1.5, 2.5, -2.5, -1.0, 1.0)]
     [TestCase(-41.21341, 44.44444, 81.49102, -89.149102, -28.97782, 29.58192)]
     public async Task GetAllAsyncOrdered_ReadFromJson_InstancesReturnedInAscendingOrderByDistance(double longitude1, double latitude1,
-                                                                                                  double longitude2, double latitude2, 
+                                                                                                  double longitude2, double latitude2,
                                                                                                   double longitude3, double latitude3)
     {
         var id1 = Guid.NewGuid().ToString();
@@ -196,15 +201,15 @@ public class PollutedLocationDTOFileRepositoryTests
         var jsonString =
             "[" +
             $"{{\"id\":\"{id1}\"," +
-            "\"location\":" +
+            "\"coordinates\":" +
             $"{{\"longitude\":{longitude1.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude1.ToString(CultureInfo.InvariantCulture)}" +
             "}}," +
             $"{{\"id\":\"{id2}\"," +
-            "\"location\":" +
+            "\"coordinates\":" +
             $"{{\"longitude\":{longitude2.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude2.ToString(CultureInfo.InvariantCulture)}" +
             "}}," +
             $"{{\"id\":\"{id3}\"," +
-            "\"location\":" +
+            "\"coordinates\":" +
             $"{{\"longitude\":{longitude3.ToString(CultureInfo.InvariantCulture)},\"latitude\":{latitude3.ToString(CultureInfo.InvariantCulture)}" +
             "}}," +
             "]";
@@ -212,8 +217,11 @@ public class PollutedLocationDTOFileRepositoryTests
 
         var referenceLocationPoint = new Location
         {
-            Latitude = 0,
-            Longitude = 0
+            Coordinates = new()
+            {
+                Latitude = 0,
+                Longitude = 0
+            }
         };
 
         var instances = (await dataManager.GetAllAsync(referenceLocationPoint)).ToArray();
@@ -280,7 +288,7 @@ public class PollutedLocationDTOFileRepositoryTests
 
         var requestId = id2;
 
-       Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
     }
     #endregion
 }
