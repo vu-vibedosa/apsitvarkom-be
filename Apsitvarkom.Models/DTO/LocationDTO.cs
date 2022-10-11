@@ -9,6 +9,15 @@ public struct CoordinatesDTO
     public double? Latitude;
 }
 
+public class CoordinatesDTOValidator : AbstractValidator<CoordinatesDTO>
+{
+    public CoordinatesDTOValidator()
+    {
+        RuleFor(dto => dto.Longitude).NotNull();
+        RuleFor(dto => dto.Latitude).NotNull();
+    }
+}
+
 /// <summary>
 /// Data Transfer Object for <see cref="Location" />
 /// </summary>
@@ -18,12 +27,11 @@ public class LocationDTO
     public CoordinatesDTO? Coordinates { get; set; }
 }
 
-/// <summary>Validator for <see cref="LocationDTO"/>.</summary>
-public class LocationDTOValidator : AbstractValidator<CoordinatesDTO>
+public class LocationDTOValidator : AbstractValidator<LocationDTO>
 {
     public LocationDTOValidator()
     {
-        RuleFor(dto => dto.Longitude).NotNull();
-        RuleFor(dto => dto.Latitude).NotNull();
+        RuleFor(dto => dto.Coordinates).NotNull();
+        RuleFor(dto => dto.Coordinates!.Value).SetValidator(new CoordinatesDTOValidator()).When(dto => dto.Coordinates.HasValue);
     }
 }

@@ -33,17 +33,15 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
 {
     public PollutedLocationDTOValidator()
     {
+        // Include base class validator
+        Include(new LocationDTOValidator());
+
         RuleFor(dto => dto.Id).NotEmpty().Must(BeValidGuid);
         RuleFor(dto => dto.Radius).NotNull();
         RuleFor(dto => dto.Severity).NotEmpty().IsEnumName(typeof(Enumerations.LocationSeverityLevel));
         RuleFor(dto => dto.Spotted).NotEmpty().Must(BeDateOfValidFormat);
         RuleFor(dto => dto.Progress).NotNull();
         RuleFor(dto => dto.Notes).NotNull();
-
-        // Make sure Location itself is not null
-        RuleFor(dto => dto.Coordinates).NotNull();
-        // Validate all Location fields using its validator.
-        // RuleFor(dto => dto.Coordinates).SetInheritanceValidator(new LocationDTOValidator());
     }
 
     /// <summary>

@@ -31,11 +31,12 @@ public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
 {
     public PollutedLocationValidator()
     {
+        // Include base class validation
+        Include(new LocationValidator());
+
         // There is no need to perform validation on Severity, Id and Spotted since they are parsed/validated in DTO before mapping.
         RuleFor(data => data.Radius).GreaterThanOrEqualTo(1);
         RuleFor(data => data.Severity).IsInEnum();
         RuleFor(data => data.Progress).InclusiveBetween(0, 100);
-        // Validate all Location fields using its validator if it has a Value
-        RuleFor(data => data.Coordinates).SetValidator(new LocationValidator());
     }
 }

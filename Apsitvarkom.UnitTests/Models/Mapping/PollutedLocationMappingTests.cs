@@ -9,7 +9,7 @@ namespace Apsitvarkom.UnitTests.Models.Mapping;
 
 public class PollutedLocationMappingTests
 {
-    private IMapper m_mapper;
+    private IMapper m_mapper = null!;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
