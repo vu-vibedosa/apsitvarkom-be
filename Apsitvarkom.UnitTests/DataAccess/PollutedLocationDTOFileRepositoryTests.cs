@@ -40,8 +40,8 @@ public class PollutedLocationDTOFileRepositoryTests
 
     [Test]
     [TestCase("file/name/with/folders.json")]
-    [TestCase("file\\\\name\\\\with\\\\folders.json")]
-    [TestCase("C:/Full/Path.json")]
+    [TestCase("file\\name\\with\\folders.json")]
+    [TestCase("C:\\Full\\Path.json")]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_ThrowsDirectoryNotFoundException(string filePath)
     {
         // If the file path is valid, but there are no such local files as in the test cases, it throws FileNotFoundException instead of FormatException
