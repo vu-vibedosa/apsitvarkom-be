@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IPollutedLocationDTORepository>(serviceProvider =>
 {
     var mapper = serviceProvider.GetRequiredService<IMapper>();
-    return PollutedLocationDTOFileRepository.FromFile(mapper, "PollutedLocationsMock.json");
+    return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
 var app = builder.Build();
