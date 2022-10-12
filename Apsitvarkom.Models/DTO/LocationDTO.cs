@@ -5,8 +5,8 @@ namespace Apsitvarkom.Models.DTO;
 /// <summary>DTO equivalent of <see cref="Coordinates"/>.</summary>
 public struct CoordinatesDTO
 {
-    public double? Longitude;
-    public double? Latitude;
+    public double? Longitude { get; set; }
+    public double? Latitude { get; set; }
 }
 
 public class CoordinatesDTOValidator : AbstractValidator<CoordinatesDTO>
