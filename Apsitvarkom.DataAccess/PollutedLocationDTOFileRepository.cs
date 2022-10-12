@@ -11,7 +11,7 @@ namespace Apsitvarkom.DataAccess;
 /// <summary>
 /// Class for <see cref="PollutedLocationDTO" /> data handling from file.
 /// </summary>
-public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository, IDisposable
+public class PollutedLocationDTOFileRepository : ILocationDTORepository<PollutedLocationDTO>, IDisposable
 {
     private readonly JsonSerializerSettings _options;
     private readonly Stream _stream;

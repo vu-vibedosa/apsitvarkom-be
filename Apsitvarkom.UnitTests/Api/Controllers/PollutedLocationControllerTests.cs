@@ -10,7 +10,7 @@ namespace Apsitvarkom.UnitTests.Api.Controllers;
 public class PollutedLocationControllerTests
 {
     private PollutedLocationController m_controller;
-    private Mock<IPollutedLocationDTORepository> m_repository;
+    private Mock<ILocationDTORepository<PollutedLocationDTO>> m_repository;
 
     private readonly IEnumerable<PollutedLocationDTO> PollutedLocationDTOs = new List<PollutedLocationDTO>
     {
@@ -47,7 +47,7 @@ public class PollutedLocationControllerTests
     [SetUp]
     public void SetUp()
     {
-        m_repository = new Mock<IPollutedLocationDTORepository>();
+        m_repository = new Mock<ILocationDTORepository<PollutedLocationDTO>>();
         m_controller = new PollutedLocationController(m_repository.Object);
     }
 

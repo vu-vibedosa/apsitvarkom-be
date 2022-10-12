@@ -8,9 +8,9 @@ namespace Apsitvarkom.Api.Controllers;
 [Route("/api/[controller]")]
 public class PollutedLocationController : ControllerBase
 {
-    private readonly IPollutedLocationDTORepository _repository;
+    private readonly ILocationDTORepository<PollutedLocationDTO> _repository;
 
-    public PollutedLocationController(IPollutedLocationDTORepository repository)
+    public PollutedLocationController(ILocationDTORepository<PollutedLocationDTO> repository)
     {
         _repository = repository;
     }
