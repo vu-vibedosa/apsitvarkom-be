@@ -51,10 +51,10 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocationDTO?> GetByIdAsync(string id)
+    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Func<PollutedLocationDTO, bool> propertyCondition)
     {
         var allLocations = await GetAllAsync();
-        return allLocations.SingleOrDefault(loc => loc.Id == id);
+        return allLocations.SingleOrDefault(propertyCondition);
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>
