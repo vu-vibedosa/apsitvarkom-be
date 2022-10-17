@@ -30,7 +30,7 @@ public class PollutedLocationController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PollutedLocationDTO>> GetById(string id)
     {
-        var instance = await _repository.GetByIdAsync(id);
+        var instance = await _repository.GetByPropertyAsync(x => x.Id == id);
         return instance is not null ? Ok(instance) : NotFound($"PollutedLocation with the specified id '{id}' was not found.");
     }
 }
