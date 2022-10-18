@@ -230,10 +230,10 @@ public class PollutedLocationDTOFileRepositoryTests
     }
     #endregion
 
-    #region GetByIdAsync tests
+    #region GetByPropertyAsync tests
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb", "71009336-9133-47c8-b577-d755c8c371ee")]
-    public async Task GetByIdAsync_JsonIncludesTheRequiredInstance_ReturnsInstance(string id1, string id2, string id3, string id4)
+    public async Task GetByPropertyAsync_JsonIncludesTheRequiredInstance_ReturnsInstance(string id1, string id2, string id3, string id4)
     {
         var jsonString =
             "[" +
@@ -246,7 +246,7 @@ public class PollutedLocationDTOFileRepositoryTests
 
         var requestId = id2;
 
-        var instance = await dataManager.GetByIdAsync(requestId);
+        var instance = await dataManager.GetByPropertyAsync(x => x.Id == requestId);
 
         Assert.That(instance, Is.Not.Null);
         Assert.That(instance!.Id, Is.EqualTo(requestId));
@@ -254,7 +254,7 @@ public class PollutedLocationDTOFileRepositoryTests
 
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb", "71009336-9133-47c8-b577-d755c8c371ee")]
-    public async Task GetByIdAsync_NoInstanceWithRequestedIdFound_ReturnsNull(string id1, string id2, string id3, string id4)
+    public async Task GetByPropertyAsync_NoInstanceWithRequestedIdFound_ReturnsNull(string id1, string id2, string id3, string id4)
     {
         var jsonString =
             "[" +
@@ -267,27 +267,28 @@ public class PollutedLocationDTOFileRepositoryTests
 
         var requestId = Guid.NewGuid().ToString();
 
-        var instance = await dataManager.GetByIdAsync(requestId);
+        var instance = await dataManager.GetByPropertyAsync(x => x.Id == requestId);
 
         Assert.That(instance, Is.Null);
     }
 
     [Test]
     [TestCase("b38b9bf6-74f6-4325-8ddf-9defe9bc2994", "3fd9bd2a-90ac-4ae1-baee-3c31b91e91f6", "6ad05412-a6c5-436d-9795-8581b27bfadb")]
-    public void GetByIdAsync_SeveralInstanceWithRequestedIdFound_Throws(string id1, string id2, string id3)
+    public async Task GetByPropertyAsync_SeveralInstanceWithRequestedIdFound_FirstMatchingInstanceReturned(string id1, string id2, string id3)
     {
         var jsonString =
             "[" +
-            $"{{\"id\":\"{id1}\"}}," +
-            $"{{\"id\":\"{id2}\"}}," +
-            $"{{\"id\":\"{id3}\"}}," +
-            $"{{\"id\":\"{id2}\"}}" +
+            $"{{\"id\":\"{id1}\", \"radius\":{1}}}," +
+            $"{{\"id\":\"{id2}\", \"radius\":{2}}}," +
+            $"{{\"id\":\"{id3}\", \"radius\":{3}}}," +
+            $"{{\"id\":\"{id2}\", \"radius\":{4}}}" +
             "]";
         using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
-
         var requestId = id2;
 
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await dataManager.GetByIdAsync(requestId));
+        var instance = await dataManager.GetByPropertyAsync(x => x.Id == requestId);
+
+        Assert.That(instance!.Radius, Is.EqualTo(2));
     }
     #endregion
 }

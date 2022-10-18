@@ -11,7 +11,7 @@ namespace Apsitvarkom.DataAccess;
 /// <summary>
 /// Class for <see cref="PollutedLocationDTO" /> data handling from file.
 /// </summary>
-public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository, IDisposable
+public class PollutedLocationDTOFileRepository : ILocationDTORepository<PollutedLocationDTO>, IDisposable
 {
     private readonly JsonSerializerSettings _options;
     private readonly Stream _stream;
@@ -45,16 +45,16 @@ public class PollutedLocationDTOFileRepository : IPollutedLocationDTORepository,
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Location inRelationTo)
     {
-        return from pollutedLocation in await GetAllAsync()
-               orderby inRelationTo.DistanceTo(_mapper.Map<Location>(pollutedLocation))
-               select pollutedLocation;
+        return from pollutedLocationDTO in await GetAllAsync()
+               orderby inRelationTo.DistanceTo(_mapper.Map<PollutedLocation>(pollutedLocationDTO))
+               select pollutedLocationDTO;
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocationDTO?> GetByIdAsync(string id)
+    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Func<PollutedLocationDTO, bool> propertyCondition)
     {
         var allLocations = await GetAllAsync();
-        return allLocations.SingleOrDefault(loc => loc.Id == id);
+        return allLocations.FirstOrDefault(propertyCondition);
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>

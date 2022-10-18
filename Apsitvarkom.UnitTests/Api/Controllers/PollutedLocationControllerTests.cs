@@ -10,7 +10,7 @@ namespace Apsitvarkom.UnitTests.Api.Controllers;
 public class PollutedLocationControllerTests
 {
     private PollutedLocationController m_controller;
-    private Mock<IPollutedLocationDTORepository> m_repository;
+    private Mock<ILocationDTORepository<PollutedLocationDTO>> m_repository;
 
     private readonly IEnumerable<PollutedLocationDTO> PollutedLocationDTOs = new List<PollutedLocationDTO>
     {
@@ -47,7 +47,7 @@ public class PollutedLocationControllerTests
     [SetUp]
     public void SetUp()
     {
-        m_repository = new Mock<IPollutedLocationDTORepository>();
+        m_repository = new Mock<ILocationDTORepository<PollutedLocationDTO>>();
         m_controller = new PollutedLocationController(m_repository.Object);
     }
 
@@ -72,7 +72,7 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsPollutedLocationDTO_OKActionResultReturned()
     {
         var instance = PollutedLocationDTOs.First();
-        m_repository.Setup(self => self.GetByIdAsync(instance.Id!)).ReturnsAsync(instance);
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Func<PollutedLocationDTO, bool>>())).ReturnsAsync(instance);
 
         var actionResult = await m_controller.GetById(instance.Id!);
 
@@ -87,7 +87,7 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
         var instanceId = Guid.NewGuid().ToString();
-        m_repository.Setup(self => self.GetByIdAsync(instanceId)).ReturnsAsync((PollutedLocationDTO?)null);
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Func<PollutedLocationDTO, bool>>())).ReturnsAsync((PollutedLocationDTO?)null);
 
         var actionResult = await m_controller.GetById(instanceId);
 

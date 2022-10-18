@@ -21,10 +21,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontEndPolicy, policy => policy.WithOrigins(builder.Configuration.GetValue<string>("FrontEndOrigin")));
 });
 
-builder.Services.AddScoped<IPollutedLocationDTORepository>(serviceProvider =>
+builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceProvider =>
 {
     var mapper = serviceProvider.GetRequiredService<IMapper>();
-    return PollutedLocationDTOFileRepository.FromFile(mapper, "PollutedLocationsMock.json");
+    return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
 var app = builder.Build();
