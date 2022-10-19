@@ -2,8 +2,8 @@
   {
     "id": "02f16033-232b-42e4-bfe7-1f9a223a1446",
     "coordinates": {
-      "longitude": 54.691452,
-      "latitude": 25.266276
+      "latitude": 54.691452,
+      "longitude": 25.266276
     },
     "radius": 5,
     "severity": "Moderate",
@@ -14,8 +14,8 @@
   {
     "id": "461911ac-ff85-41f8-860a-be0240f0653f",
     "coordinates": {
-      "longitude": 54.675369,
-      "latitude": 25.273316
+      "latitude": 54.675369,
+      "longitude": 25.273316
     },
     "radius": 1,
     "severity": "Low",
@@ -26,8 +26,8 @@
   {
     "id": "b2ed322d-331b-4f28-9dbf-4a71dce7504e",
     "coordinates": {
-      "longitude": 54.728796,
-      "latitude": 25.264199
+      "latitude": 54.728796,
+      "longitude": 25.264199
     },
     "radius": 21,
     "severity": "High",
@@ -37,8 +37,8 @@
   {
     "id": "bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0",
     "coordinates": {
-      "longitude": 54.878315,
-      "latitude": 23.883123
+      "latitude": 54.878315,
+      "longitude": 23.883123
     },
     "radius": 11,
     "severity": "Low",
@@ -49,8 +49,8 @@
   {
     "id": "65f52593-8507-4474-a522-188a2dc53208",
     "coordinates": {
-      "longitude": 54.891692,
-      "latitude": 23.914362
+      "latitude": 54.891692,
+      "longitude": 23.914362
     },
     "radius": 150,
     "severity": "Low",
@@ -61,8 +61,8 @@
   {
     "id": "d37c6b91-6363-44ce-99a8-2f15287cc5ab",
     "coordinates": {
-      "longitude": 54.686762,
-      "latitude": 25.291317
+      "latitude": 54.686762,
+      "longitude": 25.291317
     },
     "radius": 10,
     "severity": "High",
@@ -73,8 +73,8 @@
   {
     "id": "151757e9-fce3-4bb3-93db-08b93d71245e",
     "coordinates": {
-      "longitude": 55.730551,
-      "latitude": 24.394250
+      "latitude": 55.730551,
+      "longitude": 24.394250
     },
     "radius": 50,
     "severity": "Low",
@@ -85,8 +85,8 @@
   {
     "id": "9de943d3-3ac6-4c55-adcf-fc6aa79b0597",
     "coordinates": {
-      "longitude": 55.705656,
-      "latitude": 21.122825
+      "latitude": 55.705656,
+      "longitude": 21.122825
     },
     "radius": 200,
     "severity": "Low",
@@ -97,8 +97,8 @@
   {
     "id": "dc1513da-a60b-49e5-adba-d0aeed77f125",
     "coordinates": {
-      "longitude": 56.293939,
-      "latitude": 22.340248
+      "latitude": 56.293939,
+      "longitude": 22.340248
     },
     "radius": 50,
     "severity": "Moderate",
