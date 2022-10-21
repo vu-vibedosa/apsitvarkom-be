@@ -31,36 +31,16 @@ public class PollutedLocationDTOFileRepositoryTests
 
     #region Constructor tests
     [Test]
-    [TestCase("SpecialSymbols~!@#$%&^())  _+{.json")]
-    [TestCase("file\\name\\with\\folders.json")]
-    [TestCase("C:/Full/Path.json")]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws(string filePath)
-    {
-        // If the file path is valid, but there are no such local files as in the test cases, it throws FileNotFoundException instead of FormatException
-        Assert.That(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, filePath), Throws.Exception);
-    }
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws() =>
+        Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, Guid.NewGuid().ToString()));
 
     [Test]
-    [TestCase("fileNameWithWrongFileExtension.jsona")]
-    [TestCase("fileNameWithWrongFileExtension.txt")]
-    [TestCase("fileNameWithWrongFileExtension.ajson")]
-    [TestCase("fileNameWithInvalidSymbols<>|?*.json")]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_FileNameIsOfWrongFormat_Throws(string fileName)
-    {
-        Assert.Throws<FormatException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, fileName));
-    }
-    
-    [Test]
-    public void PollutedLocationDTOFileRepositoryFromFileConstructor_HappyPath()
-    {
+    public void PollutedLocationDTOFileRepositoryFromFileConstructor_HappyPath() =>
         Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath));
-    }
     
     [Test]
-    public void PollutedLocationDTOFileRepositoryFromContentConstructor_HappyPath()
-    {
-        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromContent(m_mapper, "[]"));
-    }
+    public void PollutedLocationDTOFileRepositoryFromContentConstructor_HappyPath() =>
+        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromContent(m_mapper));
     #endregion
     
     #region GetAllAsync tests
