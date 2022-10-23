@@ -27,7 +27,11 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
+var apiKey = builder.Configuration["Maps:GoogleMapsApiKey"];
 var app = builder.Build();
+
+var geocoderApiKey = app.MapGet("/", () => apiKey);
+Geocoder.geocoderApiKey = geocoderApiKey.ToString();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
 {
