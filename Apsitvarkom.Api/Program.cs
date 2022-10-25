@@ -26,8 +26,12 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
-var mapsApiKey = builder.Configuration.GetValue<string>("Maps:GoogleMapsApiKey");
-builder.Services.AddSingleton<IGeocoder>(_ => new Geocoder(mapsApiKey));
+var mapsApiKey = builder.Configuration.GetValue<string>("Geocoding:ApiKey");
+builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(c =>
+{
+    var geocodingApiUrl = builder.Configuration.GetValue<string>("Geocoding:Url");
+    c.BaseAddress = new Uri(geocodingApiUrl);
+});
 
 var app = builder.Build();
 

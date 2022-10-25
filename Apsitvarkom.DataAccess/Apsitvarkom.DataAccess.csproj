@@ -9,4 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.0.0" />
+  </ItemGroup>
 </Project>
