@@ -6,6 +6,10 @@ using AutoMapper;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsLocal())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
@@ -27,11 +31,10 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
-var apiKey = builder.Configuration["Maps:GoogleMapsApiKey"];
-var app = builder.Build();
+var mapsApiKey = builder.Configuration.GetValue<string>("Maps:GoogleMapsApiKey");
+builder.Services.AddSingleton<IGeocoder>(_ => new Geocoder(mapsApiKey));
 
-var geocoderApiKey = app.MapGet("/", () => apiKey);
-Geocoder.geocoderApiKey = geocoderApiKey.ToString();
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
 {

@@ -9,6 +9,6 @@ namespace Apsitvarkom.DataAccess
 {
     public interface IGeocoder
     {
-        public Task<string> ReverseGeocode(Coordinates cords);
+        Task<string> ReverseGeocode(Coordinates cords);
     }
 }

@@ -1,35 +1,32 @@
 ﻿using Apsitvarkom.Models;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
-
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Apsitvarkom.DataAccess
 {
     public class Geocoder : IGeocoder
     {
-        private static readonly HttpClient client = new HttpClient();
+        private static HttpClient _client;
 
-        public static string geocoderApiKey;
-
-        public async Task<string> ReverseGeocode(Coordinates cords)
+        private static string? _apiKey;
+        public Geocoder(string apiKey)
         {
-            var apiResponse = await MakeReverseGeocodeApiCall(cords);
-            dynamic dynamicObject = JsonConvert.DeserializeObject<dynamic>(apiResponse)!;
-            string locationTitle = dynamicObject.results[0].formatted_address;
-            return locationTitle;
+            _apiKey = apiKey;
+            _client = new HttpClient();
         }
-
-        private static async Task<string> MakeReverseGeocodeApiCall(Coordinates cordinates)
+        public async Task<string> ReverseGeocode(Coordinates coordinates)
         {
-            var apiCall = client.GetStringAsync("https://maps.googleapis.com/maps/api/geocode/json?latlng=54.687203,25.241313&language=lt&result_type=political&key=[ENTER_API_KEY_THERE]");
-            var apiResponse = await apiCall;
-            return apiResponse;
+            var apiCall = _client.GetStreamAsync("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + coordinates.Longitude + "," + coordinates.Latitude + "&language=lt&result_type=political&key=" + _apiKey);
+            var deserializedApiResponse = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(await apiCall);
+            string formattedTitle = deserializedApiResponse.results.First().formatted_address;
+            return formattedTitle;
         }
-
     }
-
-
-
-
-
+    public class ReverseGeocodingApiResult
+    {
+        public string? formatted_address { get; set; }
+    }
+    public class ReverseGeocodingApiResponse
+    {
+        public IEnumerable<ReverseGeocodingApiResult>? results { get; set; }
+    }
 }

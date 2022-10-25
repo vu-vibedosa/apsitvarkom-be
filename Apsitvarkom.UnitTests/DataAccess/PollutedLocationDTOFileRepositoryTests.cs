@@ -271,20 +271,5 @@ public class PollutedLocationDTOFileRepositoryTests
         Assert.That(instance!.Radius, Is.EqualTo(2));
     }
 
-    [Test]
-    public async Task tempTest()
-    {
-        var coordinates = new Coordinates
-        {
-            Longitude = 55.7329098,
-            Latitude = 24.3557527,
-        };
-       
-        var geocoderClass = new Geocoder();
-        var result = geocoderClass.ReverseGeocode(coordinates);
-
-
-        Assert.AreEqual("test", result.Result);
-    }
     #endregion
 }
