@@ -1,13 +1,13 @@
-name: Dev deployment
+name: Staging deployment
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["staging"]
 
 env:
-  PROJECT_ID: apsitvarkom-dev
+  PROJECT_ID: apsitvarkom-staging
   LOCATION: us-east1
-  REPOSITORY: docker-apsitvarkom-dev
+  REPOSITORY: docker-apsitvarkom-staging
   IMAGE: apsitvarkom-be
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-test-publish-push
     environment:
-      name: dev
+      name: staging
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
@@ -77,4 +77,4 @@ jobs:
           region: ${{ env.LOCATION }}
           flags: --allow-unauthenticated --port=80
           env_vars: |
-            ASPNETCORE_ENVIRONMENT=Development
+            ASPNETCORE_ENVIRONMENT=Staging

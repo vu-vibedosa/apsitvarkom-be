@@ -36,7 +36,7 @@ builder.Services.AddSingleton<IGeocoder>(_ => new Geocoder(mapsApiKey));
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
