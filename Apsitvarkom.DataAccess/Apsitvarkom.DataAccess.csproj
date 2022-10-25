@@ -9,9 +9,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
 </Project>
