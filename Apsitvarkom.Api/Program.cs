@@ -29,13 +29,13 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {
-    Geocoding = builder.Configuration.GetValue<string>("Geocoding:ApiKey")
+    Geocoding = builder.Configuration.GetRequiredValue<string>("Geocoding:ApiKey")
 });
 
-builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(c =>
+builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(client =>
 {
-    var geocodingApiUrl = builder.Configuration.GetValue<string>("Geocoding:Url");
-    c.BaseAddress = new Uri(geocodingApiUrl);
+    var geocodingApiUrl = builder.Configuration.GetRequiredValue<string>("Geocoding:Url");
+    client.BaseAddress = new Uri(geocodingApiUrl);
 });
 
 var app = builder.Build();
