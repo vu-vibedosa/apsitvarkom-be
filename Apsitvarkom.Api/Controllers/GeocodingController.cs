@@ -16,14 +16,14 @@ namespace Apsitvarkom.Api.Controllers
         }
         [HttpGet]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<string> getGeocoder()
+        public async Task<string> ReverseGeocode()
         {
             var coordinates = new Coordinates
             {
                 Longitude = 54.687203,
                 Latitude = 25.241313,
             };
-            string response = await _geocoder.ReverseGeocode(coordinates);
+            string response = await _geocoder.ReverseGeocodeAsync(coordinates);
             return response;
         }
     }

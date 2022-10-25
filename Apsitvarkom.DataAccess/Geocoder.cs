@@ -1,32 +1,38 @@
 ﻿using Apsitvarkom.Models;
+using System.Text.Json.Serialization;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Apsitvarkom.DataAccess
 {
     public class Geocoder : IGeocoder
     {
-        private static HttpClient _client;
+        private readonly HttpClient _client;
 
-        private static string? _apiKey;
+        private readonly string _apiKey;
+
+        const string apiPath = "https://maps.googleapis.com/maps/api/geocode/json";
         public Geocoder(string apiKey)
         {
             _apiKey = apiKey;
             _client = new HttpClient();
         }
-        public async Task<string> ReverseGeocode(Coordinates coordinates)
+        public async Task<string> ReverseGeocodeAsync(Coordinates coordinates)
         {
-            var apiCall = _client.GetStreamAsync("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + coordinates.Longitude + "," + coordinates.Latitude + "&language=lt&result_type=political&key=" + _apiKey);
+            var apiCall = _client.GetStreamAsync($"{apiPath}?latlng={coordinates.Longitude},{coordinates.Latitude}&language=lt&result_type=political&key={_apiKey}");
             var deserializedApiResponse = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(await apiCall);
-            string formattedTitle = deserializedApiResponse.results.First().formatted_address;
+            string formattedTitle = deserializedApiResponse.Results.First().FormattedAddress;
             return formattedTitle;
         }
     }
-    public class ReverseGeocodingApiResult
+    internal class ReverseGeocodingApiResult
     {
-        public string? formatted_address { get; set; }
+        [JsonPropertyName("formatted_address")]
+        public string? FormattedAddress { get; set; }
     }
-    public class ReverseGeocodingApiResponse
+    internal class ReverseGeocodingApiResponse
     {
-        public IEnumerable<ReverseGeocodingApiResult>? results { get; set; }
+        [JsonPropertyName("results")]
+        public IEnumerable<ReverseGeocodingApiResult>? Results { get; set; }
     }
 }
+

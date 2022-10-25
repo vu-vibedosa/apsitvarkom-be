@@ -6,10 +6,6 @@ using AutoMapper;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsLocal())
-{
-    builder.Configuration.AddUserSecrets<Program>();
-}
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
