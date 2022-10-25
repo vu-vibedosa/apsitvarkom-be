@@ -1,3 +1,4 @@
+using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
@@ -26,7 +27,11 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
-var mapsApiKey = builder.Configuration.GetValue<string>("Geocoding:ApiKey");
+builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
+{
+    Geocoding = builder.Configuration.GetValue<string>("Geocoding:ApiKey")
+});
+
 builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(c =>
 {
     var geocodingApiUrl = builder.Configuration.GetValue<string>("Geocoding:Url");

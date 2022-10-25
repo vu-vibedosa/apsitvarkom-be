@@ -1,4 +1,5 @@
-﻿using Apsitvarkom.Models;
+﻿using Apsitvarkom.Configuration;
+using Apsitvarkom.Models;
 using System.Text.Json;
 using Yoh.Text.Json.NamingPolicies;
 
@@ -14,9 +15,9 @@ public class GoogleGeocoder : IGeocoder
         PropertyNamingPolicy = JsonNamingPolicies.SnakeCaseLower
     };
 
-    public GoogleGeocoder(HttpClient httpClient, IApiKeyProvider apiKey)
+    public GoogleGeocoder(HttpClient httpClient, IApiKeyProvider apiKeyProvider)
     {
-        _apiKey = apiKey;
+        _apiKey = apiKeyProvider.Geocoding;
         _httpClient = httpClient;
     }
 
