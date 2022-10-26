@@ -1,9 +1,8 @@
 ﻿using Apsitvarkom.Models;
 
-namespace Apsitvarkom.DataAccess
+namespace Apsitvarkom.DataAccess;
+
+public interface IGeocoder
 {
-    public interface IGeocoder
-    {
-        Task<string?> ReverseGeocodeAsync(Coordinates coordinates);
-    }
+    Task<string?> ReverseGeocodeAsync(Coordinates coordinates);
 }

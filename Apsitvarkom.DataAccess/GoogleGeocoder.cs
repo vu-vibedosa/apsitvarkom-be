@@ -26,8 +26,7 @@ public class GoogleGeocoder : IGeocoder
         var jsonStream = await _httpClient.GetStreamAsync($"json?latlng={coordinates.Latitude},{coordinates.Longitude}&language=lt&result_type=political&key={_apiKey}");
         var response = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(jsonStream, SerializerOptions);
 
-        var title = response?.Results?.FirstOrDefault()?.FormattedAddress;
-        return title ?? string.Empty;
+        return response?.Results?.FirstOrDefault()?.FormattedAddress;
     }
 
     private class ReverseGeocodingApiResult

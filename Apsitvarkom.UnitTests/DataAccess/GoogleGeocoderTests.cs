@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text;
 using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Moq;
