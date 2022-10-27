@@ -1,4 +1,4 @@
-using Apsitvarkom.Api;
+using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
@@ -7,7 +7,7 @@ using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -27,8 +27,16 @@ builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceP
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });
 
-var mapsApiKey = builder.Configuration.GetValue<string>("Maps:GoogleMapsApiKey");
-builder.Services.AddSingleton<IGeocoder>(_ => new Geocoder(mapsApiKey));
+builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
+{
+    Geocoding = builder.Configuration.GetRequiredValue<string>("Geocoding:ApiKey")
+});
+
+builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(client =>
+{
+    var geocodingApiUrl = builder.Configuration.GetRequiredValue<string>("Geocoding:Url");
+    client.BaseAddress = new Uri(geocodingApiUrl);
+});
 
 var app = builder.Build();
 

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.UnitTests", "Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.DataAccess", "Apsitvarkom.DataAccess\Apsitvarkom.DataAccess.csproj", "{655EE043-C640-4F28-B8A4-8CFC73EB86FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.Configuration", "Apsitvarkom.Configuration\Apsitvarkom.Configuration.csproj", "{5AA264CE-9DD3-491D-995F-D6B015A459C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{655EE043-C640-4F28-B8A4-8CFC73EB86FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{655EE043-C640-4F28-B8A4-8CFC73EB86FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{655EE043-C640-4F28-B8A4-8CFC73EB86FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

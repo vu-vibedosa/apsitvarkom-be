@@ -8,10 +8,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
+    <ProjectReference Include="..\Apsitvarkom.Configuration\Apsitvarkom.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.0.0" />
   </ItemGroup>
-
 </Project>
