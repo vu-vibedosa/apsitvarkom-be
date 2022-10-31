@@ -61,7 +61,6 @@ public class GoogleGeocoderTests
 
     [Test]
     [TestCase("null")]
-    [TestCase("\"\"")]
     [TestCase("{}")]
     public Task EmptyResponseRetrieved_NullReturned(string response) =>
         TestReverseGeocodeRequest(response);
