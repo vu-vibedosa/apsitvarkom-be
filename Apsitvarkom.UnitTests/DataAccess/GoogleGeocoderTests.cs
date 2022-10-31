@@ -26,47 +26,46 @@ public class GoogleGeocoderTests
     }
 
     [Test]
-    public void OkStatusCodeReturned_SingleAddressRetrieved_TitleSuccessfullyReturned()
+    public Task OkStatusCodeReturned_SingleAddressRetrieved_TitleSuccessfullyReturned()
     {
         const string title = "Hello World";
         const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}], \"status\": \"OK\"}";
 
-        TestReverseGeocodeRequest(responseJsonString, title);
+        return TestReverseGeocodeRequest(responseJsonString, title);
     }
 
     [Test]
-    public void OkStatusCodeReturned_SeveralAddressesRetrieved_FirstTitleReturned()
+    public Task OkStatusCodeReturned_SeveralAddressesRetrieved_FirstTitleReturned()
     {
         const string title = "Hello World";
         const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}, {\"formatted_address\": \"second address\"}], \"status\": \"OK\"}";
 
-        TestReverseGeocodeRequest(responseJsonString, title);
+        return TestReverseGeocodeRequest(responseJsonString, title);
     }
 
     [Test]
-    public void OkStatusCodeReturned_NullAddressRetrieved_NullReturned()
+    public Task OkStatusCodeReturned_NullAddressRetrieved_NullReturned()
     {
         const string responseJsonString = "{\"results\":[{\"formatted_address\":null}], \"status\": \"OK\"}";
 
-        TestReverseGeocodeRequest(responseJsonString);
+        return TestReverseGeocodeRequest(responseJsonString);
     }
 
     [Test]
-    public void ZeroResultsStatusCodeRetrieved_NullReturned() =>
+    public Task ZeroResultsStatusCodeRetrieved_NullReturned() =>
         TestReverseGeocodeRequest("{\"results\":[], \"status\": \"ZERO_RESULTS\"}");
 
     [Test]
-    public void EmptyResultsResponseRetrieved_NullReturned() =>
+    public Task EmptyResultsResponseRetrieved_NullReturned() =>
         TestReverseGeocodeRequest("{\"results\":null}");
 
     [Test]
-    [TestCase("")]
     [TestCase("null")]
     [TestCase("{}")]
-    public void EmptyResponseRetrieved_NullReturned(string response) =>
+    public Task EmptyResponseRetrieved_NullReturned(string response) =>
         TestReverseGeocodeRequest(response);
 
-    private async void TestReverseGeocodeRequest(string responseJsonString, string? expectedResult = null)
+    private async Task TestReverseGeocodeRequest(string responseJsonString, string? expectedResult = null)
     {
         var response = new HttpResponseMessage
         {
