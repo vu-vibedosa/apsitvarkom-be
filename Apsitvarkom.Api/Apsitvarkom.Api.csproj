@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.DataAccess\Apsitvarkom.DataAccess.csproj" />
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
+    <ProjectReference Include="..\Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

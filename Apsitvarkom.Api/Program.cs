@@ -1,9 +1,8 @@
 using Apsitvarkom.Api;
-using Apsitvarkom.Api.Logging;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
-using Apsitvarkom.Models.Logging;
+using Apsitvarkom.Utilities;
 using AutoMapper;
 using FluentValidation;
 
@@ -19,8 +18,11 @@ builder.Services
 
 builder.Services.AddLogging();
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Api\\Logging\\");
+builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
+
+
+FileLogger _logger = new FileLogger("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
+_logger.Logity("asdasd");
 
 
 const string FrontEndPolicy = "FrontEndPolicy";
