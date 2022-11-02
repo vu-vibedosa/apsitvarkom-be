@@ -16,13 +16,9 @@ builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
     .AddValidatorsFromAssemblyContaining<PollutedLocationDTOValidator>();
 
-builder.Services.AddLogging();
-builder.Logging.ClearProviders();
-builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
-
-
-FileLogger _logger = new FileLogger("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
-_logger.Logity("asdasd");
+//builder.Services.AddLogging();
+//builder.Logging.ClearProviders();
+//builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
 
 
 const string FrontEndPolicy = "FrontEndPolicy";

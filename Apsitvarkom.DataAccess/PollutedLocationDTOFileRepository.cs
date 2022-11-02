@@ -5,6 +5,8 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
 using AutoMapper;
+using Apsitvarkom.Utilities;
+using Microsoft.Extensions.Logging;
 
 namespace Apsitvarkom.DataAccess;
 
@@ -16,12 +18,14 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     private readonly JsonSerializerSettings _options;
     private readonly Stream _stream;
     private readonly IMapper _mapper;
+    private readonly ILogger _logger;
 
     /// <summary>Constructor for the reader.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="stream">Stream to be used for parsing.</param>
-    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
+    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream, ILogger logger)
     {
+        _logger = logger;
         _stream = stream;
         _options = new JsonSerializerSettings
         {
@@ -34,12 +38,12 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     public Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
     {
         return Task.Run(() =>
-        {
-            var reader = new StreamReader(_stream);
-            var jsonString = reader.ReadToEnd();
-            var result = JsonConvert.DeserializeObject<IEnumerable<PollutedLocationDTO>>(jsonString, _options);
-            return result ?? Enumerable.Empty<PollutedLocationDTO>();
-        });
+            {
+                var reader = new StreamReader(_stream);
+                var jsonString = reader.ReadToEnd();
+                var result = JsonConvert.DeserializeObject<IEnumerable<PollutedLocationDTO>>(jsonString, _options);
+                return result ?? Enumerable.Empty<PollutedLocationDTO>();
+            });
     }
 
     /// <inheritdoc />

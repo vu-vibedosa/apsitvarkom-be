@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
+    <ProjectReference Include="..\Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
