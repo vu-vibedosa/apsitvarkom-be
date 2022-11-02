@@ -1,7 +1,9 @@
 using Apsitvarkom.Api;
+using Apsitvarkom.Api.Logging;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Models.Logging;
 using AutoMapper;
 using FluentValidation;
 
@@ -14,6 +16,12 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
     .AddValidatorsFromAssemblyContaining<PollutedLocationDTOValidator>();
+
+builder.Services.AddLogging();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Api\\Logging\\");
+
 
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>
