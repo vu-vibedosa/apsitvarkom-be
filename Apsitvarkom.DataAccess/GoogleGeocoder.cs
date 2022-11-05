@@ -23,7 +23,7 @@ public class GoogleGeocoder : IGeocoder
 
     public async Task<string?> ReverseGeocodeAsync(Coordinates coordinates)
     {
-        var jsonStream = await _httpClient.GetStreamAsync($"json?latlng={coordinates.Latitude},{coordinates.Longitude}&language=lt&result_type=political&key={_apiKey}");
+        var jsonStream = await _httpClient.GetStreamAsync($"json?latlng={coordinates.Latitude},{coordinates.Longitude}&language=lt&key={_apiKey}");
         var response = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(jsonStream, SerializerOptions);
 
         return response?.Results?.FirstOrDefault()?.FormattedAddress;
