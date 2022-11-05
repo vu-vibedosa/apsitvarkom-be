@@ -9,27 +9,26 @@ namespace Apsitvarkom.UnitTests.DataAccess;
 
 public class GoogleGeocoderTests
 {
-    private Mock<IApiKeyProvider> _apiKeyProvider;
     private Mock<HttpMessageHandler> _handlerMock;
     private IGeocoder _geocoder;
 
     [SetUp]
     public void SetUp()
     {
-        _apiKeyProvider = new Mock<IApiKeyProvider>();
+        var apiKeyProvider = new Mock<IApiKeyProvider>();
         _handlerMock = new Mock<HttpMessageHandler>();
         var httpClient = new HttpClient(_handlerMock.Object)
         {
             BaseAddress = new Uri("https://mockreversegeocoder.com")
         };
-        _geocoder = new GoogleGeocoder(httpClient, _apiKeyProvider.Object);
+        _geocoder = new GoogleGeocoder(httpClient, apiKeyProvider.Object);
     }
 
     [Test]
     public Task OkStatusCodeReturned_SingleAddressRetrieved_TitleSuccessfullyReturned()
     {
         const string title = "Hello World";
-        const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}], \"status\": \"OK\"}";
+        const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}]}";
 
         return TestReverseGeocodeRequest(responseJsonString, title);
     }
@@ -38,7 +37,7 @@ public class GoogleGeocoderTests
     public Task OkStatusCodeReturned_SeveralAddressesRetrieved_FirstTitleReturned()
     {
         const string title = "Hello World";
-        const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}, {\"formatted_address\": \"second address\"}], \"status\": \"OK\"}";
+        const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}, {\"formatted_address\": \"second address\"}]}";
 
         return TestReverseGeocodeRequest(responseJsonString, title);
     }
@@ -46,14 +45,14 @@ public class GoogleGeocoderTests
     [Test]
     public Task OkStatusCodeReturned_NullAddressRetrieved_NullReturned()
     {
-        const string responseJsonString = "{\"results\":[{\"formatted_address\":null}], \"status\": \"OK\"}";
+        const string responseJsonString = "{\"results\":[{\"formatted_address\":null}]}";
 
         return TestReverseGeocodeRequest(responseJsonString);
     }
 
     [Test]
     public Task ZeroResultsStatusCodeRetrieved_NullReturned() =>
-        TestReverseGeocodeRequest("{\"results\":[], \"status\": \"ZERO_RESULTS\"}");
+        TestReverseGeocodeRequest("{\"results\":[]}");
 
     [Test]
     public Task EmptyResultsResponseRetrieved_NullReturned() =>
