@@ -24,7 +24,7 @@ public class PollutedLocation : Location
     public int Progress { get; set; }
 
     /// <summary>Additional information about the record.</summary>
-    public string Notes { get; set; } = null!;
+    public string? Notes { get; set; }
 }
 
 public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
