@@ -9,11 +9,6 @@ public static class DbInitializer
 {
     public static void InitializePollutedLocations(PollutedLocationContext context)
     {
-        if (context.PollutedLocations.Any())
-        {
-            return;
-        }
-
         var fakePollutedLocations = new PollutedLocation[]
         {
             new()
