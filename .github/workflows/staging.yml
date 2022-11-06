@@ -3,6 +3,7 @@ name: Staging deployment
 on:
   push:
     branches: ["staging"]
+  workflow_dispatch:
 
 env:
   PROJECT_ID: apsitvarkom-staging
