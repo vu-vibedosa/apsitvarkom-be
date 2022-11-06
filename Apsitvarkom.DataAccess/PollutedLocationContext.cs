@@ -14,7 +14,5 @@ public class PollutedLocationContext : DbContext
         // Coordinates must be specified as an owned entity type
         // Reference: https://learn.microsoft.com/en-us/ef/core/modeling/owned-entities
         modelBuilder.Entity<PollutedLocation>().OwnsOne(l => l.Coordinates);
-
-        //modelBuilder.Entity<PollutedLocation>().Property(l => l.Spotted).Typ;
     }
 }
