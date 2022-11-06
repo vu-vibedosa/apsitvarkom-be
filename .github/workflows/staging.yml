@@ -80,4 +80,4 @@ jobs:
           env_vars: |
             ASPNETCORE_ENVIRONMENT=Staging
           secrets: |
-            ConnectionStrings__ApsitvarkomDatabase=${{ secrets.APSITVARKOM_DATABASE_CONNECTION_STRING }}:latest
+            ConnectionStrings__ApsitvarkomDatabase="${{ secrets.APSITVARKOM_DATABASE_CONNECTION_STRING }}":latest
