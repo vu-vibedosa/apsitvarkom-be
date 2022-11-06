@@ -3,9 +3,9 @@
 namespace Apsitvarkom.Models;
 
 /// <summary>
-/// Struct used for storing coordinates of a polluted location.
+/// Class used for storing coordinates of a polluted location.
 /// </summary>
-public struct Coordinates
+public class Coordinates
 {
     public double Latitude { get; set; }
     public double Longitude { get; set; }
@@ -26,7 +26,7 @@ public class CoordinatesValidator : AbstractValidator<Coordinates>
 public class Location
 {
     /// <summary>Longitude and Latitude of a location.</summary>
-    public Coordinates Coordinates { get; set; }
+    public Coordinates Coordinates { get; set; } = null!;
 }
 
 /// <summary>
