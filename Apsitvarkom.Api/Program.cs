@@ -2,8 +2,8 @@ using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
-using AutoMapper;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,11 +21,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontEndPolicy, policy => policy.WithOrigins(builder.Configuration.GetValue<string>("FrontEndOrigin")));
 });
 
-builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceProvider =>
-{
-    var mapper = serviceProvider.GetRequiredService<IMapper>();
-    return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
-});
+builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
+
+builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>, PollutedLocationDTODatabaseRepository>();
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {
@@ -44,6 +42,16 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
+
+    // TODO: switch to migrations
+    pollutedLocationContext.Database.EnsureCreated();
+
+    if (!pollutedLocationContext.PollutedLocations.Any())
+        DbInitializer.InitializePollutedLocations(pollutedLocationContext);
 }
 
 app.UseCors(FrontEndPolicy);

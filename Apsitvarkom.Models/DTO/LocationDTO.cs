@@ -3,7 +3,7 @@
 namespace Apsitvarkom.Models.DTO;
 
 /// <summary>DTO equivalent of <see cref="Coordinates"/>.</summary>
-public struct CoordinatesDTO
+public class CoordinatesDTO
 {
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
@@ -32,6 +32,6 @@ public class LocationDTOValidator : AbstractValidator<LocationDTO>
     public LocationDTOValidator()
     {
         RuleFor(dto => dto.Coordinates).NotNull();
-        RuleFor(dto => dto.Coordinates!.Value).SetValidator(new CoordinatesDTOValidator()).When(dto => dto.Coordinates.HasValue);
+        RuleFor(dto => dto.Coordinates!).SetValidator(new CoordinatesDTOValidator()).When(dto => dto.Coordinates is not null);
     }
 }

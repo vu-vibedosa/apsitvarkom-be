@@ -79,3 +79,5 @@ jobs:
           flags: --allow-unauthenticated --port=80
           env_vars: |
             ASPNETCORE_ENVIRONMENT=Staging
+          secrets: |
+            ConnectionStrings__ApsitvarkomDatabase=ApsitvarkomDatabaseConnectionString:latest
