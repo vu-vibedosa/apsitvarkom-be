@@ -40,7 +40,7 @@ public class FileLogger : ILogger
         }
     }
 
-    public void Logity(string message)
+    public void Log(string message)
     {
             lock (_lock)
             {
@@ -49,6 +49,5 @@ public class FileLogger : ILogger
                 string exc = "";
                 File.AppendAllText(filePath, message + n + exc);
             }
-
         }
 }

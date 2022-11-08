@@ -9,6 +9,7 @@ public class FileLoggerProvider : ILoggerProvider
     public FileLoggerProvider(string _path)
     {
         path = _path;
+        CreateLogger("Error");
     }
 
     public ILogger CreateLogger(string categoryName)

@@ -23,9 +23,8 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     /// <summary>Constructor for the reader.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="stream">Stream to be used for parsing.</param>
-    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream, ILogger logger)
+    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
     {
-        _logger = logger;
         _stream = stream;
         _options = new JsonSerializerSettings
         {

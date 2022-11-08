@@ -16,9 +16,9 @@ builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
     .AddValidatorsFromAssemblyContaining<PollutedLocationDTOValidator>();
 
-//builder.Services.AddLogging();
-//builder.Logging.ClearProviders();
-//builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
+builder.Services.AddLogging();
+builder.Logging.ClearProviders();
+builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
 
 
 const string FrontEndPolicy = "FrontEndPolicy";
@@ -29,6 +29,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>>(serviceProvider =>
 {
+    //var logger = new FileLogger("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
     var mapper = serviceProvider.GetRequiredService<IMapper>();
     return PollutedLocationDTOFileRepository.FromFile(sourcePath: "PollutedLocationsMock.json", mapper: mapper);
 });

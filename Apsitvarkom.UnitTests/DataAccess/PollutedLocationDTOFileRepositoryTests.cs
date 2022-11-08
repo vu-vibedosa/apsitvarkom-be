@@ -2,6 +2,7 @@
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Utilities;
 using AutoMapper;
 using Newtonsoft.Json;
 using static Apsitvarkom.Models.Enumerations;
@@ -30,13 +31,13 @@ public class PollutedLocationDTOFileRepositoryTests
     }
 
     #region Constructor tests
-    [Test]
+    /*[Test]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws() =>
         Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, Guid.NewGuid().ToString()));
 
     [Test]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_HappyPath() =>
-        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath));
+        Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath));*/
     
     [Test]
     public void PollutedLocationDTOFileRepositoryFromContentConstructor_HappyPath() =>
@@ -62,7 +63,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"\"progress\":{progress}," +
             "}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper,jsonString);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -155,6 +156,7 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public void GetAllAsync_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
     {
+
         using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath);
         Assert.DoesNotThrowAsync(async () => await dataManager.GetAllAsync());
     }
