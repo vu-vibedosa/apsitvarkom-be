@@ -43,19 +43,16 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
 
-        // TODO: switch to migrations
-        pollutedLocationContext.Database.EnsureCreated();
+    // TODO: switch to migrations
+    pollutedLocationContext.Database.EnsureCreated();
 
-        if (!pollutedLocationContext.PollutedLocations.Any())
-            DbInitializer.InitializePollutedLocations(pollutedLocationContext);
-    }
+    if (!pollutedLocationContext.PollutedLocations.Any())
+        DbInitializer.InitializePollutedLocations(pollutedLocationContext);
 }
-
 
 app.UseCors(FrontEndPolicy);
 app.UseAuthorization();
