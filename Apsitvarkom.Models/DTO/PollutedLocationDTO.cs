@@ -41,7 +41,6 @@ public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDT
         RuleFor(dto => dto.Severity).NotEmpty().IsEnumName(typeof(Enumerations.LocationSeverityLevel));
         RuleFor(dto => dto.Spotted).NotEmpty().Must(BeDateOfValidFormat);
         RuleFor(dto => dto.Progress).NotNull();
-        RuleFor(dto => dto.Notes).NotNull();
     }
 
     /// <summary>

@@ -9,10 +9,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
     <ProjectReference Include="..\Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj" />
+    <ProjectReference Include="..\Apsitvarkom.Configuration\Apsitvarkom.Configuration.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.10" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+    <PackageReference Include="Yoh.Text.Json.NamingPolicies" Version="1.0.0" />
   </ItemGroup>
-
 </Project>

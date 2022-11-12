@@ -1,6 +1,5 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
@@ -15,7 +14,7 @@ namespace Apsitvarkom.DataAccess;
 /// </summary>
 public class PollutedLocationDTOFileRepository : ILocationDTORepository<PollutedLocationDTO>, IDisposable
 {
-    private readonly JsonSerializerSettings _options;
+    private readonly JsonSerializerOptions _options;
     private readonly Stream _stream;
     private readonly IMapper _mapper;
 
@@ -25,23 +24,19 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
     {
         _stream = stream;
-        _options = new JsonSerializerSettings
+        _options = new JsonSerializerOptions
         {
-            TypeNameHandling = TypeNameHandling.Auto
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = true
         };
         _mapper = mapper;
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
+    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
     {
-        return Task.Run(() =>
-            {
-                var reader = new StreamReader(_stream);
-                var jsonString = reader.ReadToEnd();
-                var result = JsonConvert.DeserializeObject<IEnumerable<PollutedLocationDTO>>(jsonString, _options);
-                return result ?? Enumerable.Empty<PollutedLocationDTO>();
-            });
+        var result = await JsonSerializer.DeserializeAsync<IEnumerable<PollutedLocationDTO>>(_stream, _options);
+        return result ?? Enumerable.Empty<PollutedLocationDTO>();
     }
 
     /// <inheritdoc />
