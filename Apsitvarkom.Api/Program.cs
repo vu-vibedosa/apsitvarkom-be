@@ -18,7 +18,7 @@ builder.Services
 
 builder.Services.AddLogging();
 builder.Logging.ClearProviders();
-builder.Logging.AddFile("C:\\antriMetai\\PSI\\Apsitvarkom\\apsitvarkom-be\\Apsitvarkom.Utilities\\");
+builder.Logging.AddFile("ApsitvarkomApi.log");
 
 
 const string FrontEndPolicy = "FrontEndPolicy";

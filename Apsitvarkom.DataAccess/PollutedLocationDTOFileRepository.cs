@@ -18,7 +18,6 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     private readonly JsonSerializerSettings _options;
     private readonly Stream _stream;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
 
     /// <summary>Constructor for the reader.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>

@@ -10,11 +10,15 @@ public class FileLogger : ILogger
     public FileLogger(string path)
     {
         _filePath = path;
+        if (!File.Exists(_filePath))
+            File.Create(_filePath);
     }
 
     public IDisposable BeginScope<TState>(TState state)
     {
+#pragma warning disable CS8603 // Possible null reference return.
         return null;
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
     public bool IsEnabled(LogLevel logLevel)
@@ -28,25 +32,9 @@ public class FileLogger : ILogger
         {
             lock (_lock)
             {
-                string filePath = Path.Combine(_filePath, "ApsitvarkomApi.log");
-                var n = Environment.NewLine;
-                string exc = "";
-                if (exception is not null)
-                    exc = $"{exception} : {DateTime.Now}{n}";
-
-                File.AppendAllText(filePath, logLevel.ToString() + formatter(state, exception) + n + exc);
+                if(exception is not null)
+                    File.AppendAllText(_filePath, $"{exception} {exception.Message}\n {exception.StackTrace}");
             }
-        }
-    }
-
-    public void Log(string message)
-    {
-        lock (_lock)
-        {
-            string filePath = Path.Combine(_filePath, "ApsitvarkomApi.log");
-            var n = Environment.NewLine;
-            string exc = "";
-            File.AppendAllText(filePath, message + n + exc);
         }
     }
 }
