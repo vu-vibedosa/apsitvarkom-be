@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Apsitvarkom.Utilities;
 
@@ -42,12 +41,12 @@ public class FileLogger : ILogger
 
     public void Log(string message)
     {
-            lock (_lock)
-            {
-                string filePath = Path.Combine(_filePath, "ApsitvarkomApi.log");
-                var n = Environment.NewLine;
-                string exc = "";
-                File.AppendAllText(filePath, message + n + exc);
-            }
+        lock (_lock)
+        {
+            string filePath = Path.Combine(_filePath, "ApsitvarkomApi.log");
+            var n = Environment.NewLine;
+            string exc = "";
+            File.AppendAllText(filePath, message + n + exc);
         }
+    }
 }
