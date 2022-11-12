@@ -11,13 +11,13 @@ namespace Apsitvarkom.DataAccess;
 /// </summary>
 public class PollutedLocationDTODatabaseRepository : ILocationDTORepository<PollutedLocationDTO>
 {
-    private readonly PollutedLocationContext _context;
+    private readonly IPollutedLocationContext _context;
     private readonly IMapper _mapper;
 
     /// <summary>Constructor for the reader.</summary>
     /// <param name="context">Database context for <see cref="PollutedLocation"/>.</param>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
-    public PollutedLocationDTODatabaseRepository(PollutedLocationContext context, IMapper mapper)
+    public PollutedLocationDTODatabaseRepository(IPollutedLocationContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;

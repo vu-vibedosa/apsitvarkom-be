@@ -3,7 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apsitvarkom.DataAccess;
 
-public class PollutedLocationContext : DbContext
+public interface IPollutedLocationContext
+{
+    DbSet<PollutedLocation> PollutedLocations { get; set; }
+}
+
+public class PollutedLocationContext : DbContext, IPollutedLocationContext
 {
     public DbSet<PollutedLocation> PollutedLocations { get; set; } = null!;
 

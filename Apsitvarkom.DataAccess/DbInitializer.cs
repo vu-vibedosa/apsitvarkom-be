@@ -9,7 +9,15 @@ public static class DbInitializer
 {
     public static void InitializePollutedLocations(PollutedLocationContext context)
     {
-        var fakePollutedLocations = new PollutedLocation[]
+        var fakePollutedLocations = CreateFakePollutedLocationArray();
+
+        context.PollutedLocations.AddRange(fakePollutedLocations);
+        context.SaveChanges();
+    }
+
+    public static PollutedLocation[] CreateFakePollutedLocationArray()
+    {
+        return new PollutedLocation[]
         {
             new()
             {
@@ -137,8 +145,5 @@ public static class DbInitializer
                 Notes = "The fans made a big mess after the game. Apsitvarkom?"
             },
         };
-
-        context.PollutedLocations.AddRange(fakePollutedLocations);
-        context.SaveChanges();
     }
 }

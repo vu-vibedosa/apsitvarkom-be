@@ -270,6 +270,5 @@ public class PollutedLocationDTOFileRepositoryTests
 
         Assert.That(instance!.Radius, Is.EqualTo(2));
     }
-
     #endregion
 }
