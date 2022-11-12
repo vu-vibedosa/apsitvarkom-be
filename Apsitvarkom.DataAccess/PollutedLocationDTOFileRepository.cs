@@ -4,8 +4,6 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
 using AutoMapper;
-using Apsitvarkom.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Apsitvarkom.DataAccess;
 

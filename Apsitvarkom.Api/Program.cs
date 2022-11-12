@@ -3,7 +3,6 @@ using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Utilities;
-using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 

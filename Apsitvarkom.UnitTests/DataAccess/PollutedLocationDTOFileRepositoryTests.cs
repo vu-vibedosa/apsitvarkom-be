@@ -3,7 +3,6 @@ using System.Text.Json;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
-using Apsitvarkom.Utilities;
 using AutoMapper;
 using static Apsitvarkom.Models.Enumerations;
 
@@ -31,7 +30,7 @@ public class PollutedLocationDTOFileRepositoryTests
     }
 
     #region Constructor tests
-    /*[Test]
+    [Test]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_CouldNotFindSourceFile_Throws() =>
         Assert.Throws<FileNotFoundException>(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, Guid.NewGuid().ToString()));
 
