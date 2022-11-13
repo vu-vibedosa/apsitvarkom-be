@@ -8,9 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
 if (builder.Environment.IsDevelopment())
     builder.Logging.AddFile();
 
