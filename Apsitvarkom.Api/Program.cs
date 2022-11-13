@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddFile();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -15,11 +19,6 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
     .AddValidatorsFromAssemblyContaining<PollutedLocationDTOValidator>();
-
-builder.Services.AddLogging();
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddFile("ApsitvarkomApi.log");
 
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>

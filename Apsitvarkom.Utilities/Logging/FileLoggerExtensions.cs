@@ -1,13 +1,28 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Apsitvarkom.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
 
 namespace Apsitvarkom.Utilities;
 
 /// <summary>Used for registering <see cref="FileLogger"/> to the program.</summary>
 public static class FileLoggerExtensions
 {
-    public static ILoggingBuilder AddFile(this ILoggingBuilder builder, string filePath)
+    public static ILoggingBuilder AddFile(this ILoggingBuilder builder)
     {
-        builder.AddProvider(new FileLoggerProvider(filePath));
+        builder.AddConfiguration();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, FileLoggerProvider>());
+        LoggerProviderOptions.RegisterProviderOptions<FileLoggerConfiguration, FileLoggerProvider>(builder.Services);
+
+        return builder;
+    }
+
+    public static ILoggingBuilder AddFile(this ILoggingBuilder builder, Action<FileLoggerConfiguration> configure)
+    {
+        builder.AddFile();
+        builder.Services.Configure(configure);
+
         return builder;
     }
 }
