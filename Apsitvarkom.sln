@@ -11,8 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.UnitTests", "Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.DataAccess", "Apsitvarkom.DataAccess\Apsitvarkom.DataAccess.csproj", "{655EE043-C640-4F28-B8A4-8CFC73EB86FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.Utilities", "Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj", "{CD97E546-DA91-4A66-B3B0-CD52969D6287}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.Configuration", "Apsitvarkom.Configuration\Apsitvarkom.Configuration.csproj", "{5AA264CE-9DD3-491D-995F-D6B015A459C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.Utilities", "Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj", "{CD97E546-DA91-4A66-B3B0-CD52969D6287}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apsitvarkom.Configuration", "Apsitvarkom.Configuration\Apsitvarkom.Configuration.csproj", "{5AA264CE-9DD3-491D-995F-D6B015A459C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apsitvarkom.IntegrationTests", "Apsitvarkom.IntegrationTests\Apsitvarkom.IntegrationTests.csproj", "{3FD00F6F-CE03-471C-B057-85B501A5D743}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +47,10 @@ Global
 		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AA264CE-9DD3-491D-995F-D6B015A459C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FD00F6F-CE03-471C-B057-85B501A5D743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD00F6F-CE03-471C-B057-85B501A5D743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD00F6F-CE03-471C-B057-85B501A5D743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD00F6F-CE03-471C-B057-85B501A5D743}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
