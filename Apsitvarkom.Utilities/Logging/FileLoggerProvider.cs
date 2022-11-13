@@ -32,7 +32,7 @@ public class FileLoggerProvider : ILoggerProvider
     public void Dispose()
     {
         _onChangeToken?.Dispose();
-        _logger.Dispose();
+        _logger?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

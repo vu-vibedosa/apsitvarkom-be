@@ -20,10 +20,14 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
-      - name: Code Coverage Report
+      - name: Install reportgenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      - name: Combine Coverage Reports
+        run: reportgenerator -reports:./**/coverage.cobertura.xml -targetdir:./coverage -reporttypes:Cobertura
+      - name: Parse Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: "**/coverage.cobertura.xml"
+          filename: "./coverage/coverage.cobertura.xml"
           badge: true
           format: markdown
           hide_complexity: true
