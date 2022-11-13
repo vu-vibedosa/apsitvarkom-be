@@ -10,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Logging.AddFile();
+
+if (builder.Environment.IsDevelopment())
+    builder.Logging.AddFile();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
