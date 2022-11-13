@@ -18,8 +18,8 @@ builder.Services
 
 builder.Services.AddLogging();
 builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 builder.Logging.AddFile("ApsitvarkomApi.log");
-
 
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>

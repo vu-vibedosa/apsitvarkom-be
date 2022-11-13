@@ -2,11 +2,13 @@
 
 namespace Apsitvarkom.Utilities;
 
+/// <summary>Class for storing all logic related to outputting messages to a log.</summary>
 public class FileLogger : ILogger
 {
     private readonly string _filePath;
     private static readonly object _lock = new object();
 
+    /// <summary>Constructor that is being called by <see cref="FileLoggerProvider"/>.</summary>
     public FileLogger(string path)
     {
         _filePath = path;
@@ -33,7 +35,7 @@ public class FileLogger : ILogger
             lock (_lock)
             {
                 if(exception is not null)
-                    File.AppendAllText(_filePath, $"{exception} {exception.Message}\n {exception.StackTrace}");
+                    File.AppendAllText(_filePath, $"{exception} {exception.Message}\n {exception.StackTrace}\n\n");
             }
         }
     }

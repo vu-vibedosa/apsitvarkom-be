@@ -62,7 +62,7 @@ public class PollutedLocationDTOFileRepositoryTests
             $"\"progress\":{progress}," +
             "}" +
             "]";
-        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper,jsonString);
+        using var dataManager = PollutedLocationDTOFileRepository.FromContent(m_mapper, jsonString);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -155,7 +155,6 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public void GetAllAsync_ReadFromFile_JsonIncludesValidData_DoesNotThrow()
     {
-
         using var dataManager = PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath);
         Assert.DoesNotThrowAsync(async () => await dataManager.GetAllAsync());
     }
