@@ -1,6 +1,5 @@
 using Apsitvarkom.Utilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace Apsitvarkom.IntegrationTests.Utilities;
 
