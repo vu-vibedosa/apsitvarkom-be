@@ -1,7 +1,6 @@
 ﻿using Apsitvarkom.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
-using System.Text;
 
 namespace Apsitvarkom.Utilities;
 
