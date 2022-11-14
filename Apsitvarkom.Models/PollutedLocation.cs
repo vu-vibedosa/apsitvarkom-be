@@ -29,10 +29,10 @@ public class PollutedLocation : Location
 
 public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
 {
-    public PollutedLocationValidator()
+    public PollutedLocationValidator(LocationValidator locationValidator)
     {
         // Include base class validation
-        Include(new LocationValidator());
+        Include(locationValidator);
 
         // There is no need to perform validation on Severity, Id and Spotted since they are parsed/validated in DTO before mapping.
         RuleFor(data => data.Radius).GreaterThanOrEqualTo(1);
