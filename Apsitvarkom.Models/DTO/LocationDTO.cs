@@ -5,16 +5,16 @@ namespace Apsitvarkom.Models.DTO;
 /// <summary>DTO equivalent of <see cref="Coordinates"/>.</summary>
 public class CoordinatesDTO
 {
-    public double? Longitude { get; set; }
     public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
 }
 
 public class CoordinatesDTOValidator : AbstractValidator<CoordinatesDTO>
 {
     public CoordinatesDTOValidator()
     {
-        RuleFor(dto => dto.Longitude).NotNull();
         RuleFor(dto => dto.Latitude).NotNull();
+        RuleFor(dto => dto.Longitude).NotNull();
     }
 }
 
