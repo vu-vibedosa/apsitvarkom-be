@@ -60,7 +60,7 @@ public class FileLogger : ILogger, IDisposable
         {
             Interlocked.Add(ref bytesPrinted, Encoding.ASCII.GetByteCount(messageToLog));
             var bytesPrintedAsOfNow = Interlocked.CompareExchange(ref bytesPrinted, 0, 0);
-            if (bytesPrintedAsOfNow > _configuration.InformOnEachAmountOfBytes)
+            if (bytesPrintedAsOfNow >= _configuration.InformOnEachAmountOfBytes)
             {
                 Interlocked.Exchange(ref bytesPrinted, 0);
                 InformationAmountOfBytesPrinted?.Invoke(this, bytesPrintedAsOfNow);
