@@ -1,15 +1,20 @@
 ﻿using Apsitvarkom.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace Apsitvarkom.Utilities;
 
 public class FileLogger : ILogger, IDisposable
 {
+    public event EventHandler<int>? InformationAmountOfBytesPrinted;
+
     private readonly FileLoggerConfiguration _configuration;
     private readonly BlockingCollection<string> _messagesBlockingQueue = new (new ConcurrentQueue<string>());
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly CancellationToken _cancellationToken;
+
+    private int bytesPrinted;
 
     /// <summary>Constructor that is being called by <see cref="FileLoggerProvider"/>.</summary>
     public FileLogger(FileLoggerConfiguration configuration)
@@ -47,7 +52,20 @@ public class FileLogger : ILogger, IDisposable
         if (exception is not null)
             messageToLog += " " + exception.Message + Environment.NewLine + exception.StackTrace;
 
+        messageToLog += Environment.NewLine;
+
         _messagesBlockingQueue.Add(messageToLog);
+
+        if (_configuration.InformOnEachAmountOfBytes.HasValue)
+        {
+            Interlocked.Add(ref bytesPrinted, Encoding.ASCII.GetByteCount(messageToLog));
+            var bytesPrintedAsOfNow = Interlocked.CompareExchange(ref bytesPrinted, 0, 0);
+            if (bytesPrintedAsOfNow >= _configuration.InformOnEachAmountOfBytes)
+            {
+                Interlocked.Exchange(ref bytesPrinted, 0);
+                InformationAmountOfBytesPrinted?.Invoke(this, bytesPrintedAsOfNow);
+            }
+        }
     }
 
     private void WriteLogToFile()
@@ -61,7 +79,7 @@ public class FileLogger : ILogger, IDisposable
         while (!_cancellationToken.IsCancellationRequested)
         {
             var message = _messagesBlockingQueue.Take();
-            File.AppendAllText(_configuration.Path, message + Environment.NewLine);
+            File.AppendAllText(_configuration.Path, message);
         }
     }
 
