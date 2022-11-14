@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontEndPolicy, policy => policy.WithOrigins(builder.Configuration.GetValue<string>("FrontEndOrigin")));
 });
 
-builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetService<PollutedLocationContext>()!);
+builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetRequiredService<PollutedLocationContext>()!);
 builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
 
 builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>, PollutedLocationDTODatabaseRepository>();
