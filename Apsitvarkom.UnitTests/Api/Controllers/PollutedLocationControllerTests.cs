@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -62,6 +63,24 @@ public class PollutedLocationControllerTests
 
         var actionResult = await m_controller.GetAll();
 
+        var result = actionResult.Result as OkObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(result.Value, Is.EqualTo(PollutedLocationDTOs));
+    }
+
+    [Test]
+    public async Task GetAll_RepositoryReturnsOrderedPollutedLocationDTOs_OKActionResultReturned()
+    {
+        const double latitude = 12.3456;
+        const double longitude = -65.4321;
+        m_repository.Setup(self => self.GetAllAsync(It.Is<Location>(x => 
+            Math.Abs(x.Coordinates.Latitude - latitude) < 0.0001 && Math.Abs(x.Coordinates.Longitude - longitude) < 0.0001))).ReturnsAsync(PollutedLocationDTOs);
+
+        var actionResult = await m_controller.GetAll(latitude, longitude);
+
+        Assert.That(actionResult.Result, Is.TypeOf(typeof(OkObjectResult)));
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
