@@ -14,15 +14,21 @@ public class PollutedLocationDTODatabaseRepositoryTests
     private IMapper m_mapper = null!;
     private Mock<IPollutedLocationContext> m_mockContext = null!;
 
-    [SetUp]
-    public void SetUp()
+
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
         });
         config.AssertConfigurationIsValid();
-        m_mapper = config.CreateMapper(); 
+        m_mapper = config.CreateMapper();
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
         m_mockContext = new Mock<IPollutedLocationContext>();
     }
 
@@ -36,8 +42,8 @@ public class PollutedLocationDTODatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasNoInstances_EmptyListReturned()
     {
-        var dbInstances = new List<PollutedLocation>();
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var dbRows = new List<PollutedLocation>();
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
@@ -49,18 +55,18 @@ public class PollutedLocationDTODatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasOneInstance_SingleInstanceReturnedWithCorrectProperties()
     {
-        var id = Guid.NewGuid();
-        var notes = "notes";
-        var spotted = new DateTime(2022, 11, 12, 19, 23, 30);
-        var coordinates = new Coordinates { Latitude = 47.12, Longitude = -41.1251 };
-        var radius = 35;
-        var progress = 67;
-        var severity = LocationSeverityLevel.Moderate;
-        var dbInstances = new List<PollutedLocation>
-        {
-            new() { Id = id, Coordinates = coordinates, Radius = radius, Severity = severity, Spotted = spotted, Notes = notes, Progress = progress }
+        var pollutedLocationInstance = new PollutedLocation 
+        { 
+            Id = Guid.NewGuid(),
+            Coordinates = new Coordinates { Latitude = 47.12, Longitude = -41.1251 }, 
+            Radius = 35, 
+            Severity = LocationSeverityLevel.Moderate, 
+            Spotted = new DateTime(2022, 11, 12, 19, 23, 30), 
+            Notes = "notes", 
+            Progress = 67
         };
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var dbRows = new List<PollutedLocation> { pollutedLocationInstance };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
@@ -71,14 +77,14 @@ public class PollutedLocationDTODatabaseRepositoryTests
         Assert.That(instance, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(instance!.Id, Is.EqualTo(id.ToString()));
-            Assert.That(instance.Coordinates?.Latitude, Is.EqualTo(coordinates.Latitude));
-            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(coordinates.Longitude));
-            Assert.That(instance.Radius, Is.EqualTo(radius));
-            Assert.That(instance.Severity, Is.EqualTo(severity.ToString()));
-            Assert.That(instance.Spotted, Is.EqualTo(spotted.ToString(CultureInfo.InvariantCulture)));
-            Assert.That(instance.Progress, Is.EqualTo(progress));
-            Assert.That(instance.Notes, Is.EqualTo(notes));
+            Assert.That(instance!.Id, Is.EqualTo(pollutedLocationInstance.Id.ToString()));
+            Assert.That(instance.Coordinates?.Latitude, Is.EqualTo(pollutedLocationInstance.Coordinates.Latitude));
+            Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(pollutedLocationInstance.Coordinates.Longitude));
+            Assert.That(instance.Radius, Is.EqualTo(pollutedLocationInstance.Radius));
+            Assert.That(instance.Severity, Is.EqualTo(pollutedLocationInstance.Severity.ToString()));
+            Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted.ToString(CultureInfo.InvariantCulture)));
+            Assert.That(instance.Progress, Is.EqualTo(pollutedLocationInstance.Progress));
+            Assert.That(instance.Notes, Is.EqualTo(pollutedLocationInstance.Notes));
         });
     }
 
@@ -87,16 +93,16 @@ public class PollutedLocationDTODatabaseRepositoryTests
     {
         var id1 = Guid.NewGuid();
         var id2 = Guid.NewGuid();
-        var dbInstances = DbInitializer.CreateFakePollutedLocationArray();
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var dbRows = DbInitializer.FakePollutedLocations.Value;
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
         var instanceIds = instances.Select(x => x.Id);
 
-        Assert.That(instances, Has.Length.EqualTo(dbInstances.Length));
-        Assert.That(instanceIds, Is.EqualTo(dbInstances.Select(x => x.Id.ToString())));
+        Assert.That(instances, Has.Length.EqualTo(dbRows.Length));
+        Assert.That(instanceIds, Is.EqualTo(dbRows.Select(x => x.Id.ToString())));
     }
 
     [Test]
@@ -106,14 +112,14 @@ public class PollutedLocationDTODatabaseRepositoryTests
         var id2 = Guid.NewGuid();
         var id3 = Guid.NewGuid();
         var id4 = Guid.NewGuid();
-        var dbInstances = new List<PollutedLocation>
+        var dbRows = new List<PollutedLocation>
         {
             new() { Id = id1, Coordinates = new Coordinates {Latitude = 3, Longitude = 3} },
             new() { Id = id2, Coordinates = new Coordinates {Latitude = 1, Longitude = 1} },
             new() { Id = id3, Coordinates = new Coordinates {Latitude = 4, Longitude = 4} },
             new() { Id = id4, Coordinates = new Coordinates {Latitude = 2, Longitude = 2} }
         };
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
@@ -131,14 +137,14 @@ public class PollutedLocationDTODatabaseRepositoryTests
     [Test]
     public async Task GetByPropertyAsync_InstanceWithRequestedPropertyNotFound_NullReturned()
     {
-        var dbInstances = new List<PollutedLocation>
+        var dbRows = new List<PollutedLocation>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() }
         };
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
@@ -152,14 +158,14 @@ public class PollutedLocationDTODatabaseRepositoryTests
     {
         var id = Guid.NewGuid();
         var notes = "123";
-        var dbInstances = new List<PollutedLocation>
+        var dbRows = new List<PollutedLocation>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() },
             new() { Id = id, Notes = notes },
             new() { Id = Guid.NewGuid() }
         };
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
@@ -169,19 +175,18 @@ public class PollutedLocationDTODatabaseRepositoryTests
         Assert.That(instance?.Id, Is.EqualTo(id.ToString()));
     }
 
-
     [Test]
     public async Task GetByPropertyAsync_SeveralInstancesWithPropertyFound_FirstMatchingInstanceReturned()
     {
         var id = Guid.NewGuid();
-        var dbInstances = new List<PollutedLocation>
+        var dbRows = new List<PollutedLocation>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = id, Severity = LocationSeverityLevel.Low },
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid(), Severity = LocationSeverityLevel.Low}
         };
-        var mock = dbInstances.AsQueryable().BuildMockDbSet();
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDTODatabaseRepository(m_mockContext.Object, m_mapper);
 
