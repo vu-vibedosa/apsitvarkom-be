@@ -7,14 +7,22 @@ namespace Apsitvarkom.DataAccess;
 /// </summary>
 public static class DbInitializer
 {
+    public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
+
     public static void InitializePollutedLocations(PollutedLocationContext context)
     {
-        var fakePollutedLocations = new PollutedLocation[]
+        context.PollutedLocations.AddRange(FakePollutedLocations.Value);
+        context.SaveChanges();
+    }
+
+    private static PollutedLocation[] InitializeFakePollutedLocationsArray()
+    {
+        return new PollutedLocation[]
         {
             new()
             {
                 Id = new Guid("02f16033-232b-42e4-bfe7-1f9a223a1446"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.691452,
                     Longitude = 25.266276
@@ -28,7 +36,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("461911ac-ff85-41f8-860a-be0240f0653f"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.675369,
                     Longitude = 25.273316
@@ -42,7 +50,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("b2ed322d-331b-4f28-9dbf-4a71dce7504e"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.728796,
                     Longitude = 25.264199
@@ -55,7 +63,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.878315,
                     Longitude = 23.883123
@@ -69,7 +77,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.891692,
                     Longitude = 23.914362
@@ -83,7 +91,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("d37c6b91-6363-44ce-99a8-2f15287cc5ab"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 54.686762,
                     Longitude = 25.291317
@@ -97,7 +105,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("151757e9-fce3-4bb3-93db-08b93d71245e"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 55.730551,
                     Longitude = 24.394250
@@ -111,7 +119,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 55.705656,
                     Longitude = 21.122825
@@ -125,7 +133,7 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("dc1513da-a60b-49e5-adba-d0aeed77f125"),
-                Coordinates = new()
+                Coordinates = new Coordinates
                 {
                     Latitude = 56.293939,
                     Longitude = 22.340248
@@ -137,8 +145,5 @@ public static class DbInitializer
                 Notes = "The fans made a big mess after the game. Apsitvarkom?"
             },
         };
-
-        context.PollutedLocations.AddRange(fakePollutedLocations);
-        context.SaveChanges();
     }
 }

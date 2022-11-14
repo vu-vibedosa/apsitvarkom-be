@@ -20,10 +20,4 @@
     <ProjectReference Include="..\Apsitvarkom.Utilities\Apsitvarkom.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="PollutedLocationsMock.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>
