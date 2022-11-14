@@ -82,7 +82,7 @@ public class PollutedLocationDTODatabaseRepositoryTests
             Assert.That(instance.Coordinates?.Longitude, Is.EqualTo(pollutedLocationInstance.Coordinates.Longitude));
             Assert.That(instance.Radius, Is.EqualTo(pollutedLocationInstance.Radius));
             Assert.That(instance.Severity, Is.EqualTo(pollutedLocationInstance.Severity.ToString()));
-            Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted.ToString(CultureInfo.InvariantCulture)));
+            Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted.ToString("o", CultureInfo.InvariantCulture)));
             Assert.That(instance.Progress, Is.EqualTo(pollutedLocationInstance.Progress));
             Assert.That(instance.Notes, Is.EqualTo(pollutedLocationInstance.Notes));
         });

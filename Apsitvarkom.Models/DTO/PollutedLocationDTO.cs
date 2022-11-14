@@ -31,10 +31,10 @@ public class PollutedLocationDTO : LocationDTO
 /// </summary>
 public class PollutedLocationDTOValidator : AbstractValidator<PollutedLocationDTO>
 {
-    public PollutedLocationDTOValidator()
+    public PollutedLocationDTOValidator(LocationDTOValidator locationDtoValidator)
     {
         // Include base class validator
-        Include(new LocationDTOValidator());
+        Include(locationDtoValidator);
 
         RuleFor(dto => dto.Id).NotEmpty().Must(BeValidGuid);
         RuleFor(dto => dto.Radius).NotNull();

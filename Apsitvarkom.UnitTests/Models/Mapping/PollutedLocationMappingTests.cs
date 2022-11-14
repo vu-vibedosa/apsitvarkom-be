@@ -58,7 +58,7 @@ public class PollutedLocationMappingTests
     }
 
     [Test]
-    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, LocationSeverityLevel.Low, "09/16/2022 21:43:31", 25, "Hello world")]
+    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, LocationSeverityLevel.Low, "2022-09-16T21:43:31.0000000", 25, "Hello world")]
     public void MappingToPollutedLocationDTO_HappyPath(string guidString, double longitude, double latitude, int radius, LocationSeverityLevel severity, string dateTimeString, int progress, string notes)
     {
         var guid = new Guid(guidString);
