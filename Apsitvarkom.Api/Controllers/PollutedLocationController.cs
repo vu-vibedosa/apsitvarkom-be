@@ -1,4 +1,5 @@
 ﻿using Apsitvarkom.DataAccess;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,15 @@ public class PollutedLocationController : ControllerBase
     public async Task<ActionResult<IEnumerable<PollutedLocationDTO>>> GetAll()
     {
         var instances = await _repository.GetAllAsync();
+        return Ok(instances);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("All/OrderedByDistance")]
+    public async Task<ActionResult<IEnumerable<PollutedLocationDTO>>> GetAll(double latitude, double longitude)
+    {
+        var instances = await _repository.GetAllAsync(new Location { Coordinates = new Coordinates { Latitude = latitude, Longitude = longitude } } );
         return Ok(instances);
     }
 
