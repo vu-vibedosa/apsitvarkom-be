@@ -2,10 +2,14 @@ using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Utilities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsDevelopment())
+    builder.Logging.AddFile();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
