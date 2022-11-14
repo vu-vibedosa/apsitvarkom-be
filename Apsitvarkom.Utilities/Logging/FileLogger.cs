@@ -7,7 +7,7 @@ namespace Apsitvarkom.Utilities;
 public class FileLogger : ILogger, IDisposable
 {
     private readonly FileLoggerConfiguration _configuration;
-    private readonly BlockingCollection<string> messagesQueue = new (new ConcurrentQueue<string>());
+    private readonly BlockingCollection<string> _messagesBlockingQueue = new (new ConcurrentQueue<string>());
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly CancellationToken _cancellationToken;
 
@@ -19,7 +19,7 @@ public class FileLogger : ILogger, IDisposable
         // Start a new thread that is solely responsible for writing to a file for this logger
         _cancellationTokenSource = new CancellationTokenSource();
         _cancellationToken = _cancellationTokenSource.Token;
-        Task.Run(() => WriteLogToFile(), _cancellationToken);
+        Task.Run(WriteLogToFile, _cancellationToken);
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class FileLogger : ILogger, IDisposable
         if (exception is not null)
             messageToLog += " " + exception.Message + Environment.NewLine + exception.StackTrace;
 
-        messagesQueue.Add(messageToLog);
+        _messagesBlockingQueue.Add(messageToLog);
     }
 
     private void WriteLogToFile()
@@ -60,7 +60,7 @@ public class FileLogger : ILogger, IDisposable
 
         while (!_cancellationToken.IsCancellationRequested)
         {
-            var message = messagesQueue.Take();
+            var message = _messagesBlockingQueue.Take();
             File.AppendAllText(_configuration.Path, message + Environment.NewLine);
         }
     }
