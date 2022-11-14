@@ -37,7 +37,7 @@ public class PollutedLocationDTOFileRepositoryTests
     [Test]
     public void PollutedLocationDTOFileRepositoryFromFileConstructor_HappyPath() =>
         Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromFile(m_mapper, ValidDataSourcePath));
-
+        
     [Test]
     public void PollutedLocationDTOFileRepositoryFromContentConstructor_HappyPath() =>
         Assert.DoesNotThrow(() => PollutedLocationDTOFileRepository.FromContent(m_mapper));
