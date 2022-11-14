@@ -29,9 +29,9 @@ public class LocationDTO
 
 public class LocationDTOValidator : AbstractValidator<LocationDTO>
 {
-    public LocationDTOValidator()
+    public LocationDTOValidator(CoordinatesDTOValidator coordinatesDtoValidator)
     {
         RuleFor(dto => dto.Coordinates).NotNull();
-        RuleFor(dto => dto.Coordinates!).SetValidator(new CoordinatesDTOValidator()).When(dto => dto.Coordinates is not null);
+        RuleFor(dto => dto.Coordinates!).SetValidator(coordinatesDtoValidator).When(dto => dto.Coordinates is not null);
     }
 }

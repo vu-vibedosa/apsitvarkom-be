@@ -34,8 +34,8 @@ public class Location
 /// </summary>
 public class LocationValidator : AbstractValidator<Location>
 {
-    public LocationValidator()
+    public LocationValidator(CoordinatesValidator coordinatesValidator)
     {
-        RuleFor(data => data.Coordinates).SetValidator(new CoordinatesValidator());
+        RuleFor(data => data.Coordinates).SetValidator(coordinatesValidator);
     }
 }

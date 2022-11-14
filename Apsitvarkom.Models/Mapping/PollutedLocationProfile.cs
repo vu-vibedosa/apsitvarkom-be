@@ -30,7 +30,7 @@ public class PollutedLocationProfile : Profile
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => src.Id.ToString()))
             .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => src.Spotted.ToString(CultureInfo.InvariantCulture)));
+                .MapFrom(src => src.Spotted.ToString("o", CultureInfo.InvariantCulture)));
 
         // Location to LocationDTO
         CreateMap<Location, LocationDTO>();

@@ -5,7 +5,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationDTOValidationTests
 {
-    private static readonly IValidator<PollutedLocationDTO> Validator = new PollutedLocationDTOValidator();
+    private static readonly IValidator<PollutedLocationDTO> Validator = new PollutedLocationDTOValidator(new LocationDTOValidator(new CoordinatesDTOValidator()));
 
     private static readonly PollutedLocationDTO[] ValidInputDTOs =
     {
