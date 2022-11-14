@@ -10,8 +10,10 @@ namespace Apsitvarkom.Utilities;
 [ProviderAlias("File")]
 public class FileLoggerProvider : ILoggerProvider
 {
+    // Commiting a bit of a crime here by setting this to static
+    public static FileLogger? Logger { get; private set; }
+
     private FileLoggerConfiguration _configuration;
-    private static FileLogger? _logger;
     private readonly IDisposable _onChangeToken;
 
     /// <summary>Constructor for <see cref="FileLoggerProvider"/>.</summary>
@@ -25,14 +27,14 @@ public class FileLoggerProvider : ILoggerProvider
     /// <summary>Creates an instance of <see cref="FileLogger"/>.</summary>
     public ILogger CreateLogger(string categoryName)
     {
-        _logger ??= new FileLogger(_configuration);
-        return _logger;
+        Logger ??= new FileLogger(_configuration);
+        return Logger;
     }
 
     public void Dispose()
     {
         _onChangeToken?.Dispose();
-        _logger?.Dispose();
+        Logger?.Dispose();
         GC.SuppressFinalize(this);
     }
 }
