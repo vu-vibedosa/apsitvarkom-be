@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq.Expressions;
+using System.Text;
 using System.Text.Json;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
@@ -46,10 +47,10 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Func<PollutedLocationDTO, bool> propertyCondition)
+    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Expression<Func<PollutedLocationDTO, bool>> propertyCondition)
     {
         var allLocations = await GetAllAsync();
-        return allLocations.FirstOrDefault(propertyCondition);
+        return allLocations.FirstOrDefault(propertyCondition.Compile());
     }
 
     /// <summary>Static factory constructor for reader from file.</summary>

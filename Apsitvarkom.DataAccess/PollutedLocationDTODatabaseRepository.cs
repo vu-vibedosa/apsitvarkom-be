@@ -1,7 +1,9 @@
-﻿using Apsitvarkom.Models;
+﻿using System.Linq.Expressions;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apsitvarkom.DataAccess;
@@ -39,9 +41,11 @@ public class PollutedLocationDTODatabaseRepository : ILocationDTORepository<Poll
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Func<PollutedLocationDTO, bool> propertyCondition)
+    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Expression<Func<PollutedLocationDTO, bool>> propertyCondition)
     {
-        var allLocations = await GetAllAsync();
-        return allLocations.FirstOrDefault(propertyCondition);
+        return await _context.PollutedLocations
+            .ProjectTo<PollutedLocationDTO>(_mapper.ConfigurationProvider)
+            .Where(propertyCondition)
+            .FirstOrDefaultAsync();
     }
 }

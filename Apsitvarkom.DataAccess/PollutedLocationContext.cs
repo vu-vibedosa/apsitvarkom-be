@@ -5,12 +5,12 @@ namespace Apsitvarkom.DataAccess;
 
 public interface IPollutedLocationContext
 {
-    DbSet<PollutedLocation> PollutedLocations { get; set; }
+    DbSet<PollutedLocation> PollutedLocations { get; }
 }
 
 public class PollutedLocationContext : DbContext, IPollutedLocationContext
 {
-    public DbSet<PollutedLocation> PollutedLocations { get; set; } = null!;
+    public DbSet<PollutedLocation> PollutedLocations { get; private set; } = null!;
 
     public PollutedLocationContext(DbContextOptions<PollutedLocationContext> options) : base(options) { }
 

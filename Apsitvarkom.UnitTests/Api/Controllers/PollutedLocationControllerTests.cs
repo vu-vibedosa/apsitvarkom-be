@@ -1,4 +1,5 @@
-﻿using Apsitvarkom.Api.Controllers;
+﻿using System.Linq.Expressions;
+using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.DTO;
 using Microsoft.AspNetCore.Http;
@@ -72,7 +73,7 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsPollutedLocationDTO_OKActionResultReturned()
     {
         var instance = PollutedLocationDTOs.First();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Func<PollutedLocationDTO, bool>>())).ReturnsAsync(instance);
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocationDTO, bool>>>())).ReturnsAsync(instance);
 
         var actionResult = await m_controller.GetById(instance.Id!);
 
@@ -87,7 +88,7 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
         var instanceId = Guid.NewGuid().ToString();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Func<PollutedLocationDTO, bool>>())).ReturnsAsync((PollutedLocationDTO?)null);
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocationDTO, bool>>>())).ReturnsAsync((PollutedLocationDTO?)null);
 
         var actionResult = await m_controller.GetById(instanceId);
 
