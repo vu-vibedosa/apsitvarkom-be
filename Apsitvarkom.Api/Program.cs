@@ -50,6 +50,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
+
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    if (FileLoggerProvider.Logger is not null) 
+        FileLoggerProvider.Logger.InformationAmountOfBytesPrinted += (_, bytesPrinted) => logger.LogInformation("Printed {0} bytes to log file", bytesPrinted);
+
     var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
 
     // TODO: switch to migrations
