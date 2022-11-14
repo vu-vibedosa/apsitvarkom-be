@@ -80,6 +80,7 @@ public class PollutedLocationControllerTests
 
         var actionResult = await m_controller.GetAll(latitude, longitude);
 
+        Assert.That(actionResult.Result, Is.TypeOf(typeof(OkObjectResult)));
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
