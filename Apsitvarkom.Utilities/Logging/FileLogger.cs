@@ -41,7 +41,7 @@ public class FileLogger : ILogger, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public bool IsEnabled(LogLevel logLevel) => _messagesBlockingQueue.IsAddingCompleted;
+    public bool IsEnabled(LogLevel logLevel) => !_messagesBlockingQueue.IsAddingCompleted;
 
     public void Log<TState>(
         LogLevel logLevel, 
