@@ -24,7 +24,10 @@ public class FileLogger : ILogger, IDisposable
         // Start a new thread that is solely responsible for writing to a file for this logger
         _cancellationTokenSource = new CancellationTokenSource();
         _cancellationToken = _cancellationTokenSource.Token;
-        Task.Run(WriteLogToFile, _cancellationToken);
+        Task.Run(WriteLogToFile, _cancellationToken).ContinueWith(task =>
+        {
+            if (task.IsFaulted) _messagesBlockingQueue.CompleteAdding();
+        });
     }
 
     /// <summary>
@@ -38,7 +41,7 @@ public class FileLogger : ILogger, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public bool IsEnabled(LogLevel logLevel) => true;
+    public bool IsEnabled(LogLevel logLevel) => !_messagesBlockingQueue.IsAddingCompleted;
 
     public void Log<TState>(
         LogLevel logLevel, 
@@ -47,6 +50,8 @@ public class FileLogger : ILogger, IDisposable
         Exception? exception, 
         Func<TState, Exception?, string> formatter)
     {
+        if (!IsEnabled(logLevel)) return;
+
         var messageToLog = $"[{DateTime.Now}] [{logLevel}] " + formatter(state, exception);
 
         if (exception is not null)
@@ -68,19 +73,32 @@ public class FileLogger : ILogger, IDisposable
         }
     }
 
-    private void WriteLogToFile()
+    private Task WriteLogToFile()
     {
         if (!File.Exists(_configuration.Path))
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(_configuration.Path) ?? throw new IOException());
+            var directory = Path.GetDirectoryName(_configuration.Path);
+            if (directory is null) return Task.FromException(new IOException($"Could not get directory information for {_configuration.Path}"));
+
+            Directory.CreateDirectory(directory);
             File.Create(_configuration.Path).Close();
         }
 
         while (!_cancellationToken.IsCancellationRequested)
         {
             var message = _messagesBlockingQueue.Take();
-            File.AppendAllText(_configuration.Path, message);
+
+            try
+            {
+                File.AppendAllText(_configuration.Path, message);
+            }
+            catch (Exception e)
+            {
+                return Task.FromException(e);
+            }
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
