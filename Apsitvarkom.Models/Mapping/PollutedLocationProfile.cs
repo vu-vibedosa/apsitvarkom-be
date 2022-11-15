@@ -18,7 +18,7 @@ public class PollutedLocationProfile : Profile
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => Guid.Parse(src.Id!)))
             .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => DateTime.Parse(src.Spotted!, CultureInfo.InvariantCulture)));
+                .MapFrom(src => DateTime.Parse(src.Spotted!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
 
         // LocationDTO to Location
         CreateMap<LocationDTO, Location>();
