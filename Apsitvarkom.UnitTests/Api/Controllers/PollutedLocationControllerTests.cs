@@ -67,11 +67,21 @@ public class PollutedLocationControllerTests
         m_mapper = config.CreateMapper();
 
         m_repository = new Mock<IPollutedLocationRepository>();
-        m_controller = new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator());
+        m_controller = new PollutedLocationController(
+            m_repository.Object, 
+            m_mapper, 
+            new CoordinatesCreateRequestValidator(), 
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+        );
     }
 
     [Test]
-    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator()), Is.Not.Null);
+    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(
+            m_repository.Object,
+            m_mapper,
+            new CoordinatesCreateRequestValidator(),
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+        ), Is.Not.Null);
 
     [Test]
     public async Task GetAll_RepositoryReturnsPollutedLocations_OKActionResultReturned()
@@ -92,7 +102,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesGetRequest = new CoordinatesCreateRequest
         {
             Latitude = 12.3456,
             Longitude = -65.4321
@@ -117,7 +127,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAllOrderedInRelationTo_ValidationFails_BadRequestActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesGetRequest = new CoordinatesCreateRequest
         {
             Latitude = -91,
             Longitude = 181

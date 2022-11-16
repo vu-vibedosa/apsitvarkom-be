@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
-    .AddValidatorsFromAssemblyContaining<CoordinatesGetRequestValidator>()
+    .AddValidatorsFromAssemblyContaining<CoordinatesCreateRequestValidator>()
     .AddFluentValidationRulesToSwagger();
 
 const string FrontEndPolicy = "FrontEndPolicy";

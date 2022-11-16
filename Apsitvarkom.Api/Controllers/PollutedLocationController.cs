@@ -14,13 +14,19 @@ public class PollutedLocationController : ControllerBase
 {
     private readonly IPollutedLocationRepository _repository;
     private readonly IMapper _mapper;
-    private readonly IValidator<CoordinatesGetRequest> _coordinatesValidator;
+    private readonly IValidator<CoordinatesCreateRequest> _coordinatesValidator;
+    private readonly IValidator<PollutedLocationCreateRequest> _pollutedLocationValidator;
 
-    public PollutedLocationController(IPollutedLocationRepository repository, IMapper mapper, IValidator<CoordinatesGetRequest> coordinatesValidator)
+    public PollutedLocationController(
+        IPollutedLocationRepository repository, 
+        IMapper mapper, 
+        IValidator<CoordinatesCreateRequest> coordinatesValidator, 
+        IValidator<PollutedLocationCreateRequest> pollutedLocationValidator)
     {
         _repository = repository;
         _mapper = mapper;
         _coordinatesValidator = coordinatesValidator;
+        _pollutedLocationValidator = pollutedLocationValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,7 +49,7 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All/OrderedByDistance")]
-    public async Task<ActionResult<IEnumerable<PollutedLocationGetResponse>>> GetAll([FromQuery] CoordinatesGetRequest coordinates)
+    public async Task<ActionResult<IEnumerable<PollutedLocationGetResponse>>> GetAll([FromQuery] CoordinatesCreateRequest coordinates)
     {
         var validationResult = await _coordinatesValidator.ValidateAsync(coordinates);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
@@ -72,6 +78,33 @@ public class PollutedLocationController : ControllerBase
         {
             var location = await _repository.GetByPropertyAsync(x => x.Id.ToString() == id);
             return location is not null ? Ok(location) : NotFound($"Polluted location with the specified id '{id}' was not found.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PollutedLocationGetResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("Create")]
+    public async Task<IActionResult> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
+    {
+        var validationResult = await _pollutedLocationValidator.ValidateAsync(pollutedLocationCreateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
+        if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<PollutedLocationGetResponse>(mappedPollutedLocation);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            //await _repository.CreateAsync(mappedPollutedLocation);
+
+            return CreatedAtAction(nameof(GetById), new {Id = response.Id}, response);
         }
         catch (Exception)
         {

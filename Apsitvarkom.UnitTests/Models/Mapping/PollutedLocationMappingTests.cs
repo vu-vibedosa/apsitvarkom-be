@@ -28,7 +28,7 @@ public class PollutedLocationMappingTests
     [TestCase(-78.948237, 35.929673)]
     public void CoordinatesGetRequestToCoordinates(double latitude, double longitude)
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesGetRequest = new CoordinatesCreateRequest
         {
             Latitude = latitude,
             Longitude = longitude

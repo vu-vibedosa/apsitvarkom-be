@@ -18,17 +18,16 @@ public class PollutedLocationProfile : Profile
 
     private void MapRequests()
     {
-        CreateMap<CoordinatesGetRequest, Coordinates>();
+        CreateMap<CoordinatesCreateRequest, Coordinates>();
+        CreateMap<LocationCreateRequest, Location>();
+        CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
+            .ForMember(dest => dest.Spotted, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
     }
 
     private void MapResponses()
     {
-        CreateMap<PollutedLocation, PollutedLocationGetResponse>()
-            .ForMember(dest => dest.Id, opt => opt
-                .MapFrom(src => src.Id.ToString()))
-            .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => src.Spotted.ToString("o", CultureInfo.InvariantCulture)));
-
+        CreateMap<PollutedLocation, PollutedLocationGetResponse>();
         CreateMap<Location, LocationGetResponse>();
         CreateMap<Coordinates, CoordinatesGetResponse>();
     }
