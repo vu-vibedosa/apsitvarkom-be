@@ -72,12 +72,12 @@ public class PollutedLocationMappingTests
         var pollutedLocation = m_mapper.Map<PollutedLocationGetResponse>(businessLogicObject);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Id, Is.EqualTo(guidString));
+            Assert.That(pollutedLocation.Id, Is.EqualTo(guid));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
-            Assert.That(pollutedLocation.Severity, Is.EqualTo(severity.ToString()));
-            Assert.That(pollutedLocation.Spotted, Is.EqualTo(dateTimeString));
+            Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
+            Assert.That(pollutedLocation.Spotted, Is.EqualTo(dateTime));
             Assert.That(pollutedLocation.Progress, Is.EqualTo(progress));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
         });
