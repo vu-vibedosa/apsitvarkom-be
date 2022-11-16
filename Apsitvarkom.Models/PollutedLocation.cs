@@ -1,13 +1,17 @@
-﻿using FluentValidation;
-using static Apsitvarkom.Models.Enumerations;
-
-namespace Apsitvarkom.Models;
+﻿namespace Apsitvarkom.Models;
 
 /// <summary>
 /// Class for storing captured polluted location records.
 /// </summary>
-public class PollutedLocation : Location
+public class PollutedLocation
 {
+    public enum SeverityLevel
+    {
+        Low = 1,
+        Moderate = 2,
+        High = 3
+    }
+
     /// <summary>Unique identifier of the given record.</summary>
     public Guid Id { get; init; }
 
@@ -15,7 +19,7 @@ public class PollutedLocation : Location
     public int Radius { get; set; }
 
     /// <summary>Estimated current pollution level of the record.</summary>
-    public LocationSeverityLevel Severity { get; set; }
+    public SeverityLevel Severity { get; set; }
 
     /// <summary><see cref="DateTime" /> of when the record was created.</summary>
     public DateTime Spotted { get; init; }
@@ -25,18 +29,7 @@ public class PollutedLocation : Location
 
     /// <summary>Additional information about the record.</summary>
     public string? Notes { get; set; }
-}
 
-public class PollutedLocationValidator : AbstractValidator<PollutedLocation>
-{
-    public PollutedLocationValidator(LocationValidator locationValidator)
-    {
-        // Include base class validation
-        Include(locationValidator);
-
-        // There is no need to perform validation on Severity, Id and Spotted since they are parsed/validated in DTO before mapping.
-        RuleFor(data => data.Radius).GreaterThanOrEqualTo(1);
-        RuleFor(data => data.Severity).IsInEnum();
-        RuleFor(data => data.Progress).InclusiveBetween(0, 100);
-    }
+    /// <summary>Geographic location information about the record.</summary>
+    public Location Location { get; set; } = new();
 }

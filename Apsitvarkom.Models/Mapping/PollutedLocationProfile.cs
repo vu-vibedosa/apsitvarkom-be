@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models.Public;
 using AutoMapper;
 
 namespace Apsitvarkom.Models.Mapping;
@@ -24,16 +25,14 @@ public class PollutedLocationProfile : Profile
         CreateMap<LocationDTO, Location>();
         CreateMap<CoordinatesDTO, Coordinates>();
 
-        // PollutedLocation to PollutedLocationDTO
-        CreateMap<PollutedLocation, PollutedLocationDTO>()
-            .IncludeBase<Location, LocationDTO>()
+        // PollutedLocation to PollutedLocationGetResult
+        CreateMap<PollutedLocation, PollutedLocationGetResult>()
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => src.Id.ToString()))
             .ForMember(dest => dest.Spotted, opt => opt
                 .MapFrom(src => src.Spotted.ToString("o", CultureInfo.InvariantCulture)));
 
-        // Location to LocationDTO
-        CreateMap<Location, LocationDTO>();
-        CreateMap<Coordinates, CoordinatesDTO>();
+        CreateMap<Location, LocationGetResult>();
+        CreateMap<Coordinates, CoordinatesGetResult>();
     }
 }
