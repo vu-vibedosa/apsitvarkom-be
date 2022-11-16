@@ -5,7 +5,7 @@ namespace Apsitvarkom.DataAccess;
 /// <summary>
 /// Interface for <see cref="T" /> class data handling.
 /// </summary>
-public interface IDTORepository<T> where T: class
+public interface IRepository<T> where T: class
 {
     /// <summary>Gets all <see cref="T" /> records from the data source.</summary>
     /// <returns><see cref="Enumerable" /> of <see cref="T" /> instances.</returns>

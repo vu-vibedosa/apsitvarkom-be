@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 
@@ -13,26 +12,24 @@ public class PollutedLocationProfile : Profile
 {
     public PollutedLocationProfile()
     {
-        // PollutedLocationDTO to PollutedLocation
-        CreateMap<PollutedLocationDTO, PollutedLocation>()
-            .IncludeBase<LocationDTO, Location>()
-            .ForMember(dest => dest.Id, opt => opt
-                .MapFrom(src => Guid.Parse(src.Id!)))
-            .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => DateTime.Parse(src.Spotted!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
+        MapRequests();
+        MapResponses();
+    }
 
-        // LocationDTO to Location
-        CreateMap<LocationDTO, Location>();
-        CreateMap<CoordinatesDTO, Coordinates>();
+    private void MapRequests()
+    {
+        CreateMap<CoordinatesGetRequest, Coordinates>();
+    }
 
-        // PollutedLocation to PollutedLocationGetResult
-        CreateMap<PollutedLocation, PollutedLocationGetResult>()
+    private void MapResponses()
+    {
+        CreateMap<PollutedLocation, PollutedLocationGetResponse>()
             .ForMember(dest => dest.Id, opt => opt
                 .MapFrom(src => src.Id.ToString()))
             .ForMember(dest => dest.Spotted, opt => opt
                 .MapFrom(src => src.Spotted.ToString("o", CultureInfo.InvariantCulture)));
 
-        CreateMap<Location, LocationGetResult>();
-        CreateMap<Coordinates, CoordinatesGetResult>();
+        CreateMap<Location, LocationGetResponse>();
+        CreateMap<Coordinates, CoordinatesGetResponse>();
     }
 }

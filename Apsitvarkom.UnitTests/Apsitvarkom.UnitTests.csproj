@@ -30,10 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DataAccess\PollutedLocationDTOMockInvalid.json">
+    <None Update="DataAccess\PollutedLocationMockInvalid.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="DataAccess\PollutedLocationDTOMockValid.json">
+    <None Update="DataAccess\PollutedLocationMockValid.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

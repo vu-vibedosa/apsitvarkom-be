@@ -2,7 +2,7 @@
 
 namespace Apsitvarkom.Models.Public;
 
-public class PollutedLocationGetResult
+public class PollutedLocationGetResponse
 {
     public string Id { get; init; } = string.Empty;
 
@@ -16,5 +16,5 @@ public class PollutedLocationGetResult
 
     public string? Notes { get; set; }
 
-    public LocationGetResult Location { get; set; } = new();
+    public LocationGetResponse Location { get; set; } = new();
 }

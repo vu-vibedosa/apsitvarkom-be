@@ -2,16 +2,16 @@
 using System.Text;
 using System.Text.Json;
 using Apsitvarkom.Models;
-using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Models.Public;
 using AutoMapper;
 
 namespace Apsitvarkom.DataAccess;
 
 /// <summary>
-/// Class for <see cref="PollutedLocationDTO" /> data handling from file.
+/// Class for <see cref="PollutedLocation" /> data handling from file.
 /// </summary>
-public class PollutedLocationDTOFileRepository : ILocationDTORepository<PollutedLocationDTO>, IDisposable
+public class PollutedLocationFileRepository : IPollutedLocationRepository, IDisposable
 {
     private readonly JsonSerializerOptions _options;
     private readonly Stream _stream;
@@ -20,7 +20,7 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     /// <summary>Constructor for the reader.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="stream">Stream to be used for parsing.</param>
-    private PollutedLocationDTOFileRepository(IMapper mapper, Stream stream)
+    private PollutedLocationFileRepository(IMapper mapper, Stream stream)
     {
         _stream = stream;
         _options = new JsonSerializerOptions
@@ -32,22 +32,27 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync()
+    public async Task<IEnumerable<PollutedLocation>> GetAllAsync()
     {
-        var result = await JsonSerializer.DeserializeAsync<IEnumerable<PollutedLocationDTO>>(_stream, _options);
-        return result ?? Enumerable.Empty<PollutedLocationDTO>();
+        var result = await JsonSerializer.DeserializeAsync<IEnumerable<PollutedLocationGetResponse>>(_stream, _options);
+
+        return result switch
+        {
+            not null => _mapper.Map<IEnumerable<PollutedLocation>>(result),
+            _ => Enumerable.Empty<PollutedLocation>()
+        };
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PollutedLocationDTO>> GetAllAsync(Location inRelationTo)
+    public async Task<IEnumerable<PollutedLocation>> GetAllAsync(Coordinates inRelationTo)
     {
         return from pollutedLocationDTO in await GetAllAsync()
-               orderby inRelationTo.DistanceTo(_mapper.Map<PollutedLocation>(pollutedLocationDTO))
+               orderby _mapper.Map<PollutedLocation>(pollutedLocationDTO).Location.Coordinates.DistanceTo(inRelationTo)
                select pollutedLocationDTO;
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocationDTO?> GetByPropertyAsync(Expression<Func<PollutedLocationDTO, bool>> propertyCondition)
+    public async Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
         var allLocations = await GetAllAsync();
         return allLocations.FirstOrDefault(propertyCondition.Compile());
@@ -56,20 +61,20 @@ public class PollutedLocationDTOFileRepository : ILocationDTORepository<Polluted
     /// <summary>Static factory constructor for reader from file.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="sourcePath">Relative location of the .json type source data file.</param>
-    public static PollutedLocationDTOFileRepository FromFile(IMapper mapper, string sourcePath)
+    public static PollutedLocationFileRepository FromFile(IMapper mapper, string sourcePath)
     {
         var stream = File.OpenRead(sourcePath);
-        return new PollutedLocationDTOFileRepository(mapper, stream);
+        return new PollutedLocationFileRepository(mapper, stream);
     }
 
     /// <summary>Static factory constructor for reader from JSON string.</summary>
     /// <param name="mapper">Mapper implementing profile <see cref="PollutedLocationProfile"/>.</param>
     /// <param name="contents">Contents to be parsed from JSON string.</param>
-    public static PollutedLocationDTOFileRepository FromContent(IMapper mapper, string contents = "[]")
+    public static PollutedLocationFileRepository FromContent(IMapper mapper, string contents = "[]")
     {
         var byteArray = Encoding.UTF8.GetBytes(contents);
         var stream = new MemoryStream(byteArray);
-        return new PollutedLocationDTOFileRepository(mapper, stream);
+        return new PollutedLocationFileRepository(mapper, stream);
     }
 
     /// <inheritdoc />

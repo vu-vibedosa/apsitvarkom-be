@@ -1,7 +1,7 @@
 using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
-using Apsitvarkom.Models.DTO;
 using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Models.Public;
 using Apsitvarkom.Utilities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
-    .AddValidatorsFromAssemblyContaining<PollutedLocationDTOValidator>();
+    .AddValidatorsFromAssemblyContaining<CoordinatesGetRequestValidator>();
 
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>
@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetRequiredService<PollutedLocationContext>());
 builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
 
-builder.Services.AddScoped<ILocationDTORepository<PollutedLocationDTO>, PollutedLocationDTODatabaseRepository>();
+builder.Services.AddScoped<IPollutedLocationRepository, PollutedLocationDatabaseRepository>();
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {

@@ -1,8 +1,8 @@
 ﻿namespace Apsitvarkom.Models.Public;
 
-public class LocationGetResult
+public class LocationGetResponse
 {
     // TODO: Title that will be populated by the geocoding api should be inserted here
 
-    public CoordinatesGetResult Coordinates { get; set; } = new();
+    public CoordinatesGetResponse Coordinates { get; set; } = new();
 }

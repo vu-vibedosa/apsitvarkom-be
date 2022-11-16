@@ -2,7 +2,9 @@
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
-using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Models.Public;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,17 +14,21 @@ namespace Apsitvarkom.UnitTests.Api.Controllers;
 public class PollutedLocationControllerTests
 {
     private PollutedLocationController m_controller;
-    private Mock<ILocationDTORepository<PollutedLocationDTO>> m_repository;
+    private IMapper m_mapper;
+    private Mock<IPollutedLocationRepository> m_repository;
 
-    private readonly IEnumerable<PollutedLocationDTO> PollutedLocationDTOs = new List<PollutedLocationDTO>
+    private readonly IEnumerable<PollutedLocationGetResponse> PollutedLocations = new List<PollutedLocationGetResponse>
     {
         new()
         {
             Id = Guid.NewGuid().ToString(),
-            Coordinates = new CoordinatesDTO
+            Location =
             {
-              Longitude = 54,
-              Latitude = 23
+                Coordinates =
+                {
+                  Longitude = 54,
+                  Latitude = 23
+                },
             },
             Radius = 15,
             Severity = "Moderate",
@@ -33,10 +39,13 @@ public class PollutedLocationControllerTests
         new()
         {
             Id = Guid.NewGuid().ToString(),
-            Coordinates = new CoordinatesDTO
+            Location =
             {
-                Latitude = 111.11111,
-                Longitude = 11.11111
+                Coordinates =
+                {
+                    Latitude = 111.11111,
+                    Longitude = 11.11111
+                },
             },
             Radius = 11,
             Severity = "Low",
@@ -49,71 +58,114 @@ public class PollutedLocationControllerTests
     [SetUp]
     public void SetUp()
     {
-        m_repository = new Mock<ILocationDTORepository<PollutedLocationDTO>>();
-        m_controller = new PollutedLocationController(m_repository.Object);
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<PollutedLocationProfile>();
+        });
+        config.AssertConfigurationIsValid();
+        m_mapper = config.CreateMapper();
+
+        m_repository = new Mock<IPollutedLocationRepository>();
+        m_controller = new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator());
     }
 
     [Test]
-    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(m_repository.Object), Is.Not.Null);
+    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator()), Is.Not.Null);
 
     [Test]
     public async Task GetAll_RepositoryReturnsPollutedLocationDTOs_OKActionResultReturned()
     {
-        m_repository.Setup(self => self.GetAllAsync()).ReturnsAsync(PollutedLocationDTOs);
+        m_repository.Setup(self => self.GetAllAsync())
+            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
 
         var actionResult = await m_controller.GetAll();
 
+        Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(PollutedLocationDTOs));
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
     }
 
     [Test]
-    public async Task GetAll_RepositoryReturnsOrderedPollutedLocationDTOs_OKActionResultReturned()
+    public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocationDTOs_OKActionResultReturned()
     {
-        const double latitude = 12.3456;
-        const double longitude = -65.4321;
-        m_repository.Setup(self => self.GetAllAsync(It.Is<Location>(x => 
-            Math.Abs(x.Coordinates.Latitude - latitude) < 0.0001 && Math.Abs(x.Coordinates.Longitude - longitude) < 0.0001))).ReturnsAsync(PollutedLocationDTOs);
+        var coordinatesGetRequest = new CoordinatesGetRequest
+        {
+            Latitude = 12.3456,
+            Longitude = -65.4321
+        };
 
-        var actionResult = await m_controller.GetAll(latitude, longitude);
+        m_repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(
+                x => Math.Abs(x.Latitude - coordinatesGetRequest.Latitude) < 0.0001 && Math.Abs(x.Longitude - coordinatesGetRequest.Longitude) < 0.0001)
+            ))
+            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
 
-        Assert.That(actionResult.Result, Is.TypeOf(typeof(OkObjectResult)));
+        var actionResult = await m_controller.GetAll(coordinatesGetRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(PollutedLocationDTOs));
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
+    }
+
+    [Test]
+    public async Task GetAllOrderedInRelationTo_ValidationFails_BadRequestActionResultReturned()
+    {
+        var coordinatesGetRequest = new CoordinatesGetRequest
+        {
+            Latitude = -91,
+            Longitude = 181
+        };
+
+        m_repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
+            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
+
+        var actionResult = await m_controller.GetAll(coordinatesGetRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        // TODO: FIX below assert
+        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
     }
 
     [Test]
     public async Task GetById_RepositoryReturnsPollutedLocationDTO_OKActionResultReturned()
     {
-        var instance = PollutedLocationDTOs.First();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocationDTO, bool>>>())).ReturnsAsync(instance);
+        var location = PollutedLocations.First();
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .ReturnsAsync(m_mapper.Map<PollutedLocation>(location));
 
-        var actionResult = await m_controller.GetById(instance.Id!);
+        var actionResult = await m_controller.GetById(location.Id!);
 
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(instance));
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(result.Value, Is.EqualTo(location));
     }
 
     [Test]
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
         var instanceId = Guid.NewGuid().ToString();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocationDTO, bool>>>())).ReturnsAsync((PollutedLocationDTO?)null);
+        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .ReturnsAsync((PollutedLocation?)null);
 
         var actionResult = await m_controller.GetById(instanceId);
 
+        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 }
