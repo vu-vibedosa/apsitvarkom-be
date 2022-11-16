@@ -5,6 +5,7 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,11 +18,11 @@ public class PollutedLocationControllerTests
     private IMapper m_mapper;
     private Mock<IPollutedLocationRepository> m_repository;
 
-    private readonly IEnumerable<PollutedLocationGetResponse> PollutedLocations = new List<PollutedLocationGetResponse>
+    private readonly IEnumerable<PollutedLocation> PollutedLocations = new List<PollutedLocation>
     {
         new()
         {
-            Id = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
             Location =
             {
                 Coordinates =
@@ -31,14 +32,14 @@ public class PollutedLocationControllerTests
                 },
             },
             Radius = 15,
-            Severity = "Moderate",
-            Spotted = "2022-09-14T17:35:23Z",
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+            Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
             Progress = 42,
             Notes = "Lorem ipsum"
         },
         new()
         {
-            Id = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
             Location =
             {
                 Coordinates =
@@ -48,8 +49,8 @@ public class PollutedLocationControllerTests
                 },
             },
             Radius = 11,
-            Severity = "Low",
-            Spotted = "2023-11-23T21:12:14Z",
+            Severity = PollutedLocation.SeverityLevel.Low,
+            Spotted = DateTime.Parse("2023-11-23T21:12:14Z"),
             Progress = 11,
             Notes = "11111"
         }
@@ -76,16 +77,16 @@ public class PollutedLocationControllerTests
     public async Task GetAll_RepositoryReturnsPollutedLocationDTOs_OKActionResultReturned()
     {
         m_repository.Setup(self => self.GetAllAsync())
-            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
+            .ReturnsAsync(PollutedLocations);
 
         var actionResult = await m_controller.GetAll();
 
-        Assert.That(actionResult, Is.TypeOf<OkObjectResult>());
+        Assert.That(actionResult.Result, Is.TypeOf <OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
+        Assert.That(m_mapper.Map<IEnumerable<PollutedLocation>>(result.Value), Is.EqualTo(PollutedLocations));
     }
 
     [Test]
@@ -100,7 +101,7 @@ public class PollutedLocationControllerTests
         m_repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(
                 x => Math.Abs(x.Latitude - coordinatesGetRequest.Latitude) < 0.0001 && Math.Abs(x.Longitude - coordinatesGetRequest.Longitude) < 0.0001)
             ))
-            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
+            .ReturnsAsync(PollutedLocations);
 
         var actionResult = await m_controller.GetAll(coordinatesGetRequest);
 
@@ -109,7 +110,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
+        Assert.That(m_mapper.Map<IEnumerable<PollutedLocation>>(result.Value), Is.EqualTo(PollutedLocations));
     }
 
     [Test]
@@ -122,7 +123,7 @@ public class PollutedLocationControllerTests
         };
 
         m_repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
-            .ReturnsAsync(m_mapper.Map<IEnumerable<PollutedLocation>>(PollutedLocations));
+            .ReturnsAsync(PollutedLocations);
 
         var actionResult = await m_controller.GetAll(coordinatesGetRequest);
 
@@ -131,8 +132,11 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        // TODO: FIX below assert
-        Assert.That(result.Value, Is.EqualTo(PollutedLocations));
+        Assert.That(result.Value, Is.TypeOf<List<ValidationFailure>>());
+
+        var errorList = result.Value as List<ValidationFailure>;
+        Assert.That(errorList, Is.Not.Null);
+        Assert.That(errorList.Count, Is.EqualTo(2));
     }
 
     [Test]
@@ -142,14 +146,14 @@ public class PollutedLocationControllerTests
         m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync(m_mapper.Map<PollutedLocation>(location));
 
-        var actionResult = await m_controller.GetById(location.Id!);
+        var actionResult = await m_controller.GetById(location.Id.ToString());
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(result.Value, Is.EqualTo(location));
+        Assert.That(m_mapper.Map<PollutedLocation>(result.Value), Is.EqualTo(location));
     }
 
     [Test]

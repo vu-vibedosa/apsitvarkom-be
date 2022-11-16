@@ -87,7 +87,7 @@ public class PollutedLocationDatabaseRepositoryTests
         var instanceIds = instances.Select(x => x.Id);
 
         Assert.That(instances, Has.Length.EqualTo(dbRows.Length));
-        Assert.That(instanceIds, Is.EqualTo(dbRows.Select(x => x.Id.ToString())));
+        Assert.That(instanceIds, Is.EqualTo(dbRows.Select(x => x.Id)));
     }
 
     [Test]

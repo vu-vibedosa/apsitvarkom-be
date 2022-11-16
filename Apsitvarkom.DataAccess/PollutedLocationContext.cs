@@ -16,8 +16,8 @@ public class PollutedLocationContext : DbContext, IPollutedLocationContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Location must be specified as an owned entity type
+        // Location and coordinates must be specified as owned entity types
         // Reference: https://learn.microsoft.com/en-us/ef/core/modeling/owned-entities
-        modelBuilder.Entity<PollutedLocation>().OwnsOne(l => l.Location);
+        modelBuilder.Entity<PollutedLocation>().OwnsOne(l => l.Location).OwnsOne(l => l.Coordinates);
     }
 }
