@@ -40,13 +40,13 @@ public class PollutedLocationController : ControllerBase
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<ValidationFailure>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All/OrderedByDistance")]
     public async Task<ActionResult<IEnumerable<PollutedLocationGetResponse>>> GetAll([FromQuery] CoordinatesGetRequest coordinates)
     {
         var validationResult = await _coordinatesValidator.ValidateAsync(coordinates);
-        if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
         var mappedCoordinates = _mapper.Map<Coordinates>(coordinates);
         if (mappedCoordinates is null) return StatusCode(StatusCodes.Status500InternalServerError);

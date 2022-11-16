@@ -74,7 +74,7 @@ public class PollutedLocationControllerTests
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator()), Is.Not.Null);
 
     [Test]
-    public async Task GetAll_RepositoryReturnsPollutedLocationDTOs_OKActionResultReturned()
+    public async Task GetAll_RepositoryReturnsPollutedLocations_OKActionResultReturned()
     {
         m_repository.Setup(self => self.GetAllAsync())
             .ReturnsAsync(PollutedLocations);
@@ -90,7 +90,7 @@ public class PollutedLocationControllerTests
     }
 
     [Test]
-    public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocationDTOs_OKActionResultReturned()
+    public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
         var coordinatesGetRequest = new CoordinatesGetRequest
         {
@@ -99,8 +99,9 @@ public class PollutedLocationControllerTests
         };
 
         m_repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(
-                x => Math.Abs(x.Latitude - coordinatesGetRequest.Latitude) < 0.0001 && Math.Abs(x.Longitude - coordinatesGetRequest.Longitude) < 0.0001)
-            ))
+                x => Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
+                     Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
+            )))
             .ReturnsAsync(PollutedLocations);
 
         var actionResult = await m_controller.GetAll(coordinatesGetRequest);
@@ -132,15 +133,15 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result.Value, Is.TypeOf<List<ValidationFailure>>());
+        Assert.That(result.Value, Is.TypeOf<List<string>>());
 
-        var errorList = result.Value as List<ValidationFailure>;
+        var errorList = result.Value as List<string>;
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList.Count, Is.EqualTo(2));
     }
 
     [Test]
-    public async Task GetById_RepositoryReturnsPollutedLocationDTO_OKActionResultReturned()
+    public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
         var location = PollutedLocations.First();
         m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))

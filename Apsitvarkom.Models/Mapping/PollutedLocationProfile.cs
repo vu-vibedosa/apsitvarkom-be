@@ -6,7 +6,7 @@ namespace Apsitvarkom.Models.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class
-/// <see cref="PollutedLocationDTO" /> objects to <see cref="PollutedLocation" /> used in the business logic and vice-versa.
+/// <see cref="PollutedLocation" /> related objects (Requests, Responses, Business objects).
 /// </summary>
 public class PollutedLocationProfile : Profile
 {

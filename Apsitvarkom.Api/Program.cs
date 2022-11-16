@@ -4,20 +4,26 @@ using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using Apsitvarkom.Utilities;
 using FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
     builder.Logging.AddFile();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
+    );
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
-    .AddValidatorsFromAssemblyContaining<CoordinatesGetRequestValidator>();
+    .AddValidatorsFromAssemblyContaining<CoordinatesGetRequestValidator>()
+    .AddFluentValidationRulesToSwagger();
 
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>

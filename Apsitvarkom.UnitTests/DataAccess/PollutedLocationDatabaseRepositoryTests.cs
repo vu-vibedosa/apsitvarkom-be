@@ -17,7 +17,7 @@ public class PollutedLocationDatabaseRepositoryTests
 
     #region Constructor tests
     [Test]
-    public void PollutedLocationDTODatabaseRepositoryConstructor_HappyPath() =>
+    public void PollutedLocationDatabaseRepositoryConstructor_HappyPath() =>
         Assert.DoesNotThrow(() => new PollutedLocationDatabaseRepository(m_mockContext.Object));
     #endregion
 

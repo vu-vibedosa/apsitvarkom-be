@@ -47,9 +47,9 @@ public class CoordinatesGetRequestValidationTests
 
     [Test]
     [TestCaseSource(nameof(ValidCoordinateGetRequests))]
-    public async Task ValidInputShouldSucceedValidation(CoordinatesGetRequest inputDTO)
+    public async Task ValidInputShouldSucceedValidation(CoordinatesGetRequest input)
     {
-        var result = await Validator.ValidateAsync(inputDTO);
+        var result = await Validator.ValidateAsync(input);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Empty);
@@ -58,9 +58,9 @@ public class CoordinatesGetRequestValidationTests
 
     [Test]
     [TestCaseSource(nameof(InvalidCoordinateGetRequests))]
-    public async Task InvalidInputShouldFailValidation(CoordinatesGetRequest inputDTO)
+    public async Task InvalidInputShouldFailValidation(CoordinatesGetRequest input)
     {
-        var result = await Validator.ValidateAsync(inputDTO);
+        var result = await Validator.ValidateAsync(input);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Not.Empty);
