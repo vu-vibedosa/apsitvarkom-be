@@ -2,6 +2,7 @@
 using Apsitvarkom.Models;
 using Moq;
 using MockQueryable.Moq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
@@ -179,6 +180,46 @@ public class PollutedLocationDatabaseRepositoryTests
 
         Assert.That(instance, Is.Not.Null);
         Assert.That(instance?.Id, Is.EqualTo(id));
+    }
+    #endregion
+
+    #region InsertAsync tests
+    [Test]
+    public async Task InsertAsync_OneInstanceInserted_InstanceFoundInDbSet()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new()
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        m_mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+
+        _ = await dataManager.InsertAsync(dbRows[0]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(m_mockContext.Object.PollutedLocations.Count(), Is.EqualTo(1));
+            Assert.That(m_mockContext.Object.PollutedLocations.Contains(dbRows[0]), Is.True);
+        });
+    }
+
+    [Test]
+    public async Task InsertAsync_OneInstanceInserted_InstanceFoundInResult()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new()
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        m_mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+
+        var result = await dataManager.InsertAsync(dbRows[0]);
+
+        Assert.That(result, Is.EqualTo(dbRows[0]));
     }
     #endregion
 }

@@ -66,13 +66,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
+    var pollutedLocationContext = services.GetRequiredService<IPollutedLocationContext>();
 
     // TODO: switch to migrations
-    pollutedLocationContext.Database.EnsureCreated();
+    pollutedLocationContext.Instance.Database.EnsureCreated();
 
     if (!pollutedLocationContext.PollutedLocations.Any())
-        DbInitializer.InitializePollutedLocations(pollutedLocationContext);
+        await DbInitializer.InitializePollutedLocations(pollutedLocationContext);
 }
 
 app.UseCors(FrontEndPolicy);

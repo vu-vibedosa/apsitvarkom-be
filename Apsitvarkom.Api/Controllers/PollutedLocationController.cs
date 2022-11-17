@@ -3,7 +3,6 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apsitvarkom.Api.Controllers;
@@ -85,11 +84,11 @@ public class PollutedLocationController : ControllerBase
         }
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PollutedLocationGetResponse))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
+    public async Task<ActionResult<PollutedLocationGetResponse>> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
     {
         var validationResult = await _pollutedLocationValidator.ValidateAsync(pollutedLocationCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
@@ -97,14 +96,15 @@ public class PollutedLocationController : ControllerBase
         var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
-        var response = _mapper.Map<PollutedLocationGetResponse>(mappedPollutedLocation);
-        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
-
         try
         {
-            //await _repository.CreateAsync(mappedPollutedLocation);
+            var result = await _repository.InsertAsync(mappedPollutedLocation);
 
-            return CreatedAtAction(nameof(GetById), new {Id = response.Id}, response);
+            var response = _mapper.Map<PollutedLocationGetResponse>(result);
+            // If failed to map the response, still return 201 because the location was inserted into the database
+            if (response is null) return StatusCode(StatusCodes.Status201Created);
+
+            return CreatedAtAction(nameof(GetById), new { response.Id }, response);
         }
         catch (Exception)
         {
