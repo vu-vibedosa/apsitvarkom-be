@@ -36,7 +36,11 @@ public class PollutedLocationController : ControllerBase
         try
         {
             var locations = await _repository.GetAllAsync();
-            return Ok(locations);
+
+            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationGetResponse>>(locations);
+            if (mappedLocations is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+            return Ok(mappedLocations);
         }
         catch (Exception)
         {
@@ -59,7 +63,11 @@ public class PollutedLocationController : ControllerBase
         try
         {
             var locations = await _repository.GetAllAsync(mappedCoordinates);
-            return Ok(locations);
+
+            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationGetResponse>>(locations);
+            if (mappedLocations is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+            return Ok(mappedLocations);
         }
         catch (Exception)
         {
@@ -76,7 +84,13 @@ public class PollutedLocationController : ControllerBase
         try
         {
             var location = await _repository.GetByPropertyAsync(x => x.Id.ToString() == id);
-            return location is not null ? Ok(location) : NotFound($"Polluted location with the specified id '{id}' was not found.");
+
+            if (location is null) return NotFound($"Polluted location with the specified id '{id}' was not found.");
+
+            var mappedLocation = _mapper.Map<PollutedLocationGetResponse>(location);
+            if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+            return Ok(mappedLocation);
         }
         catch (Exception)
         {
