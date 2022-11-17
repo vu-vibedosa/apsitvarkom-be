@@ -13,18 +13,18 @@ public class PollutedLocationCreateRequest
 
     public string? Notes { get; set; }
 
-    public CoordinatesCreateRequest? Coordinates { get; set; }
+    public LocationCreateRequest? Location { get; set; }
 }
 
 public class PollutedLocationCreateRequestValidator : AbstractValidator<PollutedLocationCreateRequest>
 {
-    public PollutedLocationCreateRequestValidator(IValidator<CoordinatesCreateRequest> coordinatesCreateRequestValidator)
+    public PollutedLocationCreateRequestValidator(IValidator<LocationCreateRequest> locationCreateRequestValidator)
     {
         RuleFor(l => l.Radius).NotNull().GreaterThanOrEqualTo(1);
         RuleFor(l => l.Severity).NotNull();
         RuleFor(l => l.Progress).NotNull().InclusiveBetween(0, 100);
 
-        RuleFor(l => l.Coordinates).NotNull();
-        RuleFor(l => l.Coordinates!).SetValidator(coordinatesCreateRequestValidator).When(l => l.Coordinates is not null);
+        RuleFor(l => l.Location).NotNull();
+        RuleFor(l => l.Location!).SetValidator(locationCreateRequestValidator).When(l => l.Location is not null);
     }
 }
