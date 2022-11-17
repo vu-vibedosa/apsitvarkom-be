@@ -71,7 +71,7 @@ public class PollutedLocationControllerTests
             m_repository.Object, 
             m_mapper, 
             new CoordinatesCreateRequestValidator(), 
-            new PollutedLocationCreateRequestValidator(new CoordinatesCreateRequestValidator())
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         );
     }
 
@@ -80,7 +80,7 @@ public class PollutedLocationControllerTests
             m_repository.Object,
             m_mapper,
             new CoordinatesCreateRequestValidator(),
-            new PollutedLocationCreateRequestValidator(new CoordinatesCreateRequestValidator())
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         ), Is.Not.Null);
 
     [Test]

@@ -7,16 +7,19 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 public class PollutedLocationCreateRequestValidationTests
 {
     private static readonly IValidator<PollutedLocationCreateRequest> Validator =
-        new PollutedLocationCreateRequestValidator(new CoordinatesCreateRequestValidator());
+        new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()));
 
     private static readonly PollutedLocationCreateRequest[] ValidPollutedLocationCreateRequests =
     {
         new()
         {
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 54.691452,
-                Longitude = 25.266276
+                Coordinates = new()
+                {
+                    Latitude = 54.691452,
+                    Longitude = 25.266276
+                }
             },
             Radius = 5,
             Severity = PollutedLocation.SeverityLevel.Moderate,
@@ -25,10 +28,13 @@ public class PollutedLocationCreateRequestValidationTests
         },
         new()
         {
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 54.675369,
-                Longitude = 25.273316
+                Coordinates = new()
+                {
+                    Latitude = 54.675369,
+                    Longitude = 25.273316
+                }
             },
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.Low,
@@ -41,10 +47,13 @@ public class PollutedLocationCreateRequestValidationTests
         new()
         {
             // Invalid Location coordinates
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 94,
-                Longitude = 150
+                Coordinates = new()
+                {
+                    Latitude = 94,
+                    Longitude = 150
+                }
             },
             Progress = 1,
             Radius = 1,
@@ -53,10 +62,13 @@ public class PollutedLocationCreateRequestValidationTests
         new()
         {
             // Invalid Location coordinates
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 85,
-                Longitude = -720
+                Coordinates = new()
+                {
+                    Latitude = 85,
+                    Longitude = -720
+                }
             },
             Notes = "gtfo with these cringy notes",
             Progress = 1,
@@ -66,10 +78,13 @@ public class PollutedLocationCreateRequestValidationTests
         new()
         { 
             // Invalid Progress
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 89.9,
-                Longitude = 89.9
+                Coordinates = new()
+                {
+                    Latitude = 89.9,
+                    Longitude = 89.9
+                },
             },
             Progress = 101,
             Radius = 2,
@@ -78,10 +93,13 @@ public class PollutedLocationCreateRequestValidationTests
         new()
         { 
             // Invalid Radius
-            Coordinates = new()
+            Location = new()
             {
-                Latitude = 89.9,
-                Longitude = 89.9
+                Coordinates = new()
+                {
+                    Latitude = 89.9,
+                    Longitude = 89.9
+                },
             },
             Progress = 11,
             Radius = 0,
