@@ -6,6 +6,7 @@ using Apsitvarkom.Utilities;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,21 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
     );
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1",
+        new OpenApiInfo
+        {
+            Title = "Apsitvarkom REST API",
+            Version = "v1",
+            Contact = new()
+            {
+                Name = "vu-vibedosa",
+                Url = new("https://github.com/vu-vibedosa")
+            }
+        }
+     );
+});
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
