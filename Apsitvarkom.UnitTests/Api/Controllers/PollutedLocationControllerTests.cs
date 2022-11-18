@@ -5,7 +5,6 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -70,9 +69,12 @@ public class PollutedLocationControllerTests
         m_controller = new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator());
     }
 
+    #region Constructor tests
     [Test]
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(m_repository.Object, m_mapper, new CoordinatesGetRequestValidator()), Is.Not.Null);
+    #endregion
 
+    #region GetAll tests
     [Test]
     public async Task GetAll_RepositoryReturnsPollutedLocations_OKActionResultReturned()
     {
@@ -81,14 +83,16 @@ public class PollutedLocationControllerTests
 
         var actionResult = await m_controller.GetAll();
 
-        Assert.That(actionResult.Result, Is.TypeOf <OkObjectResult>());
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
         Assert.That(m_mapper.Map<IEnumerable<PollutedLocation>>(result.Value), Is.EqualTo(PollutedLocations));
     }
+    #endregion
 
+    #region GetAllOrderedInRelationTo tests
     [Test]
     public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
@@ -139,7 +143,9 @@ public class PollutedLocationControllerTests
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList.Count, Is.EqualTo(2));
     }
+    #endregion
 
+    #region GetById tests
     [Test]
     public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
@@ -173,4 +179,5 @@ public class PollutedLocationControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
+    #endregion
 }

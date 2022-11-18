@@ -41,8 +41,13 @@ public class PollutedLocationDatabaseRepositoryTests
         var pollutedLocationInstance = new PollutedLocation 
         { 
             Id = Guid.NewGuid(),
-            Location = {
-                Coordinates = { Latitude = 47.12, Longitude = -41.1251 }
+            Location = 
+            {
+                Coordinates =
+                {
+                    Latitude = 47.12,
+                    Longitude = -41.1251
+                }
             }, 
             Radius = 35, 
             Severity = PollutedLocation.SeverityLevel.Moderate, 
@@ -169,7 +174,7 @@ public class PollutedLocationDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() },
             new() { Id = id, Severity = PollutedLocation.SeverityLevel.Low },
             new() { Id = Guid.NewGuid() },
-            new() { Id = Guid.NewGuid(), Severity = PollutedLocation.SeverityLevel.Low}
+            new() { Id = Guid.NewGuid(), Severity = PollutedLocation.SeverityLevel.Low }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
         m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
