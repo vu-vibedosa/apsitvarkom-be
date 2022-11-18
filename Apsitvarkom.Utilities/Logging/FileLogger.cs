@@ -14,7 +14,7 @@ public class FileLogger : ILogger, IDisposable
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly CancellationToken _cancellationToken;
 
-    private int bytesPrinted;
+    private int _bytesPrinted;
 
     /// <summary>Constructor that is being called by <see cref="FileLoggerProvider"/>.</summary>
     public FileLogger(FileLoggerConfiguration configuration)
@@ -63,11 +63,11 @@ public class FileLogger : ILogger, IDisposable
 
         if (_configuration.InformOnEachAmountOfBytes.HasValue)
         {
-            Interlocked.Add(ref bytesPrinted, Encoding.ASCII.GetByteCount(messageToLog));
-            var bytesPrintedAsOfNow = Interlocked.CompareExchange(ref bytesPrinted, 0, 0);
+            Interlocked.Add(ref _bytesPrinted, Encoding.ASCII.GetByteCount(messageToLog));
+            var bytesPrintedAsOfNow = Interlocked.CompareExchange(ref _bytesPrinted, 0, 0);
             if (bytesPrintedAsOfNow >= _configuration.InformOnEachAmountOfBytes)
             {
-                Interlocked.Exchange(ref bytesPrinted, 0);
+                Interlocked.Exchange(ref _bytesPrinted, 0);
                 InformationAmountOfBytesPrinted?.Invoke(this, bytesPrintedAsOfNow);
             }
         }
