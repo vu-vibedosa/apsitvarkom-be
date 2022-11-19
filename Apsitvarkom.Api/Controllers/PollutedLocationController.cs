@@ -31,13 +31,13 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All")]
-    public async Task<ActionResult<IEnumerable<PollutedLocationGetResponse>>> GetAll()
+    public async Task<ActionResult<IEnumerable<PollutedLocationResponse>>> GetAll()
     {
         try
         {
             var locations = await _repository.GetAllAsync();
 
-            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationGetResponse>>(locations);
+            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationResponse>>(locations);
             if (mappedLocations is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
             return Ok(mappedLocations);
@@ -52,7 +52,7 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All/OrderedByDistance")]
-    public async Task<ActionResult<IEnumerable<PollutedLocationGetResponse>>> GetAll([FromQuery] CoordinatesCreateRequest coordinates)
+    public async Task<ActionResult<IEnumerable<PollutedLocationResponse>>> GetAll([FromQuery] CoordinatesCreateRequest coordinates)
     {
         var validationResult = await _coordinatesValidator.ValidateAsync(coordinates);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
@@ -64,7 +64,7 @@ public class PollutedLocationController : ControllerBase
         {
             var locations = await _repository.GetAllAsync(mappedCoordinates);
 
-            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationGetResponse>>(locations);
+            var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationResponse>>(locations);
             if (mappedLocations is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
             return Ok(mappedLocations);
@@ -79,7 +79,7 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<PollutedLocationGetResponse>> GetById(string id)
+    public async Task<ActionResult<PollutedLocationResponse>> GetById(string id)
     {
         try
         {
@@ -87,7 +87,7 @@ public class PollutedLocationController : ControllerBase
 
             if (location is null) return NotFound($"Polluted location with the specified id '{id}' was not found.");
 
-            var mappedLocation = _mapper.Map<PollutedLocationGetResponse>(location);
+            var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
             if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
             return Ok(mappedLocation);
@@ -102,7 +102,7 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost("Create")]
-    public async Task<ActionResult<PollutedLocationGetResponse>> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
+    public async Task<ActionResult<PollutedLocationResponse>> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
     {
         var validationResult = await _pollutedLocationValidator.ValidateAsync(pollutedLocationCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
@@ -114,7 +114,7 @@ public class PollutedLocationController : ControllerBase
         {
             var result = await _repository.InsertAsync(mappedPollutedLocation);
 
-            var response = _mapper.Map<PollutedLocationGetResponse>(result);
+            var response = _mapper.Map<PollutedLocationResponse>(result);
             // If failed to map the response, still return 201 because the location was inserted into the database
             if (response is null) return StatusCode(StatusCodes.Status201Created);
 

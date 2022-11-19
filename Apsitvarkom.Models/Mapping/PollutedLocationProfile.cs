@@ -27,8 +27,8 @@ public class PollutedLocationProfile : Profile
 
     private void MapResponses()
     {
-        CreateMap<PollutedLocation, PollutedLocationGetResponse>();
-        CreateMap<Location, LocationGetResponse>();
-        CreateMap<Coordinates, CoordinatesGetResponse>();
+        CreateMap<PollutedLocation, PollutedLocationResponse>();
+        CreateMap<Location, LocationResponse>();
+        CreateMap<Coordinates, CoordinatesResponse>();
     }
 }

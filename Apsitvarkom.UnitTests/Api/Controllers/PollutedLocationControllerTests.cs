@@ -99,8 +99,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
         
-        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationGetResponse>>());
-        var resultLocations = result.Value as IEnumerable<PollutedLocationGetResponse>;
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
         for (int i = 0; i < PollutedLocations.Count(); i++)
         {
@@ -124,19 +124,19 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesCreateRequest
+        var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
             Latitude = 12.3456,
             Longitude = -65.4321
         };
 
         _repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
-                Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
-                Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
+                Math.Abs((double)(x.Latitude - coordinatesCreateRequest.Latitude)) < 0.0001 &&
+                Math.Abs((double)(x.Longitude - coordinatesCreateRequest.Longitude)) < 0.0001
             )))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await _controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesCreateRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -144,8 +144,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationGetResponse>>());
-        var resultLocations = result.Value as IEnumerable<PollutedLocationGetResponse>;
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
         for (int i = 0; i < PollutedLocations.Count(); i++)
         {
@@ -167,7 +167,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAllOrderedInRelationTo_ValidationFails_BadRequestActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesCreateRequest
+        var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
             Latitude = -91,
             Longitude = 181
@@ -176,7 +176,7 @@ public class PollutedLocationControllerTests
         _repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await _controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesCreateRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -207,8 +207,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationGetResponse>());
-        var resultLocation = result.Value as PollutedLocationGetResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
         Assert.That(resultLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -271,8 +271,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
 
-        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationGetResponse>());
-        var resultLocation = result.Value as PollutedLocationGetResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
         Assert.That(resultLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {

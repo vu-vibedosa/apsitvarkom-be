@@ -4,14 +4,14 @@ using FluentValidation;
 
 namespace Apsitvarkom.UnitTests.Models.Validation;
 
-public class PollutedLocationGetResponseValidationTests
+public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationGetResponse> Validator =
-        new PollutedLocationGetResponseValidator(new LocationGetResponseValidator(new CoordinatesGetResponseValidator()));
+    private static readonly IValidator<PollutedLocationResponse> Validator =
+        new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
-    private static readonly PollutedLocationGetResponse[] ValidPollutedLocationGetResponses =
+    private static readonly PollutedLocationResponse[] ValidPollutedLocationResponses =
     {
         new()
         {
@@ -48,7 +48,7 @@ public class PollutedLocationGetResponseValidationTests
         },
     };
 
-    private static readonly PollutedLocationGetResponse[] InvalidPollutedLocationGetResponses =
+    private static readonly PollutedLocationResponse[] InvalidPollutedLocationResponses =
     {
         new()
         {
@@ -105,8 +105,8 @@ public class PollutedLocationGetResponseValidationTests
     };
 
     [Test]
-    [TestCaseSource(nameof(ValidPollutedLocationGetResponses))]
-    public async Task ValidInputShouldSucceedValidation(PollutedLocationGetResponse input)
+    [TestCaseSource(nameof(ValidPollutedLocationResponses))]
+    public async Task ValidInputShouldSucceedValidation(PollutedLocationResponse input)
     {
         var result = await Validator.ValidateAsync(input);
 
@@ -116,8 +116,8 @@ public class PollutedLocationGetResponseValidationTests
     }
 
     [Test]
-    [TestCaseSource(nameof(InvalidPollutedLocationGetResponses))]
-    public async Task InvalidInputShouldFailValidation(PollutedLocationGetResponse input)
+    [TestCaseSource(nameof(InvalidPollutedLocationResponses))]
+    public async Task InvalidInputShouldFailValidation(PollutedLocationResponse input)
     {
         var result = await Validator.ValidateAsync(input);
 
