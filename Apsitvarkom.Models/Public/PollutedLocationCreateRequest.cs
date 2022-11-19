@@ -5,6 +5,8 @@ namespace Apsitvarkom.Models.Public;
 
 public class PollutedLocationCreateRequest
 {
+    public LocationCreateRequest? Location { get; set; }
+
     public int? Radius { get; set; }
 
     public SeverityLevel? Severity { get; set; }
@@ -12,8 +14,6 @@ public class PollutedLocationCreateRequest
     public int? Progress { get; set; }
 
     public string? Notes { get; set; }
-
-    public LocationCreateRequest? Location { get; set; }
 }
 
 public class PollutedLocationCreateRequestValidator : AbstractValidator<PollutedLocationCreateRequest>
