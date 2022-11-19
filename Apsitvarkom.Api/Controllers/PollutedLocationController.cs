@@ -3,7 +3,6 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apsitvarkom.Api.Controllers;

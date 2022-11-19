@@ -6,16 +6,16 @@ namespace Apsitvarkom.IntegrationTests.DataAccess;
 
 public class DatabaseTests
 {
-    private DbContextOptions<PollutedLocationContext> m_options = null!;
+    private DbContextOptions<PollutedLocationContext> _options = null!;
 
     [SetUp]
     public async Task SetUp()
     {
-        m_options = new DbContextOptionsBuilder<PollutedLocationContext>()
+        _options = new DbContextOptionsBuilder<PollutedLocationContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         // Insert seed data into the database using one instance of the context
-        await using var context = new PollutedLocationContext(m_options);
+        await using var context = new PollutedLocationContext(_options);
         DbInitializer.InitializePollutedLocations(context);
     }
 
@@ -25,7 +25,7 @@ public class DatabaseTests
         var instanceGuids = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
-        await using var context = new PollutedLocationContext(m_options);
+        await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
         var response = (await dbRepository.GetAllAsync()).ToArray();
 
@@ -39,7 +39,7 @@ public class DatabaseTests
         var instanceGuids = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
-        await using var context = new PollutedLocationContext(m_options);
+        await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
         var coordinates = new Coordinates { Latitude = 12.123, Longitude = -12.123 };
         var response = (await dbRepository.GetAllAsync(coordinates)).ToArray();
@@ -55,7 +55,7 @@ public class DatabaseTests
         var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
-        await using var context = new PollutedLocationContext(m_options);
+        await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
         
         var response = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
