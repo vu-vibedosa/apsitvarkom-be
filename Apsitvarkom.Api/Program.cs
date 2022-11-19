@@ -2,16 +2,12 @@ using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
-using Apsitvarkom.Utilities;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-
-if (builder.Environment.IsDevelopment())
-    builder.Logging.AddFile();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -48,16 +44,6 @@ builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(client =>
 });
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    if (FileLoggerProvider.Logger is not null)
-        FileLoggerProvider.Logger.InformationAmountOfBytesPrinted += (_, bytesPrinted) => logger.LogInformation("Printed {0} bytes to log file", bytesPrinted);
-}
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
