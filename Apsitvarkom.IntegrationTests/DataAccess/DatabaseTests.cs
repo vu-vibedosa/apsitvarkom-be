@@ -84,6 +84,6 @@ public class DatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        Assert.ThrowsAsync<ArgumentException>(() => _ = dbRepository.InsertAsync(dbRow));
+        Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
     }
 }
