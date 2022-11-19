@@ -5,6 +5,8 @@ namespace Apsitvarkom.Models.Public;
 
 public class PollutedLocationGetResponse
 {
+    public LocationGetResponse Location { get; set; } = new();
+
     public Guid Id { get; init; }
 
     public int Radius { get; set; }
@@ -16,8 +18,6 @@ public class PollutedLocationGetResponse
     public int Progress { get; set; }
 
     public string? Notes { get; set; }
-
-    public LocationGetResponse Location { get; set; } = new();
 }
 
 public class PollutedLocationGetResponseValidator : AbstractValidator<PollutedLocationGetResponse>

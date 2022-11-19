@@ -8,18 +8,18 @@ namespace Apsitvarkom.UnitTests.DataAccess;
 
 public class PollutedLocationDatabaseRepositoryTests
 {
-    private Mock<IPollutedLocationContext> m_mockContext = null!;
+    private Mock<IPollutedLocationContext> _mockContext = null!;
 
     [SetUp]
     public void SetUp()
     {
-        m_mockContext = new Mock<IPollutedLocationContext>();
+        _mockContext = new Mock<IPollutedLocationContext>();
     }
 
     #region Constructor tests
     [Test]
     public void PollutedLocationDatabaseRepositoryConstructor_HappyPath() =>
-        Assert.DoesNotThrow(() => new PollutedLocationDatabaseRepository(m_mockContext.Object));
+        Assert.DoesNotThrow(() => new PollutedLocationDatabaseRepository(_mockContext.Object));
     #endregion
 
     #region GetAllAsync tests
@@ -28,8 +28,8 @@ public class PollutedLocationDatabaseRepositoryTests
     {
         var dbRows = new List<PollutedLocation>();
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -42,8 +42,13 @@ public class PollutedLocationDatabaseRepositoryTests
         var pollutedLocationInstance = new PollutedLocation 
         { 
             Id = Guid.NewGuid(),
-            Location = {
-                Coordinates = { Latitude = 47.12, Longitude = -41.1251 }
+            Location = 
+            {
+                Coordinates =
+                {
+                    Latitude = 47.12,
+                    Longitude = -41.1251
+                }
             }, 
             Radius = 35, 
             Severity = PollutedLocation.SeverityLevel.Moderate, 
@@ -53,8 +58,8 @@ public class PollutedLocationDatabaseRepositoryTests
         };
         var dbRows = new List<PollutedLocation> { pollutedLocationInstance };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
         var instance = instances.FirstOrDefault();
@@ -81,8 +86,8 @@ public class PollutedLocationDatabaseRepositoryTests
         var id2 = Guid.NewGuid();
         var dbRows = DbInitializer.FakePollutedLocations.Value;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
         var instanceIds = instances.Select(x => x.Id);
@@ -106,8 +111,8 @@ public class PollutedLocationDatabaseRepositoryTests
             new() { Id = id4, Location = { Coordinates = { Latitude = 2, Longitude = 2 } } }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var orderInRelationToPosition = new Coordinates { Latitude = 0, Longitude = 0 };
 
@@ -131,8 +136,8 @@ public class PollutedLocationDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.Id == Guid.NewGuid());
 
@@ -152,8 +157,8 @@ public class PollutedLocationDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.Notes == notes);
 
@@ -170,11 +175,11 @@ public class PollutedLocationDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() },
             new() { Id = id, Severity = PollutedLocation.SeverityLevel.Low },
             new() { Id = Guid.NewGuid() },
-            new() { Id = Guid.NewGuid(), Severity = PollutedLocation.SeverityLevel.Low}
+            new() { Id = Guid.NewGuid(), Severity = PollutedLocation.SeverityLevel.Low }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        m_mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        var dataManager = new PollutedLocationDatabaseRepository(m_mockContext.Object);
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.Severity == PollutedLocation.SeverityLevel.Low);
 

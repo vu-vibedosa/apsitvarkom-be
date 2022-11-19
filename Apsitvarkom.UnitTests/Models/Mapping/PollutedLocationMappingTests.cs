@@ -8,7 +8,7 @@ namespace Apsitvarkom.UnitTests.Models.Mapping;
 
 public class PollutedLocationMappingTests
 {
-    private IMapper m_mapper = null!;
+    private IMapper _mapper = null!;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -20,7 +20,7 @@ public class PollutedLocationMappingTests
 
         config.AssertConfigurationIsValid();
 
-        m_mapper = config.CreateMapper();
+        _mapper = config.CreateMapper();
     }
 
     #region Request mappings
@@ -34,7 +34,7 @@ public class PollutedLocationMappingTests
             Longitude = longitude
         };
 
-        var coordinates = m_mapper.Map<Coordinates>(coordinatesGetRequest);
+        var coordinates = _mapper.Map<Coordinates>(coordinatesGetRequest);
         Assert.Multiple(() =>
         {
             Assert.That(coordinates.Longitude, Is.EqualTo(longitude));
@@ -69,7 +69,7 @@ public class PollutedLocationMappingTests
             Notes = notes
         };
 
-        var pollutedLocation = m_mapper.Map<PollutedLocationGetResponse>(businessLogicObject);
+        var pollutedLocation = _mapper.Map<PollutedLocationGetResponse>(businessLogicObject);
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(guid));

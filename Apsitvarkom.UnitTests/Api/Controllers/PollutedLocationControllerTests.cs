@@ -13,9 +13,9 @@ namespace Apsitvarkom.UnitTests.Api.Controllers;
 
 public class PollutedLocationControllerTests
 {
-    private PollutedLocationController m_controller;
-    private IMapper m_mapper;
-    private Mock<IPollutedLocationRepository> m_repository;
+    private PollutedLocationController _controller;
+    private IMapper _mapper;
+    private Mock<IPollutedLocationRepository> _repository;
 
     private readonly IEnumerable<PollutedLocation> PollutedLocations = new List<PollutedLocation>
     {
@@ -63,39 +63,42 @@ public class PollutedLocationControllerTests
             cfg.AddProfile<PollutedLocationProfile>();
         });
         config.AssertConfigurationIsValid();
-        m_mapper = config.CreateMapper();
+        _mapper = config.CreateMapper();
 
-        m_repository = new Mock<IPollutedLocationRepository>();
-        m_controller = new PollutedLocationController(
-            m_repository.Object, 
-            m_mapper, 
+        _repository = new Mock<IPollutedLocationRepository>();
+        _controller = new PollutedLocationController(
+            _repository.Object, 
+            _mapper, 
             new CoordinatesCreateRequestValidator(), 
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         );
     }
 
+    #region Constructor tests
     [Test]
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(
-            m_repository.Object,
-            m_mapper,
+            _repository.Object,
+            _mapper,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         ), Is.Not.Null);
+    #endregion
 
+    #region GetAll tests
     [Test]
     public async Task GetAll_RepositoryReturnsPollutedLocations_OKActionResultReturned()
     {
-        m_repository.Setup(self => self.GetAllAsync())
+        _repository.Setup(self => self.GetAllAsync())
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await m_controller.GetAll();
+        var actionResult = await _controller.GetAll();
 
-        Assert.That(actionResult.Result, Is.TypeOf <OkObjectResult>());
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-
+        
         Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationGetResponse>>());
         var resultLocations = result.Value as IEnumerable<PollutedLocationGetResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
@@ -115,7 +118,9 @@ public class PollutedLocationControllerTests
             });
         }
     }
+    #endregion
 
+    #region GetAllOrderedInRelationTo tests
     [Test]
     public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
@@ -125,13 +130,13 @@ public class PollutedLocationControllerTests
             Longitude = -65.4321
         };
 
-        m_repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(
-                x => Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
-                     Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
+        _repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
+                Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
+                Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
             )))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await m_controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesGetRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -168,10 +173,10 @@ public class PollutedLocationControllerTests
             Longitude = 181
         };
 
-        m_repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
+        _repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await m_controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesGetRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -184,15 +189,17 @@ public class PollutedLocationControllerTests
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList.Count, Is.EqualTo(2));
     }
+    #endregion
 
+    #region GetById tests
     [Test]
     public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
         var location = PollutedLocations.First();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+        _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync(location);
 
-        var actionResult = await m_controller.GetById(location.Id.ToString());
+        var actionResult = await _controller.GetById(location.Id.ToString());
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -219,10 +226,10 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
         var instanceId = Guid.NewGuid().ToString();
-        m_repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+        _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync((PollutedLocation?)null);
 
-        var actionResult = await m_controller.GetById(instanceId);
+        var actionResult = await _controller.GetById(instanceId);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
@@ -231,7 +238,9 @@ public class PollutedLocationControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
+    #endregion
 
+    #region Create tests
     [Test]
     public async Task Create_RepositoryReturnsTheSameObject_CreatedAtActionResultReturned()
     {
@@ -274,4 +283,5 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(createRequest.Location.Coordinates.Longitude));
         });
     }
+    #endregion
 }
