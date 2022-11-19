@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace Apsitvarkom.UnitTests.Models.Validation;
 
-public class CoordinatesGetResponseValidationTests
+public class CoordinatesResponseValidationTests
 {
-    private static readonly IValidator<CoordinatesGetResponse> Validator = new CoordinatesGetResponseValidator();
+    private static readonly IValidator<CoordinatesResponse> Validator = new CoordinatesResponseValidator();
 
-    private static readonly CoordinatesGetResponse[] ValidCoordinateGetRequests =
+    private static readonly CoordinatesResponse[] ValidCoordinateResponses =
     {
         new()
         {
@@ -21,7 +21,7 @@ public class CoordinatesGetResponseValidationTests
         },
     };
 
-    private static readonly CoordinatesGetResponse[] InvalidCoordinateGetRequests =
+    private static readonly CoordinatesResponse[] InvalidCoordinateResponses =
     {
         new()
         {
@@ -46,8 +46,8 @@ public class CoordinatesGetResponseValidationTests
     };
 
     [Test]
-    [TestCaseSource(nameof(ValidCoordinateGetRequests))]
-    public async Task ValidInputShouldSucceedValidation(CoordinatesGetResponse input)
+    [TestCaseSource(nameof(ValidCoordinateResponses))]
+    public async Task ValidInputShouldSucceedValidation(CoordinatesResponse input)
     {
         var result = await Validator.ValidateAsync(input);
 
@@ -57,8 +57,8 @@ public class CoordinatesGetResponseValidationTests
     }
 
     [Test]
-    [TestCaseSource(nameof(InvalidCoordinateGetRequests))]
-    public async Task InvalidInputShouldFailValidation(CoordinatesGetResponse input)
+    [TestCaseSource(nameof(InvalidCoordinateResponses))]
+    public async Task InvalidInputShouldFailValidation(CoordinatesResponse input)
     {
         var result = await Validator.ValidateAsync(input);
 

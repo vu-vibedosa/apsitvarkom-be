@@ -37,4 +37,11 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     {
         return _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
     }
+
+    /// <inheritdoc />
+    public async Task InsertAsync(PollutedLocation modelToInsert)
+    {
+        await _context.PollutedLocations.AddAsync(modelToInsert);
+        await _context.Instance.SaveChangesAsync();
+    }
 }

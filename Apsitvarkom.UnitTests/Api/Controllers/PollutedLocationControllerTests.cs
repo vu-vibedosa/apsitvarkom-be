@@ -43,8 +43,8 @@ public class PollutedLocationControllerTests
             {
                 Coordinates =
                 {
-                    Latitude = 111.11111,
-                    Longitude = 11.11111
+                    Latitude = 11.11111,
+                    Longitude = 111.11111
                 },
             },
             Radius = 11,
@@ -66,12 +66,22 @@ public class PollutedLocationControllerTests
         _mapper = config.CreateMapper();
 
         _repository = new Mock<IPollutedLocationRepository>();
-        _controller = new PollutedLocationController(_repository.Object, _mapper, new CoordinatesGetRequestValidator());
+        _controller = new PollutedLocationController(
+            _repository.Object, 
+            _mapper, 
+            new CoordinatesCreateRequestValidator(), 
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+        );
     }
 
     #region Constructor tests
     [Test]
-    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(_repository.Object, _mapper, new CoordinatesGetRequestValidator()), Is.Not.Null);
+    public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(
+            _repository.Object,
+            _mapper,
+            new CoordinatesCreateRequestValidator(),
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+        ), Is.Not.Null);
     #endregion
 
     #region GetAll tests
@@ -88,7 +98,25 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(_mapper.Map<IEnumerable<PollutedLocation>>(result.Value), Is.EqualTo(PollutedLocations));
+        
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
+        Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
+        for (int i = 0; i < PollutedLocations.Count(); i++)
+        {
+            var location = PollutedLocations.ElementAt(i);
+            var resultLocation = resultLocations.ElementAt(i);
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
+                Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+                Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
+                Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
+                Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+                Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
+                Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            });
+        }
     }
     #endregion
 
@@ -96,32 +124,50 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAllOrderedInRelationTo_RepositoryReturnsOrderedPollutedLocations_OKActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
             Latitude = 12.3456,
             Longitude = -65.4321
         };
 
         _repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
-                Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
-                Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
+                Math.Abs((double)(x.Latitude - coordinatesCreateRequest.Latitude)) < 0.0001 &&
+                Math.Abs((double)(x.Longitude - coordinatesCreateRequest.Longitude)) < 0.0001
             )))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await _controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesCreateRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(_mapper.Map<IEnumerable<PollutedLocation>>(result.Value), Is.EqualTo(PollutedLocations));
+
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
+        Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
+        for (int i = 0; i < PollutedLocations.Count(); i++)
+        {
+            var location = PollutedLocations.ElementAt(i);
+            var resultLocation = resultLocations.ElementAt(i);
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
+                Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+                Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
+                Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
+                Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+                Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
+                Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            });
+        }
     }
 
     [Test]
     public async Task GetAllOrderedInRelationTo_ValidationFails_BadRequestActionResultReturned()
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
             Latitude = -91,
             Longitude = 181
@@ -130,7 +176,7 @@ public class PollutedLocationControllerTests
         _repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
             .ReturnsAsync(PollutedLocations);
 
-        var actionResult = await _controller.GetAll(coordinatesGetRequest);
+        var actionResult = await _controller.GetAll(coordinatesCreateRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -151,7 +197,7 @@ public class PollutedLocationControllerTests
     {
         var location = PollutedLocations.First();
         _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
-            .ReturnsAsync(_mapper.Map<PollutedLocation>(location));
+            .ReturnsAsync(location);
 
         var actionResult = await _controller.GetById(location.Id.ToString());
 
@@ -160,7 +206,20 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(_mapper.Map<PollutedLocation>(result.Value), Is.EqualTo(location));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
+            Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+            Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
+            Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
+            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+        });
     }
 
     [Test]
@@ -178,6 +237,50 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+    #endregion
+
+    #region Create tests
+    [Test]
+    public async Task Create_RepositoryInsertsOnce_CreatedAtActionResultReturned()
+    {
+        var location = PollutedLocations.First();
+        var createRequest = new PollutedLocationCreateRequest
+        {
+            Location = new LocationCreateRequest()
+            {
+                Coordinates = new CoordinatesCreateRequest()
+                {
+                    Latitude = location.Location.Coordinates.Latitude,
+                    Longitude = location.Location.Coordinates.Longitude
+                },
+            },
+            Radius = location.Radius,
+            Severity = location.Severity,
+            Progress = location.Progress,
+        };
+
+        var actionResult = await _controller.Create(createRequest);
+
+        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
+        var result = actionResult.Result as CreatedAtActionResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultLocation.Radius, Is.EqualTo(createRequest.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(createRequest.Severity));
+            Assert.That(resultLocation.Progress, Is.EqualTo(createRequest.Progress));
+            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(createRequest.Location.Coordinates.Latitude));
+            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(createRequest.Location.Coordinates.Longitude));
+        });
     }
     #endregion
 }

@@ -16,7 +16,7 @@ public class DatabaseTests
             .Options;
         // Insert seed data into the database using one instance of the context
         await using var context = new PollutedLocationContext(_options);
-        DbInitializer.InitializePollutedLocations(context);
+        await DbInitializer.InitializePollutedLocations(context);
     }
 
     [Test]
@@ -72,5 +72,18 @@ public class DatabaseTests
             Assert.That(response.Progress, Is.EqualTo(dbRow.Progress));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
         });
+    }
+
+    [Test]
+    public async Task InsertAsync_SamePrimaryKeys_Throws()
+    {
+        // Try to insert the same row that was inserted in [SetUp]
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
     }
 }

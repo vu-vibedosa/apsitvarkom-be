@@ -5,6 +5,7 @@ using Apsitvarkom.Models.Public;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,11 +15,25 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
     );
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1",
+        new OpenApiInfo
+        {
+            Title = "Apsitvarkom REST API",
+            Version = "v1",
+            Contact = new()
+            {
+                Name = "vu-vibedosa",
+                Url = new("https://github.com/vu-vibedosa")
+            }
+        }
+     );
+});
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
-    .AddValidatorsFromAssemblyContaining<CoordinatesGetRequestValidator>()
+    .AddValidatorsFromAssemblyContaining<CoordinatesCreateRequestValidator>()
     .AddFluentValidationRulesToSwagger();
 
 const string FrontEndPolicy = "FrontEndPolicy";
@@ -52,13 +67,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    var pollutedLocationContext = services.GetRequiredService<PollutedLocationContext>();
+    var pollutedLocationContext = services.GetRequiredService<IPollutedLocationContext>();
 
     // TODO: switch to migrations
-    pollutedLocationContext.Database.EnsureCreated();
+    pollutedLocationContext.Instance.Database.EnsureCreated();
 
     if (!pollutedLocationContext.PollutedLocations.Any())
-        DbInitializer.InitializePollutedLocations(pollutedLocationContext);
+        await DbInitializer.InitializePollutedLocations(pollutedLocationContext);
 }
 
 app.UseCors(FrontEndPolicy);

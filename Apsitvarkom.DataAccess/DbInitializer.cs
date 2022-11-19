@@ -9,10 +9,10 @@ public static class DbInitializer
 {
     public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
 
-    public static void InitializePollutedLocations(PollutedLocationContext context)
+    public static Task InitializePollutedLocations(IPollutedLocationContext context)
     {
         context.PollutedLocations.AddRange(FakePollutedLocations.Value);
-        context.SaveChanges();
+        return context.Instance.SaveChangesAsync();
     }
 
     private static PollutedLocation[] InitializeFakePollutedLocationsArray()

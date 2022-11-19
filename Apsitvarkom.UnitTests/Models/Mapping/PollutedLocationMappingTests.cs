@@ -26,15 +26,15 @@ public class PollutedLocationMappingTests
     #region Request mappings
     [Test]
     [TestCase(-78.948237, 35.929673)]
-    public void CoordinatesGetRequestToCoordinates(double latitude, double longitude)
+    public void CoordinatesCreateRequestToCoordinates(double latitude, double longitude)
     {
-        var coordinatesGetRequest = new CoordinatesGetRequest
+        var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
             Latitude = latitude,
             Longitude = longitude
         };
 
-        var coordinates = _mapper.Map<Coordinates>(coordinatesGetRequest);
+        var coordinates = _mapper.Map<Coordinates>(coordinatesCreateRequest);
         Assert.Multiple(() =>
         {
             Assert.That(coordinates.Longitude, Is.EqualTo(longitude));
@@ -46,7 +46,7 @@ public class PollutedLocationMappingTests
     #region Response mappings
     [Test]
     [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, PollutedLocation.SeverityLevel.Low, "2022-09-16T21:43:31.0000000", 25, "Hello world")]
-    public void PollutedLocationToPollutedLocationGetResponse(string guidString, double longitude, double latitude, int radius, PollutedLocation.SeverityLevel severity, string dateTimeString, int progress, string notes)
+    public void PollutedLocationToPollutedLocationResponse(string guidString, double longitude, double latitude, int radius, PollutedLocation.SeverityLevel severity, string dateTimeString, int progress, string notes)
     {
         var guid = new Guid(guidString);
         var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
@@ -69,7 +69,7 @@ public class PollutedLocationMappingTests
             Notes = notes
         };
 
-        var pollutedLocation = _mapper.Map<PollutedLocationGetResponse>(businessLogicObject);
+        var pollutedLocation = _mapper.Map<PollutedLocationResponse>(businessLogicObject);
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(guid));

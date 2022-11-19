@@ -2,6 +2,7 @@
 using Apsitvarkom.Models;
 using Moq;
 using MockQueryable.Moq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
@@ -184,6 +185,29 @@ public class PollutedLocationDatabaseRepositoryTests
 
         Assert.That(instance, Is.Not.Null);
         Assert.That(instance?.Id, Is.EqualTo(id));
+    }
+    #endregion
+
+    #region InsertAsync tests
+    [Test]
+    public async Task InsertAsync_OneInstanceInserted_InstanceFoundInDbSet()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new()
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        await dataManager.InsertAsync(dbRows[0]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_mockContext.Object.PollutedLocations.Count(), Is.EqualTo(1));
+            Assert.That(_mockContext.Object.PollutedLocations.Contains(dbRows[0]), Is.True);
+        });
     }
     #endregion
 }
