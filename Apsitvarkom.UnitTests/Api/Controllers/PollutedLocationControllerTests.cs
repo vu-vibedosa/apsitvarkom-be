@@ -102,7 +102,7 @@ public class PollutedLocationControllerTests
             Longitude = -65.4321
         };
 
-        m_repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
+        _repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
                 Math.Abs((double)(x.Latitude - coordinatesGetRequest.Latitude)) < 0.0001 &&
                 Math.Abs((double)(x.Longitude - coordinatesGetRequest.Longitude)) < 0.0001
             )))
