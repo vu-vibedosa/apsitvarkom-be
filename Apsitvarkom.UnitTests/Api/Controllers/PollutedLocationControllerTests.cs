@@ -260,10 +260,10 @@ public class PollutedLocationControllerTests
             Progress = location.Progress,
         };
 
-        m_repository.Setup(self => self.InsertAsync(It.IsAny<PollutedLocation>()))
+        _repository.Setup(self => self.InsertAsync(It.IsAny<PollutedLocation>()))
             .ReturnsAsync((PollutedLocation argument) => argument);
 
-        var actionResult = await m_controller.Create(createRequest);
+        var actionResult = await _controller.Create(createRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
         var result = actionResult.Result as CreatedAtActionResult;

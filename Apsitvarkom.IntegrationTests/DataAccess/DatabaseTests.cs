@@ -81,7 +81,7 @@ public class DatabaseTests
         var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
-        await using var context = new PollutedLocationContext(m_options);
+        await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
         Assert.ThrowsAsync<ArgumentException>(() => _ = dbRepository.InsertAsync(dbRow));
