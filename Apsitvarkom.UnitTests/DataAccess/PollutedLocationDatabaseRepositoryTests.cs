@@ -201,30 +201,13 @@ public class PollutedLocationDatabaseRepositoryTests
         _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
         var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
 
-        _ = await dataManager.InsertAsync(dbRows[0]);
+        await dataManager.InsertAsync(dbRows[0]);
 
         Assert.Multiple(() =>
         {
             Assert.That(_mockContext.Object.PollutedLocations.Count(), Is.EqualTo(1));
             Assert.That(_mockContext.Object.PollutedLocations.Contains(dbRows[0]), Is.True);
         });
-    }
-
-    [Test]
-    public async Task InsertAsync_OneInstanceInserted_InstanceFoundInResult()
-    {
-        var dbRows = new List<PollutedLocation>
-        {
-            new()
-        };
-        var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
-        _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
-        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
-
-        var result = await dataManager.InsertAsync(dbRows[0]);
-
-        Assert.That(result, Is.EqualTo(dbRows[0]));
     }
     #endregion
 }

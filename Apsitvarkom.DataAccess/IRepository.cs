@@ -18,6 +18,6 @@ public interface IRepository<T> where T: class
 
     /// <summary>Inserts a single <see cref="T" /> record to the data source.</summary>
     /// <param name="modelToInsert">Model to be inserted into the repository.</param>
-    /// <returns>The inserted <see cref="T" /> model.</returns>
-    public Task<T> InsertAsync(T modelToInsert);
+    /// <returns>The Task to insert the model.</returns>
+    public Task InsertAsync(T modelToInsert);
 }

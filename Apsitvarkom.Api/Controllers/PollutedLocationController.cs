@@ -110,19 +110,18 @@ public class PollutedLocationController : ControllerBase
         var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
+        var response = _mapper.Map<PollutedLocationResponse>(mappedPollutedLocation);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
         try
         {
-            var result = await _repository.InsertAsync(mappedPollutedLocation);
-
-            var response = _mapper.Map<PollutedLocationResponse>(result);
-            // If failed to map the response, still return 201 because the location was inserted into the database
-            if (response is null) return StatusCode(StatusCodes.Status201Created);
-
-            return CreatedAtAction(nameof(GetById), new { response.Id }, response);
+            await _repository.InsertAsync(mappedPollutedLocation);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+        return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 }
