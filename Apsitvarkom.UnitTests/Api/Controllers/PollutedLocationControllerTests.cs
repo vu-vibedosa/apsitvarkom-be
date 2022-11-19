@@ -242,7 +242,7 @@ public class PollutedLocationControllerTests
 
     #region Create tests
     [Test]
-    public async Task Create_RepositoryReturnsTheSameObject_CreatedAtActionResultReturned()
+    public async Task Create_RepositoryInsertsOnce_CreatedAtActionResultReturned()
     {
         var location = PollutedLocations.First();
         var createRequest = new PollutedLocationCreateRequest
@@ -261,6 +261,8 @@ public class PollutedLocationControllerTests
         };
 
         var actionResult = await _controller.Create(createRequest);
+
+        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
         var result = actionResult.Result as CreatedAtActionResult;
