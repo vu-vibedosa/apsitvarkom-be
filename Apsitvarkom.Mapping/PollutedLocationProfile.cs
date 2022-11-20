@@ -21,10 +21,10 @@ public class PollutedLocationProfile : Profile
     {
         CreateMap<CoordinatesCreateRequest, Coordinates>();
         CreateMap<LocationCreateRequest, Location>()
-            .ForMember(dest => dest.Title, opt => opt.MapFrom<LocationTitleResolver>());
+            .ForMember(x => x.Title, opt => opt.Ignore());
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
-            .ForMember(dest => dest.Spotted, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
+            .ForMember(x => x.Spotted, opt => opt.Ignore())
+            .ForMember(x => x.Id, opt => opt.Ignore());
     }
 
     private void MapResponses()
@@ -32,20 +32,5 @@ public class PollutedLocationProfile : Profile
         CreateMap<PollutedLocation, PollutedLocationResponse>();
         CreateMap<Location, LocationResponse>();
         CreateMap<Coordinates, CoordinatesResponse>();
-    }
-}
-
-public class LocationTitleResolver : IValueResolver<LocationCreateRequest, Location, string>
-{
-    private readonly IGeocoder _geocoder;
-
-    public LocationTitleResolver(IGeocoder geocoder)
-    {
-        _geocoder = geocoder;
-    }
-
-    public string Resolve(LocationCreateRequest source, Location destination, string destMember, ResolutionContext context)
-    {
-        return Task.Run(async () => await _geocoder.ReverseGeocodeAsync(destination.Coordinates)).Result ?? string.Empty;
     }
 }

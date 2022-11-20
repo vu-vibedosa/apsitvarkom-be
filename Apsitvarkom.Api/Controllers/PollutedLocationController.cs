@@ -13,17 +13,20 @@ public class PollutedLocationController : ControllerBase
 {
     private readonly IPollutedLocationRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IGeocoder _geocoder;
     private readonly IValidator<CoordinatesCreateRequest> _coordinatesValidator;
     private readonly IValidator<PollutedLocationCreateRequest> _pollutedLocationValidator;
 
     public PollutedLocationController(
         IPollutedLocationRepository repository, 
-        IMapper mapper, 
+        IMapper mapper,
+        IGeocoder geocoder,
         IValidator<CoordinatesCreateRequest> coordinatesValidator, 
         IValidator<PollutedLocationCreateRequest> pollutedLocationValidator)
     {
         _repository = repository;
         _mapper = mapper;
+        _geocoder = geocoder;
         _coordinatesValidator = coordinatesValidator;
         _pollutedLocationValidator = pollutedLocationValidator;
     }
@@ -109,6 +112,10 @@ public class PollutedLocationController : ControllerBase
 
         var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        mappedPollutedLocation.Id = Guid.NewGuid();
+        mappedPollutedLocation.Spotted = DateTime.UtcNow;
+        mappedPollutedLocation.Location.Title = await _geocoder.ReverseGeocodeAsync(mappedPollutedLocation.Location.Coordinates) ?? string.Empty;
 
         var response = _mapper.Map<PollutedLocationResponse>(mappedPollutedLocation);
         if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);

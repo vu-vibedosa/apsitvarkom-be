@@ -1,5 +1,6 @@
 ﻿using Apsitvarkom.Configuration;
 using Apsitvarkom.Models;
+using System.Globalization;
 using System.Text.Json;
 using Yoh.Text.Json.NamingPolicies;
 
@@ -23,7 +24,8 @@ public class GoogleGeocoder : IGeocoder
 
     public async Task<string?> ReverseGeocodeAsync(Coordinates coordinates)
     {
-        var jsonStream = await _httpClient.GetStreamAsync($"json?latlng={coordinates.Latitude},{coordinates.Longitude}&language=lt&key={_apiKey}");
+        var query = $"json?latlng={coordinates.Latitude.ToString(CultureInfo.InvariantCulture)},{coordinates.Longitude.ToString(CultureInfo.InvariantCulture)}&language=lt&key={_apiKey}";
+        var jsonStream = await _httpClient.GetStreamAsync(query);
         var response = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(jsonStream, SerializerOptions);
 
         return response?.Results?.FirstOrDefault()?.FormattedAddress;

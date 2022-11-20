@@ -1,26 +1,21 @@
 ﻿using System.Globalization;
-using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
-using Moq;
 
 namespace Apsitvarkom.UnitTests.Mapping;
 
 public class PollutedLocationMappingTests
 {
     private IMapper _mapper = null!;
-    private Mock<IGeocoder> _geocoder = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _geocoder = new Mock<IGeocoder>();
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
-            cfg.ConstructServicesUsing(_ => new LocationTitleResolver(_geocoder.Object));
         });
 
         config.AssertConfigurationIsValid();
@@ -67,15 +62,9 @@ public class PollutedLocationMappingTests
             }
         };
 
-        var title = "title";
-        _geocoder.Setup(self => self.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
-            Math.Abs(x.Latitude - latitude) < 0.0001 && Math.Abs(x.Longitude - longitude) < 0.0001
-        ))).ReturnsAsync(title);
-
         var pollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(title));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));

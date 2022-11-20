@@ -61,19 +61,19 @@ public class PollutedLocationControllerTests
     [SetUp]
     public void SetUp()
     {
-        _geocoder = new Mock<IGeocoder>();
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.ConstructServicesUsing(_ => new LocationTitleResolver(_geocoder.Object));
             cfg.AddProfile<PollutedLocationProfile>();
         });
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
 
+        _geocoder = new Mock<IGeocoder>();
         _repository = new Mock<IPollutedLocationRepository>();
         _controller = new PollutedLocationController(
             _repository.Object, 
-            _mapper, 
+            _mapper,
+            _geocoder.Object,
             new CoordinatesCreateRequestValidator(), 
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         );
@@ -84,6 +84,7 @@ public class PollutedLocationControllerTests
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new PollutedLocationController(
             _repository.Object,
             _mapper,
+            _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
         ), Is.Not.Null);

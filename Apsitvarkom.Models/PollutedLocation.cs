@@ -13,7 +13,7 @@ public class PollutedLocation
     }
 
     /// <summary>Unique identifier of the given record.</summary>
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     /// <summary>Rough size estimate of the given record area in meters from the center.</summary>
     public int Radius { get; set; }
@@ -22,7 +22,7 @@ public class PollutedLocation
     public SeverityLevel Severity { get; set; }
 
     /// <summary><see cref="DateTime" /> of when the record was created.</summary>
-    public DateTime Spotted { get; init; }
+    public DateTime Spotted { get; set; }
 
     /// <summary>Current progress of the record's cleaning process in percentages.</summary>
     public int Progress { get; set; }
