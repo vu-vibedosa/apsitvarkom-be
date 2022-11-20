@@ -1,17 +1,17 @@
 ﻿using System.Globalization;
 using Apsitvarkom.Models;
-using Apsitvarkom.Mapping;
+using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.UnitTests.Mapping;
+namespace Apsitvarkom.UnitTests.Models.Mapping;
 
 public class PollutedLocationMappingTests
 {
     private IMapper _mapper = null!;
 
-    [SetUp]
-    public void SetUp()
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
         var config = new MapperConfiguration(cfg =>
         {

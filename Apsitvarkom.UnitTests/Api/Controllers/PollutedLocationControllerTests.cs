@@ -2,7 +2,7 @@
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
-using Apsitvarkom.Mapping;
+using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
