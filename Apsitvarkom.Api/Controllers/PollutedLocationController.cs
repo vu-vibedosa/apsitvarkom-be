@@ -88,14 +88,12 @@ public class PollutedLocationController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PollutedLocationResponse>> GetById([FromQuery] PollutedLocationIdentifyRequest pollutedLocationIdentifyRequest)
     {
-
         var validationResult = await _pollutedLocationIdentifyValidator.ValidateAsync(pollutedLocationIdentifyRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
         try
         {
             var location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
-
             if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
 
             var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
@@ -138,5 +136,33 @@ public class PollutedLocationController : ControllerBase
         }
 
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpDelete("Delete")]
+    public async Task<ActionResult<PollutedLocationResponse>> Delete([FromQuery] PollutedLocationIdentifyRequest pollutedLocationIdentifyRequest)
+    {
+        var validationResult = await _pollutedLocationIdentifyValidator.ValidateAsync(pollutedLocationIdentifyRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        try
+        {
+            var location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
+            if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
+
+            var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
+            if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+            await _repository.DeleteAsync(location);
+
+            return Ok(mappedLocation);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
