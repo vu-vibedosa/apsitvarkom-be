@@ -5,17 +5,17 @@ namespace Apsitvarkom.Models.Public;
 
 public class PollutedLocationResponse
 {
+    public Guid Id { get; init; }
+
     public LocationResponse Location { get; set; } = new();
 
-    public Guid Id { get; init; }
+    public int Progress { get; set; }
 
     public int Radius { get; set; }
 
     public SeverityLevel Severity { get; set; }
 
     public DateTime Spotted { get; init; }
-
-    public int Progress { get; set; }
 
     public string? Notes { get; set; }
 }
