@@ -210,4 +210,31 @@ public class PollutedLocationDatabaseRepositoryTests
         });
     }
     #endregion
+
+    #region DeleteAsync
+    [Test]
+    public async Task DeleteAsync_InstanceExists_SuccessfullyDeleted()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new() { Id = new Guid() },
+            new() { Id = new Guid() },
+            new() { Id = new Guid() }
+        };
+        var locationToDelete = dbRows.TakeLast(1).Single();
+        var mock = dbRows.SkipLast(1).AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        await dataManager.DeleteAsync(locationToDelete);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_mockContext.Object.PollutedLocations.Count(), Is.EqualTo(2));
+            Assert.That(_mockContext.Object.PollutedLocations.Select(x => x.Id), Is.EqualTo(dbRows.SkipLast(1).Select(x => x.Id)));
+            Assert.That(_mockContext.Object.PollutedLocations.Contains(locationToDelete), Is.False);
+        });
+    }
+    #endregion
 }
