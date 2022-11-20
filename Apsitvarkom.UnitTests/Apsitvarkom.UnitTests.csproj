@@ -19,23 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\Controllers\" />
-    <Folder Include="Models\Mapping\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Api\Apsitvarkom.Api.csproj" />
     <ProjectReference Include="..\Apsitvarkom.DataAccess\Apsitvarkom.DataAccess.csproj" />
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="DataAccess\PollutedLocationDTOMockInvalid.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="DataAccess\PollutedLocationDTOMockValid.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

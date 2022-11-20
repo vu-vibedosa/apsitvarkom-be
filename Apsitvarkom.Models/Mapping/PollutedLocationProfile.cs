@@ -1,39 +1,34 @@
 ﻿using System.Globalization;
-using Apsitvarkom.Models.DTO;
+using Apsitvarkom.Models.Public;
 using AutoMapper;
 
 namespace Apsitvarkom.Models.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class
-/// <see cref="PollutedLocationDTO" /> objects to <see cref="PollutedLocation" /> used in the business logic and vice-versa.
+/// <see cref="PollutedLocation" /> related objects (Requests, Responses, Business objects).
 /// </summary>
 public class PollutedLocationProfile : Profile
 {
     public PollutedLocationProfile()
     {
-        // PollutedLocationDTO to PollutedLocation
-        CreateMap<PollutedLocationDTO, PollutedLocation>()
-            .IncludeBase<LocationDTO, Location>()
-            .ForMember(dest => dest.Id, opt => opt
-                .MapFrom(src => Guid.Parse(src.Id!)))
-            .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => DateTime.Parse(src.Spotted!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)));
+        MapRequests();
+        MapResponses();
+    }
 
-        // LocationDTO to Location
-        CreateMap<LocationDTO, Location>();
-        CreateMap<CoordinatesDTO, Coordinates>();
+    private void MapRequests()
+    {
+        CreateMap<CoordinatesCreateRequest, Coordinates>();
+        CreateMap<LocationCreateRequest, Location>();
+        CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
+            .ForMember(dest => dest.Spotted, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
+    }
 
-        // PollutedLocation to PollutedLocationDTO
-        CreateMap<PollutedLocation, PollutedLocationDTO>()
-            .IncludeBase<Location, LocationDTO>()
-            .ForMember(dest => dest.Id, opt => opt
-                .MapFrom(src => src.Id.ToString()))
-            .ForMember(dest => dest.Spotted, opt => opt
-                .MapFrom(src => src.Spotted.ToString("o", CultureInfo.InvariantCulture)));
-
-        // Location to LocationDTO
-        CreateMap<Location, LocationDTO>();
-        CreateMap<Coordinates, CoordinatesDTO>();
+    private void MapResponses()
+    {
+        CreateMap<PollutedLocation, PollutedLocationResponse>();
+        CreateMap<Location, LocationResponse>();
+        CreateMap<Coordinates, CoordinatesResponse>();
     }
 }
