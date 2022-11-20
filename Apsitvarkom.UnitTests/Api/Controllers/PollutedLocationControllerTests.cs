@@ -2,7 +2,7 @@
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
-using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +15,7 @@ public class PollutedLocationControllerTests
 {
     private PollutedLocationController _controller;
     private IMapper _mapper;
+    private Mock<IGeocoder> _geocoder;
     private Mock<IPollutedLocationRepository> _repository;
 
     private readonly IEnumerable<PollutedLocation> PollutedLocations = new List<PollutedLocation>
@@ -24,6 +25,7 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid(),
             Location =
             {
+                Title = "Loc1",
                 Coordinates =
                 {
                   Longitude = 54,
@@ -41,6 +43,7 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid(),
             Location =
             {
+                Title = "Loc2",
                 Coordinates =
                 {
                     Latitude = 11.11111,
@@ -58,8 +61,10 @@ public class PollutedLocationControllerTests
     [SetUp]
     public void SetUp()
     {
+        _geocoder = new Mock<IGeocoder>();
         var config = new MapperConfiguration(cfg =>
         {
+            cfg.ConstructServicesUsing(_ => new LocationTitleResolver(_geocoder.Object));
             cfg.AddProfile<PollutedLocationProfile>();
         });
         config.AssertConfigurationIsValid();
@@ -102,7 +107,7 @@ public class PollutedLocationControllerTests
         Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
         var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
-        for (int i = 0; i < PollutedLocations.Count(); i++)
+        for (var i = 0; i < PollutedLocations.Count(); i++)
         {
             var location = PollutedLocations.ElementAt(i);
             var resultLocation = resultLocations.ElementAt(i);
@@ -113,6 +118,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+                Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             });
@@ -147,7 +153,7 @@ public class PollutedLocationControllerTests
         Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
         var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
-        for (int i = 0; i < PollutedLocations.Count(); i++)
+        for (var i = 0; i < PollutedLocations.Count(); i++)
         {
             var location = PollutedLocations.ElementAt(i);
             var resultLocation = resultLocations.ElementAt(i);
@@ -158,6 +164,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+                Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             });
@@ -217,6 +224,7 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+            Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
         });
@@ -260,9 +268,16 @@ public class PollutedLocationControllerTests
             Progress = location.Progress,
         };
 
+        var titleResult = "geocoding";
+        _geocoder.Setup(self => self.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
+            Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
+            Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
+        ))).ReturnsAsync(titleResult);
+
         var actionResult = await _controller.Create(createRequest);
 
         _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Once);
+        _geocoder.Verify(g => g.ReverseGeocodeAsync(It.IsAny<Coordinates>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
         var result = actionResult.Result as CreatedAtActionResult;
@@ -278,6 +293,56 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(createRequest.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(createRequest.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(createRequest.Progress));
+            Assert.That(resultLocation.Location.Title, Is.EqualTo(titleResult));
+            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(createRequest.Location.Coordinates.Latitude));
+            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(createRequest.Location.Coordinates.Longitude));
+        });
+    }
+
+    [Test]
+    public async Task Create_RepositoryInsertsOnce_GeocodingResponseIsNull_TitleIsStringEmptyAndCreatedAtActionResultReturned()
+    {
+        var location = PollutedLocations.First();
+        var createRequest = new PollutedLocationCreateRequest
+        {
+            Location = new LocationCreateRequest()
+            {
+                Coordinates = new CoordinatesCreateRequest()
+                {
+                    Latitude = location.Location.Coordinates.Latitude,
+                    Longitude = location.Location.Coordinates.Longitude
+                },
+            },
+            Radius = location.Radius,
+            Severity = location.Severity,
+            Progress = location.Progress,
+        };
+
+        _geocoder.Setup(self => self.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
+            Math.Abs((x.Latitude - location.Location.Coordinates.Latitude)) < 0.0001 &&
+            Math.Abs((x.Longitude - location.Location.Coordinates.Longitude)) < 0.0001
+        ))).ReturnsAsync((string?)null);
+
+        var actionResult = await _controller.Create(createRequest);
+
+        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Once);
+        _geocoder.Verify(g => g.ReverseGeocodeAsync(It.IsAny<Coordinates>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
+        var result = actionResult.Result as CreatedAtActionResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultLocation.Radius, Is.EqualTo(createRequest.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(createRequest.Severity));
+            Assert.That(resultLocation.Progress, Is.EqualTo(createRequest.Progress));
+            Assert.That(resultLocation.Location.Title, Is.EqualTo(string.Empty));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(createRequest.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(createRequest.Location.Coordinates.Longitude));
         });

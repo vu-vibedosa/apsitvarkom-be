@@ -1,6 +1,6 @@
 using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
-using Apsitvarkom.Models.Mapping;
+using Apsitvarkom.Mapping;
 using Apsitvarkom.Models.Public;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;

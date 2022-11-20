@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+﻿using Apsitvarkom.DataAccess;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.Models.Mapping;
+namespace Apsitvarkom.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class
@@ -19,7 +20,8 @@ public class PollutedLocationProfile : Profile
     private void MapRequests()
     {
         CreateMap<CoordinatesCreateRequest, Coordinates>();
-        CreateMap<LocationCreateRequest, Location>();
+        CreateMap<LocationCreateRequest, Location>()
+            .ForMember(dest => dest.Title, opt => opt.MapFrom<LocationTitleResolver>());
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
             .ForMember(dest => dest.Spotted, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
@@ -30,5 +32,20 @@ public class PollutedLocationProfile : Profile
         CreateMap<PollutedLocation, PollutedLocationResponse>();
         CreateMap<Location, LocationResponse>();
         CreateMap<Coordinates, CoordinatesResponse>();
+    }
+}
+
+public class LocationTitleResolver : IValueResolver<LocationCreateRequest, Location, string>
+{
+    private readonly IGeocoder _geocoder;
+
+    public LocationTitleResolver(IGeocoder geocoder)
+    {
+        _geocoder = geocoder;
+    }
+
+    public string Resolve(LocationCreateRequest source, Location destination, string destMember, ResolutionContext context)
+    {
+        return Task.Run(async () => await _geocoder.ReverseGeocodeAsync(destination.Coordinates)).Result ?? string.Empty;
     }
 }

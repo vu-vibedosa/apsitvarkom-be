@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apsitvarkom.Api\Apsitvarkom.Api.csproj" />
     <ProjectReference Include="..\Apsitvarkom.DataAccess\Apsitvarkom.DataAccess.csproj" />
+    <ProjectReference Include="..\Apsitvarkom.Mapping\Apsitvarkom.Mapping.csproj" />
     <ProjectReference Include="..\Apsitvarkom.Models\Apsitvarkom.Models.csproj" />
   </ItemGroup>
 
