@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.Models.Public;
 using AutoMapper;
 
 namespace Apsitvarkom.Models.Mapping;
@@ -19,10 +18,11 @@ public class PollutedLocationProfile : Profile
     private void MapRequests()
     {
         CreateMap<CoordinatesCreateRequest, Coordinates>();
-        CreateMap<LocationCreateRequest, Location>();
+        CreateMap<LocationCreateRequest, Location>()
+            .ForMember(x => x.Title, opt => opt.Ignore());
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
-            .ForMember(dest => dest.Spotted, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
+            .ForMember(x => x.Spotted, opt => opt.Ignore())
+            .ForMember(x => x.Id, opt => opt.Ignore());
     }
 
     private void MapResponses()

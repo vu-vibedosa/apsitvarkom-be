@@ -44,6 +44,7 @@ public class PollutedLocationDatabaseRepositoryTests
             Id = Guid.NewGuid(),
             Location = 
             {
+                Title = "title",
                 Coordinates =
                 {
                     Latitude = 47.12,
@@ -69,6 +70,7 @@ public class PollutedLocationDatabaseRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(pollutedLocationInstance.Id));
+            Assert.That(instance.Location.Title, Is.EqualTo(pollutedLocationInstance.Location.Title));
             Assert.That(instance.Location.Coordinates.Latitude, Is.EqualTo(pollutedLocationInstance.Location.Coordinates.Latitude));
             Assert.That(instance.Location.Coordinates.Longitude, Is.EqualTo(pollutedLocationInstance.Location.Coordinates.Longitude));
             Assert.That(instance.Radius, Is.EqualTo(pollutedLocationInstance.Radius));
@@ -82,8 +84,6 @@ public class PollutedLocationDatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasSeveralInstances_InstancesReturnedInCorrectOrder()
     {
-        var id1 = Guid.NewGuid();
-        var id2 = Guid.NewGuid();
         var dbRows = DbInitializer.FakePollutedLocations.Value;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
         _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);

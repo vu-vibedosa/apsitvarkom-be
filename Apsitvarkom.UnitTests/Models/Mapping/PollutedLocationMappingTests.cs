@@ -41,12 +41,44 @@ public class PollutedLocationMappingTests
             Assert.That(coordinates.Latitude, Is.EqualTo(latitude));
         });
     }
+
+    [Test]
+    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4, 12)]
+    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius, int progress)
+    {
+        var pollutedLocationCreateRequest = new PollutedLocationCreateRequest
+        {
+            Severity = severity,
+            Notes = notes,
+            Progress = progress,
+            Radius = radius,
+            Location = new LocationCreateRequest
+            {
+                Coordinates = new CoordinatesCreateRequest()
+                {
+                    Latitude = latitude,
+                    Longitude = longitude
+                }
+            }
+        };
+
+        var pollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
+        Assert.Multiple(() =>
+        {
+            Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
+            Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
+            Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
+            Assert.That(pollutedLocation.Progress, Is.EqualTo(progress));
+            Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
+            Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
+        });
+    }
     #endregion
 
     #region Response mappings
     [Test]
-    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", -78.948237, 35.929673, 10, PollutedLocation.SeverityLevel.Low, "2022-09-16T21:43:31.0000000", 25, "Hello world")]
-    public void PollutedLocationToPollutedLocationResponse(string guidString, double longitude, double latitude, int radius, PollutedLocation.SeverityLevel severity, string dateTimeString, int progress, string notes)
+    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", "title", -78.948237, 35.929673, 10, PollutedLocation.SeverityLevel.Low, "2022-09-16T21:43:31.0000000", 25, "Hello world")]
+    public void PollutedLocationToPollutedLocationResponse(string guidString, string title, double longitude, double latitude, int radius, PollutedLocation.SeverityLevel severity, string dateTimeString, int progress, string notes)
     {
         var guid = new Guid(guidString);
         var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
@@ -56,6 +88,7 @@ public class PollutedLocationMappingTests
             Id = guid,
             Location =
             {
+                Title = title,
                 Coordinates = new Coordinates
                 {
                     Longitude = longitude,
@@ -73,6 +106,7 @@ public class PollutedLocationMappingTests
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(guid));
+            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(title));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
