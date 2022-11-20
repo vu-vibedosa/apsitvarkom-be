@@ -75,7 +75,8 @@ public class PollutedLocationControllerTests
             _mapper,
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(), 
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+            new PollutedLocationIdentifyRequestValidator()
         );
     }
 
@@ -86,7 +87,8 @@ public class PollutedLocationControllerTests
             _mapper,
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+            new PollutedLocationIdentifyRequestValidator()
         ), Is.Not.Null);
     #endregion
 
@@ -204,10 +206,15 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
         var location = PollutedLocations.First();
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = location.Id
+        };
+
         _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync(location);
 
-        var actionResult = await _controller.GetById(location.Id.ToString());
+        var actionResult = await _controller.GetById(identifyRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -234,17 +241,41 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
-        var instanceId = Guid.NewGuid().ToString();
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
         _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync((PollutedLocation?)null);
 
-        var actionResult = await _controller.GetById(instanceId);
+        var actionResult = await _controller.GetById(identifyRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task GetById_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.GetById(identifyRequest);
+
+        _repository.Verify(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
     #endregion
