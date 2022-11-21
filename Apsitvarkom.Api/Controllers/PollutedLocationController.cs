@@ -18,10 +18,10 @@ public class PollutedLocationController : ControllerBase
     private readonly IValidator<PollutedLocationCreateRequest> _pollutedLocationValidator;
 
     public PollutedLocationController(
-        IPollutedLocationRepository repository, 
+        IPollutedLocationRepository repository,
         IMapper mapper,
         IGeocoder geocoder,
-        IValidator<CoordinatesCreateRequest> coordinatesValidator, 
+        IValidator<CoordinatesCreateRequest> coordinatesValidator,
         IValidator<PollutedLocationCreateRequest> pollutedLocationValidator)
     {
         _repository = repository;
@@ -110,12 +110,24 @@ public class PollutedLocationController : ControllerBase
         var validationResult = await _pollutedLocationValidator.ValidateAsync(pollutedLocationCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
-        if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+        var mappedLocation = _mapper.Map<Location>(pollutedLocationCreateRequest.Location);
+        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
-        mappedPollutedLocation.Id = Guid.NewGuid();
-        mappedPollutedLocation.Spotted = DateTime.UtcNow;
-        mappedPollutedLocation.Location.Title = await _geocoder.ReverseGeocodeAsync(mappedPollutedLocation.Location.Coordinates) ?? string.Empty;
+        var title = await _geocoder.ReverseGeocodeAsync(mappedLocation.Coordinates) ?? string.Empty;
+
+        var pollutedLocationDefaults = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Spotted = DateTime.UtcNow,
+            Progress = 0,
+            Location = new()
+            {
+                Title = title
+            }
+        };
+
+        var mappedPollutedLocation = _mapper.Map<PollutedLocationCreateRequest, PollutedLocation>(pollutedLocationCreateRequest, pollutedLocationDefaults);
+        if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         var response = _mapper.Map<PollutedLocationResponse>(mappedPollutedLocation);
         if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
