@@ -164,12 +164,13 @@ public class PollutedLocationController : ControllerBase
         try
         {
             location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
-            if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+        
+        if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
 
         var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
         if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
