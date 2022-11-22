@@ -23,7 +23,6 @@ public class PollutedLocationCreateRequestValidationTests
             },
             Radius = 5,
             Severity = PollutedLocation.SeverityLevel.Moderate,
-            Progress = 41,
             Notes = "Prisoners broke a window."
         },
         new()
@@ -38,7 +37,6 @@ public class PollutedLocationCreateRequestValidationTests
             },
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.Low,
-            Progress = 13,
         },
     };
 
@@ -55,7 +53,6 @@ public class PollutedLocationCreateRequestValidationTests
                     Longitude = 150
                 }
             },
-            Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
         },
@@ -71,24 +68,8 @@ public class PollutedLocationCreateRequestValidationTests
                 }
             },
             Notes = "gtfo with these cringy notes",
-            Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
-        },
-        new()
-        { 
-            // Invalid Progress
-            Location = new()
-            {
-                Coordinates = new()
-                {
-                    Latitude = 89.9,
-                    Longitude = 89.9
-                },
-            },
-            Progress = 101,
-            Radius = 2,
-            Severity = PollutedLocation.SeverityLevel.Low,
         },
         new()
         { 
@@ -101,7 +82,6 @@ public class PollutedLocationCreateRequestValidationTests
                     Longitude = 89.9
                 },
             },
-            Progress = 11,
             Radius = 0,
             Severity = PollutedLocation.SeverityLevel.Low,
         },
