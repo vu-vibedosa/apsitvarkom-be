@@ -148,21 +148,29 @@ public class PollutedLocationController : ControllerBase
         var validationResult = await _pollutedLocationIdentifyValidator.ValidateAsync(pollutedLocationIdentifyRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
+        PollutedLocation? location;
         try
         {
-            var location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
+            location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
             if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
-
-            var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
-            if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
-
-            await _repository.DeleteAsync(location);
-
-            return Ok(mappedLocation);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+        var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
+        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.DeleteAsync(location);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok(mappedLocation);
     }
 }
