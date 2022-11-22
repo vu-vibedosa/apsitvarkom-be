@@ -57,9 +57,9 @@ public class DatabaseTests
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
-        
+
         var response = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
-        
+
         Assert.That(response, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -85,5 +85,33 @@ public class DatabaseTests
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
         Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
+    }
+
+    [Test]
+    public async Task DeleteAsync_InstanceDoesNotExist_Throws()
+    {
+        // Try to delete a newly created instance
+        var instanceToDelete = new PollutedLocation();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.DeleteAsync(instanceToDelete));
+    }
+
+    [Test]
+    public async Task DeleteAsync_InstanceExists_SuccessfullyDeleted()
+    {
+        // Try to delete one of the values that was inserted in [SetUp]
+        var dbRow = DbInitializer.FakePollutedLocations.Value.TakeLast(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        Assert.DoesNotThrowAsync(() => dbRepository.DeleteAsync(dbRow));
+
+        Assert.That((await dbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
     }
 }

@@ -74,8 +74,9 @@ public class PollutedLocationControllerTests
             _repository.Object,
             _mapper,
             _geocoder.Object,
-            new CoordinatesCreateRequestValidator(),
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new CoordinatesCreateRequestValidator(), 
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+            new PollutedLocationIdentifyRequestValidator()
         );
     }
 
@@ -86,7 +87,8 @@ public class PollutedLocationControllerTests
             _mapper,
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+            new PollutedLocationIdentifyRequestValidator()
         ), Is.Not.Null);
     #endregion
 
@@ -94,7 +96,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetAll_RepositoryReturnsPollutedLocations_OKActionResultReturned()
     {
-        _repository.Setup(self => self.GetAllAsync())
+        _repository.Setup(r => r.GetAllAsync())
             .ReturnsAsync(PollutedLocations);
 
         var actionResult = await _controller.GetAll();
@@ -137,7 +139,7 @@ public class PollutedLocationControllerTests
             Longitude = -65.4321
         };
 
-        _repository.Setup(self => self.GetAllAsync(It.Is<Coordinates>(x =>
+        _repository.Setup(r => r.GetAllAsync(It.Is<Coordinates>(x =>
                 Math.Abs((double)(x.Latitude - coordinatesCreateRequest.Latitude)) < 0.0001 &&
                 Math.Abs((double)(x.Longitude - coordinatesCreateRequest.Longitude)) < 0.0001
             )))
@@ -181,7 +183,7 @@ public class PollutedLocationControllerTests
             Longitude = 181
         };
 
-        _repository.Setup(self => self.GetAllAsync(It.IsAny<Coordinates>()))
+        _repository.Setup(r => r.GetAllAsync(It.IsAny<Coordinates>()))
             .ReturnsAsync(PollutedLocations);
 
         var actionResult = await _controller.GetAll(coordinatesCreateRequest);
@@ -204,10 +206,15 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
         var location = PollutedLocations.First();
-        _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = location.Id
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync(location);
 
-        var actionResult = await _controller.GetById(location.Id.ToString());
+        var actionResult = await _controller.GetById(identifyRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -234,17 +241,41 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
-        var instanceId = Guid.NewGuid().ToString();
-        _repository.Setup(self => self.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync((PollutedLocation?)null);
 
-        var actionResult = await _controller.GetById(instanceId);
+        var actionResult = await _controller.GetById(identifyRequest);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task GetById_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.GetById(identifyRequest);
+
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
     #endregion
@@ -269,7 +300,7 @@ public class PollutedLocationControllerTests
         };
 
         var titleResult = "geocoding";
-        _geocoder.Setup(self => self.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
+        _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
             Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
             Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
         ))).ReturnsAsync(titleResult);
@@ -316,9 +347,9 @@ public class PollutedLocationControllerTests
             Severity = location.Severity,
         };
 
-        _geocoder.Setup(self => self.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
-            Math.Abs((x.Latitude - location.Location.Coordinates.Latitude)) < 0.0001 &&
-            Math.Abs((x.Longitude - location.Location.Coordinates.Longitude)) < 0.0001
+        _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
+            Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
+            Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
         ))).ReturnsAsync((string?)null);
 
         var actionResult = await _controller.Create(createRequest);
@@ -343,6 +374,110 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(createRequest.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(createRequest.Location.Coordinates.Longitude));
         });
+    }
+
+    [Test]
+    public async Task Create_InvalidDataEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var createRequest = new PollutedLocationCreateRequest
+        {
+            Severity = null
+        };
+
+        var actionResult = await _controller.Create(createRequest);
+
+        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+    #endregion
+
+    #region Delete tests
+    [Test]
+    public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
+    {
+        var location = PollutedLocations.First();
+        var createRequest = new PollutedLocationIdentifyRequest()
+        {
+            Id = location.Id
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(location);
+
+        var actionResult = await _controller.Delete(createRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
+        var result = actionResult.Result as OkObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
+            Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+            Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
+            Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+            Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
+            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
+            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+        });
+    }
+
+    [Test]
+    public async Task Delete_RepositoryReturnsNull_NotFoundActionResultReturned()
+    {
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .ReturnsAsync((PollutedLocation?)null);
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Never);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult.Result as NotFoundObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Delete_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var identifyRequest = new PollutedLocationIdentifyRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
     #endregion
 }
