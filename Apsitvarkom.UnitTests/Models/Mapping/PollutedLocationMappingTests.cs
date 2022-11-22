@@ -43,14 +43,13 @@ public class PollutedLocationMappingTests
     }
 
     [Test]
-    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4, 12)]
-    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius, int progress)
+    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4)]
+    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius)
     {
         var pollutedLocationCreateRequest = new PollutedLocationCreateRequest
         {
             Severity = severity,
             Notes = notes,
-            Progress = progress,
             Radius = radius,
             Location = new LocationCreateRequest
             {
@@ -68,7 +67,6 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
-            Assert.That(pollutedLocation.Progress, Is.EqualTo(progress));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
             Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
         });
