@@ -381,7 +381,7 @@ public class PollutedLocationControllerTests
     {
         var createRequest = new PollutedLocationCreateRequest
         {
-            Progress = null
+            Severity = null
         };
 
         var actionResult = await _controller.Create(createRequest);
