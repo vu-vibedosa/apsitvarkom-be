@@ -20,4 +20,6 @@ public interface IRepository<T> where T: class
     /// <param name="modelToInsert">Model to be inserted into the repository.</param>
     /// <returns>The Task to insert the model.</returns>
     public Task InsertAsync(T modelToInsert);
+
+    public Task UpdateAsync(T modelToUpdate);
 }

@@ -16,19 +16,22 @@ public class PollutedLocationController : ControllerBase
     private readonly IGeocoder _geocoder;
     private readonly IValidator<CoordinatesCreateRequest> _coordinatesValidator;
     private readonly IValidator<PollutedLocationCreateRequest> _pollutedLocationValidator;
+    private readonly IValidator<PollutedLocationUpdateRequest> _pollutedLocationUpdateValidator;
 
     public PollutedLocationController(
         IPollutedLocationRepository repository, 
         IMapper mapper,
         IGeocoder geocoder,
         IValidator<CoordinatesCreateRequest> coordinatesValidator, 
-        IValidator<PollutedLocationCreateRequest> pollutedLocationValidator)
+        IValidator<PollutedLocationCreateRequest> pollutedLocationValidator,
+        IValidator<PollutedLocationUpdateRequest> pollutedLocationUpdateValidator)
     {
         _repository = repository;
         _mapper = mapper;
         _geocoder = geocoder;
         _coordinatesValidator = coordinatesValidator;
         _pollutedLocationValidator = pollutedLocationValidator;
+        _pollutedLocationUpdateValidator = pollutedLocationUpdateValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -131,4 +134,35 @@ public class PollutedLocationController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
+
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPut("Update")]
+    public async Task<ActionResult<PollutedLocationResponse>> Update(PollutedLocationUpdateRequest pollutedLocationUpdateRequest)
+    {
+        var validatorResponse = await _pollutedLocationUpdateValidator.ValidateAsync(pollutedLocationUpdateRequest);
+        if (!validatorResponse.IsValid) return BadRequest(validatorResponse.Errors.Select(e => e.ErrorMessage).ToList());
+
+        var existingLocation = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationUpdateRequest.Id);
+        if (existingLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+       
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(pollutedLocationUpdateRequest, existingLocation);
+        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.UpdateAsync(mappedLocation);
+
+            return Ok(mappedLocation);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }
+
+
+
+
