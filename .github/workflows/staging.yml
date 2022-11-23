@@ -81,3 +81,4 @@ jobs:
             ASPNETCORE_ENVIRONMENT=Staging
           secrets: |
             ConnectionStrings__ApsitvarkomDatabase=ApsitvarkomDatabaseConnectionString:latest
+            Geocoding__ApiKey=BeGeocodingApiKey:latest
