@@ -33,6 +33,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
+    .AddAutoMapper(typeof(TidyingEventProfile))
     .AddValidatorsFromAssemblyContaining<CoordinatesCreateRequestValidator>()
     .AddFluentValidationRulesToSwagger();
 
