@@ -3,7 +3,7 @@
 namespace Apsitvarkom.DataAccess;
 
 /// <summary>
-/// Responsible for initializing fake data to databases
+/// Responsible for initializing fake data to databases.
 /// </summary>
 public static class DbInitializer
 {

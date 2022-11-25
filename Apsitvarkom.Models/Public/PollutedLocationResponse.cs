@@ -18,6 +18,8 @@ public class PollutedLocationResponse
     public DateTime Spotted { get; init; }
 
     public string? Notes { get; set; }
+
+    public List<TidyingEvent> Events { get; set; } = new();
 }
 
 public class PollutedLocationResponseValidator : AbstractValidator<PollutedLocationResponse>
@@ -28,5 +30,6 @@ public class PollutedLocationResponseValidator : AbstractValidator<PollutedLocat
 
         RuleFor(l => l.Radius).GreaterThanOrEqualTo(1);
         RuleFor(l => l.Progress).InclusiveBetween(0, 100);
+        // TODO: when TidyingEventResponseValidator is created, add it here.
     }
 }
