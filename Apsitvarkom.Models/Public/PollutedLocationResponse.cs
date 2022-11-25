@@ -30,6 +30,6 @@ public class PollutedLocationResponseValidator : AbstractValidator<PollutedLocat
 
         RuleFor(l => l.Radius).GreaterThanOrEqualTo(1);
         RuleFor(l => l.Progress).InclusiveBetween(0, 100);
-        // TODO: when TidyingEventResponseValidator is created, add it here.
+        // TODO: when TidyingEventResponseValidator is created, set it here and add validation tests.
     }
 }

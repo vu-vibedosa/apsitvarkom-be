@@ -22,7 +22,7 @@ public class PollutedLocationControllerTests
     {
         new()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
             Location =
             {
                 Title = "Loc1",
@@ -36,7 +36,23 @@ public class PollutedLocationControllerTests
             Severity = PollutedLocation.SeverityLevel.Moderate,
             Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
             Progress = 42,
-            Notes = "Lorem ipsum"
+            Notes = "Lorem ipsum",
+            Events = new List<TidyingEvent>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
+                    StartTime = DateTime.Parse("2023-01-01T00:11:22Z"),
+                    Notes = "So many fireworks leftovers..."
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
+                    StartTime = DateTime.Parse("2022-12-23T10:11:12Z"),
+                },
+            }
         },
         new()
         {
@@ -54,7 +70,8 @@ public class PollutedLocationControllerTests
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = DateTime.Parse("2023-11-23T21:12:14Z"),
             Progress = 11,
-            Notes = "11111"
+            Notes = "11111",
+            Events = new List<TidyingEvent>()
         }
     };
 
@@ -124,6 +141,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+                Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
             });
         }
     }
@@ -170,6 +188,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+                Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
             });
         }
     }
@@ -235,6 +254,7 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
         });
     }
 
@@ -433,6 +453,7 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
         });
     }
 

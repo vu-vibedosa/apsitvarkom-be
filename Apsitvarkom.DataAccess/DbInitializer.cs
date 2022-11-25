@@ -10,11 +10,11 @@ public static class DbInitializer
     public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
     public static readonly Lazy<TidyingEvent[]> FakeTidyingEvents = new(InitializeFakeTidyingEventsArray);
 
-    public static Task InitializePollutedLocations(IPollutedLocationContext context)
+    public static async Task<int> InitializePollutedLocations(IPollutedLocationContext context)
     {
         context.PollutedLocations.AddRange(FakePollutedLocations.Value);
         context.TidyingEvents.AddRange(FakeTidyingEvents.Value);
-        return context.Instance.SaveChangesAsync();
+        return await context.Instance.SaveChangesAsync();
     }
 
     private static PollutedLocation[] InitializeFakePollutedLocationsArray()
@@ -37,7 +37,8 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Moderate,
                 Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
                 Progress = 41,
-                Notes = "Prisoners broke a window."
+                Notes = "Prisoners broke a window.",
+                Events = new List<TidyingEvent>()
             },
             new()
             {
@@ -55,7 +56,17 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
                 Progress = 13,
-                Notes = "A lot of cigarettes waste on the pavement."
+                Notes = "A lot of cigarettes waste on the pavement.",
+                Events = new List<TidyingEvent>
+                {
+                    new()
+                    {
+                        Id = new Guid("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
+                        PollutedLocationId = new Guid("461911ac-ff85-41f8-860a-be0240f0653f"),
+                        StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
+                        Notes = "Let's patch this place up."
+                    }
+                }
             },
             new()
             {
@@ -73,6 +84,7 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.High,
                 Spotted = DateTime.Parse("2023-03-12T23:41:21Z").ToUniversalTime(),
                 Progress = 80,
+                Events = new List<TidyingEvent>()
             },
             new()
             {
@@ -90,7 +102,17 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2023-11-11T11:11:11Z").ToUniversalTime(),
                 Progress = 11,
-                Notes = "Apsitvarkom to the moooooon"
+                Notes = "Apsitvarkom to the moooooon",
+                Events = new List<TidyingEvent>
+                {
+                    new()
+                    {
+                        Id = new Guid("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
+                        PollutedLocationId = new Guid("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
+                        StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
+                        Notes = "Bring your own trash-bags."
+                    },
+                }
             },
             new()
             {
@@ -108,7 +130,23 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2023-07-11T02:13:14Z").ToUniversalTime(),
                 Progress = 0,
-                Notes = "After the celebration of the latest Euroleague trophy, Zalgiris fans have left the grass trashy."
+                Notes = "After the celebration of the latest Euroleague trophy, Zalgiris fans have left the grass trashy.",
+                Events = new List<TidyingEvent>
+                {
+                    new()
+                    {
+                        Id = new Guid("8e8bf1df-e732-409e-976a-d61806ee7c19"),
+                        PollutedLocationId = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
+                        StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
+                    },
+                    new()
+                    {
+                        Id = new Guid("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
+                        PollutedLocationId = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
+                        StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
+                        Notes = "Apsitvarkom!:)"
+                    },
+                }
             },
             new()
             {
@@ -126,7 +164,8 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.High,
                 Spotted = DateTime.Parse("2023-01-01T04:00:01Z").ToUniversalTime(),
                 Progress = 0,
-                Notes = "The Vilnius Castle has slipped off the mountain."
+                Notes = "The Vilnius Castle has slipped off the mountain.",
+                Events = new List<TidyingEvent>()
             },
             new()
             {
@@ -144,7 +183,8 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2022-06-08T01:12:23Z").ToUniversalTime(),
                 Progress = 80,
-                Notes = "Couldn't manage to grab all the beer cans I found on the beach."
+                Notes = "Couldn't manage to grab all the beer cans I found on the beach.",
+                Events = new List<TidyingEvent>()
             },
             new()
             {
@@ -162,7 +202,17 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2023-04-01T13:14:15Z").ToUniversalTime(),
                 Progress = 0,
-                Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city."
+                Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city.",
+                Events = new List<TidyingEvent>()
+                {
+                    new()
+                    {
+                        Id = new Guid("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
+                        PollutedLocationId = new Guid("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
+                        StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
+                        Notes = "Let's finish it for once and for all."
+                    },
+                }
             },
             new()
             {
@@ -180,7 +230,8 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Moderate,
                 Spotted = DateTime.Parse("2022-06-20T11:22:33Z").ToUniversalTime(),
                 Progress = 20,
-                Notes = "The fans made a big mess after the game. Apsitvarkom?"
+                Notes = "The fans made a big mess after the game. Apsitvarkom?",
+                Events = new List<TidyingEvent>()
             },
         };
     }
@@ -192,27 +243,27 @@ public static class DbInitializer
             new()
             {
                 Id = new Guid("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
-                PollutedLocationId = FakePollutedLocations.Value[4].Id,
+                PollutedLocationId = FakePollutedLocations.Value[1].Id,
                 StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
                 Notes = "Let's patch this place up."
             },
             new()
             {
                 Id = new Guid("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
-                PollutedLocationId = FakePollutedLocations.Value[4].Id,
+                PollutedLocationId = FakePollutedLocations.Value[3].Id,
                 StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
                 Notes = "Bring your own trash-bags."
             },
             new()
             {
                 Id = new Guid("8e8bf1df-e732-409e-976a-d61806ee7c19"),
-                PollutedLocationId = FakePollutedLocations.Value[0].Id,
+                PollutedLocationId = FakePollutedLocations.Value[4].Id,
                 StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
             },
             new()
             {
                 Id = new Guid("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
-                PollutedLocationId = FakePollutedLocations.Value[2].Id,
+                PollutedLocationId = FakePollutedLocations.Value[4].Id,
                 StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
                 Notes = "Apsitvarkom!:)"
             },
