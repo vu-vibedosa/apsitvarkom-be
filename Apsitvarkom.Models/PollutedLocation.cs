@@ -32,4 +32,7 @@ public class PollutedLocation
 
     /// <summary>Geographic location information about the record.</summary>
     public Location Location { get; set; } = new();
+
+    /// <summary>Collection of events linked to the location.</summary>
+    public List<TidyingEvent> Events { get; set; } = new();
 }

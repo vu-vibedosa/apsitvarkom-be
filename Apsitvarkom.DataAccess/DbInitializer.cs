@@ -8,10 +8,12 @@ namespace Apsitvarkom.DataAccess;
 public static class DbInitializer
 {
     public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
+    public static readonly Lazy<TidyingEvent[]> FakeTidyingEvents = new(InitializeFakeTidyingEventsArray);
 
     public static Task InitializePollutedLocations(IPollutedLocationContext context)
     {
         context.PollutedLocations.AddRange(FakePollutedLocations.Value);
+        context.TidyingEvents.AddRange(FakeTidyingEvents.Value);
         return context.Instance.SaveChangesAsync();
     }
 
@@ -179,6 +181,47 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2022-06-20T11:22:33Z").ToUniversalTime(),
                 Progress = 20,
                 Notes = "The fans made a big mess after the game. Apsitvarkom?"
+            },
+        };
+    }
+
+    private static TidyingEvent[] InitializeFakeTidyingEventsArray()
+    {
+        return new TidyingEvent[]
+        {
+            new()
+            {
+                Id = new Guid("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
+                PollutedLocationId = FakePollutedLocations.Value[4].Id,
+                StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
+                Notes = "Let's patch this place up."
+            },
+            new()
+            {
+                Id = new Guid("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
+                PollutedLocationId = FakePollutedLocations.Value[4].Id,
+                StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
+                Notes = "Bring your own trash-bags."
+            },
+            new()
+            {
+                Id = new Guid("8e8bf1df-e732-409e-976a-d61806ee7c19"),
+                PollutedLocationId = FakePollutedLocations.Value[0].Id,
+                StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
+            },
+            new()
+            {
+                Id = new Guid("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
+                PollutedLocationId = FakePollutedLocations.Value[2].Id,
+                StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
+                Notes = "Apsitvarkom!:)"
+            },
+            new()
+            {
+                Id = new Guid("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
+                PollutedLocationId = FakePollutedLocations.Value[7].Id,
+                StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
+                Notes = "Let's finish it for once and for all."
             },
         };
     }

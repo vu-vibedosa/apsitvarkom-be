@@ -33,11 +33,11 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     }
 
     /// <inheritdoc />
-    public Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    public async Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
-        return _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
+        return await _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
     }
-
+    
     /// <inheritdoc />
     public async Task InsertAsync(PollutedLocation modelToInsert)
     {
