@@ -54,7 +54,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_GetByPropertyTest()
     {
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(4).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
