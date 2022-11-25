@@ -23,7 +23,7 @@ public static class DbInitializer
         {
             new()
             {
-                Id = new Guid("02f16033-232b-42e4-bfe7-1f9a223a1446"),
+                Id = Guid.Parse("02f16033-232b-42e4-bfe7-1f9a223a1446"),
                 Location =
                 {
                     Title = "Lukiškių kalėjimas",
@@ -42,7 +42,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("461911ac-ff85-41f8-860a-be0240f0653f"),
+                Id = Guid.Parse("461911ac-ff85-41f8-860a-be0240f0653f"),
                 Location =
                 {
                     Title = "VU, matematikos ir informatikos fakultetas",
@@ -61,8 +61,8 @@ public static class DbInitializer
                 {
                     new()
                     {
-                        Id = new Guid("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
-                        PollutedLocationId = new Guid("461911ac-ff85-41f8-860a-be0240f0653f"),
+                        Id = Guid.Parse("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
+                        PollutedLocationId = Guid.Parse("461911ac-ff85-41f8-860a-be0240f0653f"),
                         StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
                         Notes = "Let's patch this place up."
                     }
@@ -70,7 +70,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("b2ed322d-331b-4f28-9dbf-4a71dce7504e"),
+                Id = Guid.Parse("b2ed322d-331b-4f28-9dbf-4a71dce7504e"),
                 Location =
                 {
                     Title = "Didlaukio g. 47",
@@ -88,7 +88,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
+                Id = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                 Location =
                 {
                     Title = "",
@@ -107,8 +107,8 @@ public static class DbInitializer
                 {
                     new()
                     {
-                        Id = new Guid("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
-                        PollutedLocationId = new Guid("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
+                        Id = Guid.Parse("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
+                        PollutedLocationId = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                         StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
                         Notes = "Bring your own trash-bags."
                     },
@@ -116,7 +116,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
+                Id = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                 Location =
                 {
                     Title = "Žalgirio arena",
@@ -135,14 +135,14 @@ public static class DbInitializer
                 {
                     new()
                     {
-                        Id = new Guid("8e8bf1df-e732-409e-976a-d61806ee7c19"),
-                        PollutedLocationId = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
+                        Id = Guid.Parse("8e8bf1df-e732-409e-976a-d61806ee7c19"),
+                        PollutedLocationId = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                         StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
                     },
                     new()
                     {
-                        Id = new Guid("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
-                        PollutedLocationId = new Guid("65f52593-8507-4474-a522-188a2dc53208"),
+                        Id = Guid.Parse("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
+                        PollutedLocationId = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                         StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
                         Notes = "Apsitvarkom!:)"
                     },
@@ -150,7 +150,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("d37c6b91-6363-44ce-99a8-2f15287cc5ab"),
+                Id = Guid.Parse("d37c6b91-6363-44ce-99a8-2f15287cc5ab"),
                 Location =
                 {
                     Title = "Gedimino pilis",
@@ -169,7 +169,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("151757e9-fce3-4bb3-93db-08b93d71245e"),
+                Id = Guid.Parse("151757e9-fce3-4bb3-93db-08b93d71245e"),
                 Location =
                 {
                     Title = "Panevėžio paplūdimys",
@@ -188,7 +188,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
+                Id = Guid.Parse("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
                 Location =
                 {
                     Title = "Klaipėdos kruizinių laivų terminalas",
@@ -207,8 +207,8 @@ public static class DbInitializer
                 {
                     new()
                     {
-                        Id = new Guid("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
-                        PollutedLocationId = new Guid("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
+                        Id = Guid.Parse("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
+                        PollutedLocationId = Guid.Parse("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
                         StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
                         Notes = "Let's finish it for once and for all."
                     },
@@ -216,7 +216,7 @@ public static class DbInitializer
             },
             new()
             {
-                Id = new Guid("dc1513da-a60b-49e5-adba-d0aeed77f125"),
+                Id = Guid.Parse("dc1513da-a60b-49e5-adba-d0aeed77f125"),
                 Location =
                 {
                     Title = "Mažeikių miesto centrinis stadionas",
@@ -242,34 +242,34 @@ public static class DbInitializer
         {
             new()
             {
-                Id = new Guid("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
+                Id = Guid.Parse("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
                 PollutedLocationId = FakePollutedLocations.Value[1].Id,
                 StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
                 Notes = "Let's patch this place up."
             },
             new()
             {
-                Id = new Guid("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
+                Id = Guid.Parse("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
                 PollutedLocationId = FakePollutedLocations.Value[3].Id,
                 StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
                 Notes = "Bring your own trash-bags."
             },
             new()
             {
-                Id = new Guid("8e8bf1df-e732-409e-976a-d61806ee7c19"),
+                Id = Guid.Parse("8e8bf1df-e732-409e-976a-d61806ee7c19"),
                 PollutedLocationId = FakePollutedLocations.Value[4].Id,
                 StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
             },
             new()
             {
-                Id = new Guid("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
+                Id = Guid.Parse("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
                 PollutedLocationId = FakePollutedLocations.Value[4].Id,
                 StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
                 Notes = "Apsitvarkom!:)"
             },
             new()
             {
-                Id = new Guid("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
+                Id = Guid.Parse("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
                 PollutedLocationId = FakePollutedLocations.Value[7].Id,
                 StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
                 Notes = "Let's finish it for once and for all."
