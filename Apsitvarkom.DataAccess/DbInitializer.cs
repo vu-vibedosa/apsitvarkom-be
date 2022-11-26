@@ -13,7 +13,6 @@ public static class DbInitializer
     public static async Task<int> InitializePollutedLocations(IPollutedLocationContext context)
     {
         context.PollutedLocations.AddRange(FakePollutedLocations.Value);
-        context.TidyingEvents.AddRange(FakeTidyingEvents.Value);
         return await context.Instance.SaveChangesAsync();
     }
 
@@ -72,7 +71,7 @@ public static class DbInitializer
                     {
                         Latitude = 54.728796,
                         Longitude = 25.264199
-                    },
+                    }
                 },
                 Radius = 21,
                 Severity = PollutedLocation.SeverityLevel.High,
@@ -90,7 +89,7 @@ public static class DbInitializer
                     {
                         Latitude = 54.878315,
                         Longitude = 23.883123
-                    },
+                    }
                 },
                 Radius = 11,
                 Severity = PollutedLocation.SeverityLevel.Low,
@@ -112,7 +111,7 @@ public static class DbInitializer
                     {
                         Latitude = 54.891692,
                         Longitude = 23.914362
-                    },
+                    }
                 },
                 Radius = 150,
                 Severity = PollutedLocation.SeverityLevel.Low,
@@ -122,7 +121,7 @@ public static class DbInitializer
                 Events = new List<TidyingEvent>
                 {
                     FakeTidyingEvents.Value[2],
-                    FakeTidyingEvents.Value[3],
+                    FakeTidyingEvents.Value[3]
                 }
             },
             new()
@@ -135,7 +134,7 @@ public static class DbInitializer
                     {
                         Latitude = 54.686762,
                         Longitude = 25.291317
-                    },
+                    }
                 },
                 Radius = 10,
                 Severity = PollutedLocation.SeverityLevel.High,
@@ -154,7 +153,7 @@ public static class DbInitializer
                     {
                         Latitude = 55.730551,
                         Longitude = 24.394250
-                    },
+                    }
                 },
                 Radius = 50,
                 Severity = PollutedLocation.SeverityLevel.Low,
@@ -173,14 +172,14 @@ public static class DbInitializer
                     {
                         Latitude = 55.705656,
                         Longitude = 21.122825
-                    },
+                    }
                 },
                 Radius = 200,
                 Severity = PollutedLocation.SeverityLevel.Low,
                 Spotted = DateTime.Parse("2023-04-01T13:14:15Z").ToUniversalTime(),
                 Progress = 0,
                 Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city.",
-                Events = new List<TidyingEvent>()
+                Events = new List<TidyingEvent>
                 {
                     FakeTidyingEvents.Value[4]
                 }
@@ -195,7 +194,7 @@ public static class DbInitializer
                     {
                         Latitude = 56.293939,
                         Longitude = 22.340248
-                    },
+                    }
                 },
                 Radius = 50,
                 Severity = PollutedLocation.SeverityLevel.Moderate,
@@ -203,7 +202,7 @@ public static class DbInitializer
                 Progress = 20,
                 Notes = "The fans made a big mess after the game. Apsitvarkom?",
                 Events = new List<TidyingEvent>()
-            },
+            }
         };
     }
 
@@ -214,37 +213,32 @@ public static class DbInitializer
             new()
             {
                 Id = Guid.Parse("3621f801-00c6-48a6-9dd4-15a0f2fdb7bb"),
-                PollutedLocationId = Guid.Parse("461911ac-ff85-41f8-860a-be0240f0653f"),
                 StartTime = new DateTime(2022, 12, 23, 23, 00, 00).ToUniversalTime(),
                 Notes = "Let's patch this place up."
             },
             new()
             {
                 Id = Guid.Parse("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
-                PollutedLocationId = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                 StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
                 Notes = "Bring your own trash-bags."
             },
             new()
             {
                 Id = Guid.Parse("8e8bf1df-e732-409e-976a-d61806ee7c19"),
-                PollutedLocationId = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
-                StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime(),
+                StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime()
             },
             new()
             {
                 Id = Guid.Parse("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
-                PollutedLocationId = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                 StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
                 Notes = "Apsitvarkom!:)"
             },
             new()
             {
                 Id = Guid.Parse("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
-                PollutedLocationId = Guid.Parse("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
                 StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
                 Notes = "Let's finish it once and for all."
-            },
+            }
         };
     }
 }

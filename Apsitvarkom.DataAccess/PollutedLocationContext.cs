@@ -13,13 +13,11 @@ public interface IPollutedLocationContext
 public class PollutedLocationContext : DbContext, IPollutedLocationContext
 {
     public DbSet<PollutedLocation> PollutedLocations { get; private set; } = null!;
-
     public DbSet<TidyingEvent> TidyingEvents { get; private set; } = null!;
-
     public DbContext Instance => this;
 
     public PollutedLocationContext(DbContextOptions<PollutedLocationContext> options) : base(options) { }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Location and coordinates must be specified as owned entity types

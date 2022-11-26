@@ -28,31 +28,16 @@ public class PollutedLocationControllerTests
                 Title = "Loc1",
                 Coordinates =
                 {
-                  Longitude = 54,
-                  Latitude = 23
-                },
+                    Longitude = 54,
+                    Latitude = 23
+                }
             },
             Radius = 15,
             Severity = PollutedLocation.SeverityLevel.Moderate,
             Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
             Progress = 42,
             Notes = "Lorem ipsum",
-            Events = new List<TidyingEvent>
-            {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
-                    StartTime = DateTime.Parse("2023-01-01T00:11:22Z"),
-                    Notes = "So many fireworks leftovers..."
-                },
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
-                    StartTime = DateTime.Parse("2022-12-23T10:11:12Z"),
-                },
-            }
+            Events = new List<TidyingEvent>()
         },
         new()
         {
@@ -64,7 +49,7 @@ public class PollutedLocationControllerTests
                 {
                     Latitude = 11.11111,
                     Longitude = 111.11111
-                },
+                }
             },
             Radius = 11,
             Severity = PollutedLocation.SeverityLevel.Low,
@@ -91,7 +76,7 @@ public class PollutedLocationControllerTests
             _repository.Object,
             _mapper,
             _geocoder.Object,
-            new CoordinatesCreateRequestValidator(), 
+            new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
             new PollutedLocationIdentifyRequestValidator()
         );
@@ -304,16 +289,16 @@ public class PollutedLocationControllerTests
         var location = PollutedLocations.First();
         var createRequest = new PollutedLocationCreateRequest
         {
-            Location = new LocationCreateRequest()
+            Location = new LocationCreateRequest
             {
-                Coordinates = new CoordinatesCreateRequest()
+                Coordinates = new CoordinatesCreateRequest
                 {
                     Latitude = location.Location.Coordinates.Latitude,
                     Longitude = location.Location.Coordinates.Longitude
-                },
+                }
             },
             Radius = location.Radius,
-            Severity = location.Severity,
+            Severity = location.Severity
         };
 
         var titleResult = "geocoding";
@@ -352,16 +337,16 @@ public class PollutedLocationControllerTests
         var location = PollutedLocations.First();
         var createRequest = new PollutedLocationCreateRequest
         {
-            Location = new LocationCreateRequest()
+            Location = new LocationCreateRequest
             {
-                Coordinates = new CoordinatesCreateRequest()
+                Coordinates = new CoordinatesCreateRequest
                 {
                     Latitude = location.Location.Coordinates.Latitude,
                     Longitude = location.Location.Coordinates.Longitude
-                },
+                }
             },
             Radius = location.Radius,
-            Severity = location.Severity,
+            Severity = location.Severity
         };
 
         _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
@@ -419,7 +404,7 @@ public class PollutedLocationControllerTests
     public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
     {
         var location = PollutedLocations.First();
-        var createRequest = new PollutedLocationIdentifyRequest()
+        var createRequest = new PollutedLocationIdentifyRequest
         {
             Id = location.Id
         };

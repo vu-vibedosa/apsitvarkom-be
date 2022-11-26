@@ -24,21 +24,21 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_GetAllTest()
     {
-        var instanceGuids = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
+        var objectIds = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
         var response = (await dbRepository.GetAllAsync()).ToArray();
 
-        Assert.That(response.Length, Is.EqualTo(instanceGuids.Length));
-        Assert.That(response.Select(x => x.Id), Is.EqualTo(instanceGuids));
+        Assert.That(response.Length, Is.EqualTo(objectIds.Length));
+        Assert.That(response.Select(x => x.Id), Is.EqualTo(objectIds));
     }
 
     [Test]
     public async Task PollutedLocation_GetAllSortedTest()
     {
-        var instanceGuids = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
+        var objectIds = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -46,9 +46,9 @@ public class PollutedLocationContextDatabaseTests
         var coordinates = new Coordinates { Latitude = 12.123, Longitude = -12.123 };
         var response = (await dbRepository.GetAllAsync(coordinates)).ToArray();
 
-        Assert.That(response.Length, Is.EqualTo(instanceGuids.Length));
-        Assert.That(response.Select(x => x.Id), Is.Not.EqualTo(instanceGuids));
-        Assert.That(response.Select(x => x.Id), Is.EquivalentTo(instanceGuids));
+        Assert.That(response.Length, Is.EqualTo(objectIds.Length));
+        Assert.That(response.Select(x => x.Id), Is.Not.EqualTo(objectIds));
+        Assert.That(response.Select(x => x.Id), Is.EquivalentTo(objectIds));
     }
 
     [Test]
@@ -123,15 +123,15 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task TidyingEvent_GetAllTest()
     {
-        var instanceGuids = DbInitializer.FakeTidyingEvents.Value.Select(location => location.Id).ToArray();
+        var objectIds = DbInitializer.FakeTidyingEvents.Value.Select(tidyingEvent => tidyingEvent.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new TidyingEventDatabaseRepository(context);
         var response = (await dbRepository.GetAllAsync()).ToArray();
 
-        Assert.That(response.Length, Is.EqualTo(instanceGuids.Length));
-        Assert.That(response.Select(x => x.Id), Is.EqualTo(instanceGuids));
+        Assert.That(response.Length, Is.EqualTo(objectIds.Length));
+        Assert.That(response.Select(x => x.Id), Is.EqualTo(objectIds));
     }
 
     [Test]

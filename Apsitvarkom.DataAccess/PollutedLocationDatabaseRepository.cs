@@ -12,7 +12,7 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     private readonly IPollutedLocationContext _context;
 
     /// <summary>Constructor for the reader.</summary>
-    /// <param name="context">Database context for <see cref="PollutedLocation"/>.</param>
+    /// <param name="context">Database context for <see cref="PollutedLocation" />.</param>
     public PollutedLocationDatabaseRepository(IPollutedLocationContext context)
     {
         _context = context;
@@ -37,7 +37,7 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     {
         return await _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
     }
-    
+
     /// <inheritdoc />
     public async Task InsertAsync(PollutedLocation modelToInsert)
     {

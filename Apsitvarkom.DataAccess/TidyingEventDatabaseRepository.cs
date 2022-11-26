@@ -12,7 +12,7 @@ public class TidyingEventDatabaseRepository : IRepository<TidyingEvent>
     private readonly IPollutedLocationContext _context;
 
     /// <summary>Constructor for the reader.</summary>
-    /// <param name="context">Database context for <see cref="TidyingEvent"/>.</param>
+    /// <param name="context">Database context for <see cref="TidyingEvent" />.</param>
     public TidyingEventDatabaseRepository(IPollutedLocationContext context)
     {
         _context = context;

@@ -1,8 +1,8 @@
 ﻿using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
-using Moq;
-using MockQueryable.Moq;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
+using Moq;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
@@ -40,10 +40,10 @@ public class PollutedLocationDatabaseRepositoryTests
     public async Task GetAllAsync_DbContextHasOneInstance_SingleInstanceReturnedWithCorrectProperties()
     {
         var pollutedLocationId = Guid.NewGuid();
-        var pollutedLocationInstance = new PollutedLocation 
-        { 
+        var pollutedLocationInstance = new PollutedLocation
+        {
             Id = pollutedLocationId,
-            Location = 
+            Location =
             {
                 Title = "title",
                 Coordinates =
@@ -51,22 +51,13 @@ public class PollutedLocationDatabaseRepositoryTests
                     Latitude = 47.12,
                     Longitude = -41.1251
                 }
-            }, 
-            Radius = 35, 
-            Severity = PollutedLocation.SeverityLevel.Moderate, 
-            Spotted = new DateTime(2022, 11, 12, 19, 23, 30), 
-            Notes = "notes", 
+            },
+            Radius = 35,
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+            Spotted = new DateTime(2022, 11, 12, 19, 23, 30),
+            Notes = "notes",
             Progress = 67,
-            Events = new List<TidyingEvent>
-            {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    PollutedLocationId = pollutedLocationId,
-                    Notes = "ho-ho-ho",
-                    StartTime = new DateTime(2022, 12, 23, 20, 00, 00),
-                }
-            }
+            Events = new List<TidyingEvent>()
         };
         var dbRows = new List<PollutedLocation> { pollutedLocationInstance };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
@@ -89,7 +80,7 @@ public class PollutedLocationDatabaseRepositoryTests
             Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted));
             Assert.That(instance.Progress, Is.EqualTo(pollutedLocationInstance.Progress));
             Assert.That(instance.Notes, Is.EqualTo(pollutedLocationInstance.Notes));
-            Assert.That(instance.Events, Is.EqualTo(pollutedLocationInstance.Events));
+            Assert.That(instance.Events, Is.Empty);
         });
     }
 

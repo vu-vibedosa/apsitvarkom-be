@@ -50,7 +50,7 @@ public class PollutedLocationMappingTests
             Radius = 4,
             Location = new LocationCreateRequest
             {
-                Coordinates = new CoordinatesCreateRequest()
+                Coordinates = new CoordinatesCreateRequest
                 {
                     Latitude = -78.948237,
                     Longitude = 35.929673
@@ -76,10 +76,6 @@ public class PollutedLocationMappingTests
     {
         var pollutedLocationId = Guid.NewGuid();
         var spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime();
-        var eventId1 = Guid.NewGuid();
-        var eventStartTime1 = new DateTime(2022, 10, 11, 12, 13, 14).ToUniversalTime();
-        var eventId2 = Guid.NewGuid();
-        var eventStartTime2 = new DateTime(2022, 11, 12, 13, 14, 15).ToUniversalTime();
 
         var businessLogicObject = new PollutedLocation
         {
@@ -91,7 +87,7 @@ public class PollutedLocationMappingTests
                 {
                     Longitude = -78.948237,
                     Latitude = 35.929673
-                },
+                }
             },
             Radius = 10,
             Severity = PollutedLocation.SeverityLevel.Low,
@@ -99,21 +95,6 @@ public class PollutedLocationMappingTests
             Progress = 25,
             Notes = "Hello world",
             Events = new List<TidyingEvent>()
-            {
-                new()
-                {
-                    PollutedLocationId = pollutedLocationId,
-                    Id = eventId1,
-                    Notes = "Hello NPC",
-                    StartTime = eventStartTime1,
-                },
-                new()
-                {
-                    PollutedLocationId = pollutedLocationId,
-                    Id = eventId2,
-                    StartTime = eventStartTime2,
-                }
-            }
         };
 
         var pollutedLocation = _mapper.Map<PollutedLocationResponse>(businessLogicObject);

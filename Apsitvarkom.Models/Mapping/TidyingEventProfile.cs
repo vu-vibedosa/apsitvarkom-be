@@ -1,5 +1,4 @@
-﻿using Apsitvarkom.Models.Public;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace Apsitvarkom.Models.Mapping;
 
