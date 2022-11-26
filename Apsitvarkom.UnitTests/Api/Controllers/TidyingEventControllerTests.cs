@@ -99,9 +99,24 @@ public class TidyingEventControllerTests
             });
         }
     }
+
+    [Test]
+    public async Task GetAll_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        _repository.Setup(r => r.GetAllAsync())
+            .Throws<Exception>();
+
+        var actionResult = await _controller.GetAll();
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+    }
     #endregion
 
-        #region GetById tests
+    #region GetById tests
     [Test]
     public async Task GetById_RepositoryReturnsTidyingEvent_OKActionResultReturned()
     {
@@ -173,6 +188,26 @@ public class TidyingEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task GetById_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<TidyingEvent, bool>>>()))
+            .Throws<Exception>();
+
+        var actionResult = await _controller.GetById(identifyRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
     #endregion
 }

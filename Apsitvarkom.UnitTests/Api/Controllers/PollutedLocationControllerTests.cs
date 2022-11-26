@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Apsitvarkom.Api.Controllers;
+﻿using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
@@ -8,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Linq.Expressions;
 
 namespace Apsitvarkom.UnitTests.Api.Controllers;
 
@@ -154,6 +154,21 @@ public class PollutedLocationControllerTests
             });
         }
     }
+
+    [Test]
+    public async Task GetAll_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        _repository.Setup(r => r.GetAllAsync())
+            .Throws<Exception>();
+
+        var actionResult = await _controller.GetAll();
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+    }
     #endregion
 
     #region GetAllOrderedInRelationTo tests
@@ -233,6 +248,26 @@ public class PollutedLocationControllerTests
         var errorList = result.Value as List<string>;
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList.Count, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task GetAllOrderedInRelationTo_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        var coordinatesRequest = new CoordinatesCreateRequest
+        {
+            Latitude = 64.12312,
+            Longitude = -12.4123
+        };
+        _repository.Setup(r => r.GetAllAsync(It.IsAny<Coordinates>()))
+            .Throws<Exception>();
+
+        var actionResult = await _controller.GetAll(coordinatesRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
     #endregion
 
@@ -320,6 +355,26 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task GetById_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .Throws<Exception>();
+
+        var actionResult = await _controller.GetById(identifyRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
     #endregion
 
@@ -438,6 +493,43 @@ public class PollutedLocationControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
+
+    [Test]
+    public async Task Create_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        var location = PollutedLocations.First();
+        var createRequest = new PollutedLocationCreateRequest
+        {
+            Location = new LocationCreateRequest
+            {
+                Coordinates = new CoordinatesCreateRequest
+                {
+                    Latitude = location.Location.Coordinates.Latitude,
+                    Longitude = location.Location.Coordinates.Longitude
+                }
+            },
+            Radius = location.Radius,
+            Severity = location.Severity
+        };
+
+        var titleResult = "geocoding";
+        _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
+            Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
+            Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
+        ))).ReturnsAsync(titleResult);
+
+        _repository.Setup(r => r.InsertAsync(It.IsAny<PollutedLocation>())).Throws<Exception>();
+
+        var actionResult = await _controller.Create(createRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
+        _geocoder.Verify(g => g.ReverseGeocodeAsync(It.IsAny<Coordinates>()), Times.Once);
+    }
     #endregion
 
     #region Delete tests
@@ -445,14 +537,14 @@ public class PollutedLocationControllerTests
     public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
     {
         var location = PollutedLocations.First();
-        var createRequest = new ObjectIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = location.Id
         };
 
         _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(location);
 
-        var actionResult = await _controller.Delete(createRequest);
+        var actionResult = await _controller.Delete(identifyRequest);
 
         _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Once);
         _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
@@ -529,6 +621,47 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Delete_RepositoryThrowsAcquiringPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Never);
+    }
+
+    [Test]
+    public async Task Delete_RepositoryThrowsDeletingPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(PollutedLocations.Last());
+        _repository.Setup(r => r.DeleteAsync(It.IsAny<PollutedLocation>())).Throws<Exception>();
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
     #endregion
 }
