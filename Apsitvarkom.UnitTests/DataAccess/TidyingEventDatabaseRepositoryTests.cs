@@ -146,6 +146,47 @@ public class TidyingEventDatabaseRepositoryTests
     }
     #endregion
 
+    #region GetByPropertyAsync tests
+    [Test]
+    public async Task ExistsByPropertyAsync_InstanceWithRequestedPropertyNotFound_FalseReturned()
+    {
+        var dbRows = new List<TidyingEvent>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
+        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Id == Guid.NewGuid());
+
+        Assert.That(instance, Is.False);
+    }
+
+    [Test]
+    public async Task ExistsByPropertyAsync_AtLeastOneInstanceWithPropertyFound_TrueReturned()
+    {
+        var notes = "123";
+        var dbRows = new List<TidyingEvent>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid(), Notes = notes },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
+        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Notes == notes);
+
+        Assert.That(instance, Is.True);
+    }
+    #endregion
+
     #region InsertAsync tests
     [Test]
     public async Task InsertAsync_OneInstanceInserted_InstanceFoundInDbSet()

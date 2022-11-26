@@ -536,47 +536,23 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
     {
-        var location = PollutedLocations.First();
         var identifyRequest = new ObjectIdentifyRequest
         {
-            Id = location.Id
+            Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(location);
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(true);
 
         var actionResult = await _controller.Delete(identifyRequest);
 
         _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Once);
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 
-        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
-        var result = actionResult.Result as OkObjectResult;
+        Assert.That(actionResult, Is.TypeOf<NoContentResult>());
+        var result = actionResult as NoContentResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-
-        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
-        var resultLocation = result.Value as PollutedLocationResponse;
-        Assert.That(resultLocation, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
-            Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
-            Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
-            Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
-            Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-            Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
-            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
-            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
-            for (var j = 0; j < resultLocation.Events.Count; ++j)
-            {
-                Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
-                Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
-                Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
-                Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
-            }
-        });
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
     }
 
     [Test]
@@ -587,16 +563,16 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
-            .ReturnsAsync((PollutedLocation?)null);
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .ReturnsAsync(false);
 
         var actionResult = await _controller.Delete(identifyRequest);
 
         _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Never);
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 
-        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
-        var result = actionResult.Result as NotFoundObjectResult;
+        Assert.That(actionResult, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult as NotFoundObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
@@ -615,8 +591,8 @@ public class PollutedLocationControllerTests
 
         _repository.Verify(r => r.DeleteAsync(It.IsAny<PollutedLocation>()), Times.Never);
 
-        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
-        var result = actionResult.Result as BadRequestObjectResult;
+        Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult as BadRequestObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
@@ -631,12 +607,12 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
 
         var actionResult = await _controller.Delete(identifyRequest);
 
-        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
-        var result = actionResult.Result as StatusCodeResult;
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
@@ -652,13 +628,13 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(PollutedLocations.Last());
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(true);
         _repository.Setup(r => r.DeleteAsync(It.IsAny<PollutedLocation>())).Throws<Exception>();
 
         var actionResult = await _controller.Delete(identifyRequest);
 
-        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
-        var result = actionResult.Result as StatusCodeResult;
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));

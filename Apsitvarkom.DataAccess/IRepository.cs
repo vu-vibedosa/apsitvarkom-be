@@ -16,6 +16,11 @@ public interface IRepository<T> where T: class
     /// <returns>Null if the instance was not found. Otherwise the acquired <see cref="T" /> instance.</returns>
     public Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> propertyCondition);
 
+    /// <summary>Checks if a single <see cref="T" /> record exists in the data source by condition.</summary>
+    /// <param name="propertyCondition">Condition for the requested record check.</param>
+    /// <returns>False if the instance was not found, true otherwise.</returns>
+    public Task<bool> ExistsByPropertyAsync(Expression<Func<T, bool>> propertyCondition);
+
     /// <summary>Inserts a single <see cref="T" /> record to the data source.</summary>
     /// <param name="modelToInsert">Model to be inserted into the repository.</param>
     /// <returns>The <see cref="Task"/> to insert the model.</returns>

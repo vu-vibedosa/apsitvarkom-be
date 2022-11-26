@@ -78,6 +78,20 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task PollutedLocation_ExistsByPropertyTest()
+    {
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(4).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        var response = await dbRepository.ExistsByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(response, Is.True);
+    }
+
+    [Test]
     public async Task PollutedLocation_InsertAsync_SamePrimaryKeys_Throws()
     {
         // Try to insert the same row that was inserted in [SetUp]
@@ -226,6 +240,20 @@ public class PollutedLocationContextDatabaseTests
             Assert.That(response.StartTime, Is.EqualTo(dbRow.StartTime));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
         });
+    }
+
+    [Test]
+    public async Task TidyingEvent_ExistsByPropertyTest()
+    {
+        var dbRow = DbInitializer.FakeTidyingEvents.Value.Skip(3).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new TidyingEventDatabaseRepository(context);
+
+        var response = await dbRepository.ExistsByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(response, Is.True);
     }
 
     [Test]

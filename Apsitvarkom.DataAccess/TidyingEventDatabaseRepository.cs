@@ -31,6 +31,12 @@ public class TidyingEventDatabaseRepository : IRepository<TidyingEvent>
     }
 
     /// <inheritdoc />
+    public async Task<bool> ExistsByPropertyAsync(Expression<Func<TidyingEvent, bool>> propertyCondition)
+    {
+        return await _context.TidyingEvents.AnyAsync(propertyCondition);
+    }
+
+    /// <inheritdoc />
     public async Task InsertAsync(TidyingEvent modelToInsert)
     {
         await _context.TidyingEvents.AddAsync(modelToInsert);
