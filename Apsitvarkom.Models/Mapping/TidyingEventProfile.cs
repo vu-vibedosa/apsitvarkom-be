@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Apsitvarkom.Models.Public;
+using AutoMapper;
 
 namespace Apsitvarkom.Models.Mapping;
 
@@ -21,6 +22,6 @@ public class TidyingEventProfile : Profile
 
     private void MapResponses()
     {
-
+        CreateMap<TidyingEvent, TidyingEventResponse>();
     }
 }

@@ -57,7 +57,16 @@ public class PollutedLocationDatabaseRepositoryTests
             Spotted = new DateTime(2022, 11, 12, 19, 23, 30),
             Notes = "notes",
             Progress = 67,
-            Events = new List<TidyingEvent>()
+            Events = new List<TidyingEvent>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = pollutedLocationId,
+                    Notes = "ho-ho-ho",
+                    StartTime = new DateTime(2022, 12, 23, 20, 00, 00),
+                }
+            }
         };
         var dbRows = new List<PollutedLocation> { pollutedLocationInstance };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
@@ -80,7 +89,7 @@ public class PollutedLocationDatabaseRepositoryTests
             Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted));
             Assert.That(instance.Progress, Is.EqualTo(pollutedLocationInstance.Progress));
             Assert.That(instance.Notes, Is.EqualTo(pollutedLocationInstance.Notes));
-            Assert.That(instance.Events, Is.Empty);
+            Assert.That(instance.Events, Is.EqualTo(pollutedLocationInstance.Events));
         });
     }
 

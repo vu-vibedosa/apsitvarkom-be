@@ -37,7 +37,22 @@ public class PollutedLocationControllerTests
             Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
             Progress = 42,
             Notes = "Lorem ipsum",
-            Events = new List<TidyingEvent>()
+            Events = new List<TidyingEvent>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
+                    StartTime = DateTime.Parse("2023-01-01T00:11:22Z"),
+                    Notes = "So many fireworks leftovers..."
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
+                    StartTime = DateTime.Parse("2022-12-23T10:11:12Z"),
+                },
+            }
         },
         new()
         {
@@ -66,6 +81,7 @@ public class PollutedLocationControllerTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
+            cfg.AddProfile<TidyingEventProfile>();
         });
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
@@ -126,6 +142,14 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+                Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+                for (var j = 0; j < resultLocation.Events.Count; ++j)
+                {
+                    Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
+                    Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
+                    Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
+                    Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
+                }
             });
         }
     }
@@ -172,6 +196,14 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+                Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+                for (var j = 0; j < resultLocation.Events.Count; ++j)
+                {
+                    Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
+                    Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
+                    Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
+                    Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
+                }
             });
         }
     }
@@ -237,6 +269,14 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+            for (var j = 0; j < resultLocation.Events.Count; ++j)
+            {
+                Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
+                Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
+                Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
+                Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
+            }
         });
     }
 
@@ -435,6 +475,14 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+            for (var j = 0; j < resultLocation.Events.Count; ++j)
+            {
+                Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
+                Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
+                Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
+                Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
+            }
         });
     }
 

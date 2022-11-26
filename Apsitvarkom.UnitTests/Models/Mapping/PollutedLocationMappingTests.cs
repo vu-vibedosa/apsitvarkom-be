@@ -15,6 +15,7 @@ public class PollutedLocationMappingTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
+            cfg.AddProfile<TidyingEventProfile>();
         });
 
         config.AssertConfigurationIsValid();
@@ -75,7 +76,6 @@ public class PollutedLocationMappingTests
     public void PollutedLocationToPollutedLocationResponse()
     {
         var pollutedLocationId = Guid.NewGuid();
-        var spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime();
 
         var businessLogicObject = new PollutedLocation
         {
@@ -91,10 +91,25 @@ public class PollutedLocationMappingTests
             },
             Radius = 10,
             Severity = PollutedLocation.SeverityLevel.Low,
-            Spotted = spotted,
+            Spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
             Progress = 25,
             Notes = "Hello world",
-            Events = new List<TidyingEvent>()
+            Events = new List<TidyingEvent>
+            {
+                new()
+                {
+                    PollutedLocationId = pollutedLocationId,
+                    Id = Guid.NewGuid(),
+                    Notes = "Hello NPC",
+                    StartTime = new DateTime(2022, 10, 11, 12, 13, 14).ToUniversalTime(),
+                },
+                new()
+                {
+                    PollutedLocationId = pollutedLocationId,
+                    Id = Guid.NewGuid(),
+                    StartTime = new DateTime(2022, 11, 12, 13, 14, 15).ToUniversalTime(),
+                }
+            }
         };
 
         var pollutedLocation = _mapper.Map<PollutedLocationResponse>(businessLogicObject);
@@ -109,6 +124,14 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(pollutedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
+            Assert.That(pollutedLocation.Events.Count, Is.EqualTo(businessLogicObject.Events.Count));
+            for (var j = 0; j < pollutedLocation.Events.Count; ++j)
+            {
+                Assert.That(pollutedLocation.Events[j].PollutedLocationId, Is.EqualTo(businessLogicObject.Events[j].PollutedLocationId));
+                Assert.That(pollutedLocation.Events[j].Id, Is.EqualTo(businessLogicObject.Events[j].Id));
+                Assert.That(pollutedLocation.Events[j].Notes, Is.EqualTo(businessLogicObject.Events[j].Notes));
+                Assert.That(pollutedLocation.Events[j].StartTime, Is.EqualTo(businessLogicObject.Events[j].StartTime));
+            }
         });
     }
     #endregion

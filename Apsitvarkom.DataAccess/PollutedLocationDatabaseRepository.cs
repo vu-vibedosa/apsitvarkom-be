@@ -21,13 +21,15 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocation>> GetAllAsync()
     {
-        return await _context.PollutedLocations.ToListAsync();
+        return await _context.PollutedLocations
+            .Include(l => l.Events)
+            .ToListAsync();
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocation>> GetAllAsync(Coordinates inRelationTo)
     {
-        return from pollutedLocation in await _context.PollutedLocations.ToListAsync()
+        return from pollutedLocation in await _context.PollutedLocations.Include(l => l.Events).ToListAsync()
             orderby pollutedLocation.Location.Coordinates.DistanceTo(inRelationTo)
             select pollutedLocation;
     }
@@ -35,7 +37,9 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     /// <inheritdoc />
     public async Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
-        return await _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
+        return await _context.PollutedLocations
+            .Include(l => l.Events)
+            .FirstOrDefaultAsync(propertyCondition);
     }
 
     /// <inheritdoc />

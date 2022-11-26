@@ -6,8 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationResponse> Validator =
-        new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
+    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
@@ -28,11 +27,12 @@ public class PollutedLocationResponseValidationTests
             Severity = PollutedLocation.SeverityLevel.Moderate,
             Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
             Progress = 41,
-            Notes = "Prisoners broke a window."
+            Notes = "Prisoners broke a window.",
+            Events = new List<TidyingEventResponse>()
         },
         new()
         {
-            Id = DummyGuid,
+            Id = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
             Location =
             {
                 Coordinates =
@@ -44,7 +44,17 @@ public class PollutedLocationResponseValidationTests
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
-            Progress = 13
+            Progress = 13,
+            Events = new List<TidyingEventResponse>
+            {
+                new()
+                {
+                    Id = DummyGuid,
+                    PollutedLocationId = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
+                    Notes = "Pick up some tools.",
+                    StartTime = DateTime.Parse("2023-05-14T08:17:56Z").ToUniversalTime(),
+                }
+            }
         }
     };
 
