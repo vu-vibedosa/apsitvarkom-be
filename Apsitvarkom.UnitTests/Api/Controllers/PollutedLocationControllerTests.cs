@@ -94,7 +94,7 @@ public class PollutedLocationControllerTests
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
-            new PollutedLocationIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator()
         );
     }
 
@@ -106,7 +106,7 @@ public class PollutedLocationControllerTests
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
-            new PollutedLocationIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator()
         ), Is.Not.Null);
     #endregion
 
@@ -142,6 +142,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+                Assert.That(resultLocation.Notes, Is.EqualTo(location.Notes));
                 Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
                 for (var j = 0; j < resultLocation.Events.Count; ++j)
                 {
@@ -240,7 +241,7 @@ public class PollutedLocationControllerTests
     public async Task GetById_RepositoryReturnsPollutedLocation_OKActionResultReturned()
     {
         var location = PollutedLocations.First();
-        var identifyRequest = new PollutedLocationIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = location.Id
         };
@@ -283,7 +284,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetById_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
-        var identifyRequest = new PollutedLocationIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = Guid.NewGuid()
         };
@@ -304,7 +305,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task GetById_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
     {
-        var identifyRequest = new PollutedLocationIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = null
         };
@@ -444,7 +445,7 @@ public class PollutedLocationControllerTests
     public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
     {
         var location = PollutedLocations.First();
-        var createRequest = new PollutedLocationIdentifyRequest
+        var createRequest = new ObjectIdentifyRequest
         {
             Id = location.Id
         };
@@ -489,7 +490,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task Delete_RepositoryReturnsNull_NotFoundActionResultReturned()
     {
-        var identifyRequest = new PollutedLocationIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = Guid.NewGuid()
         };
@@ -513,7 +514,7 @@ public class PollutedLocationControllerTests
     [Test]
     public async Task Delete_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
     {
-        var identifyRequest = new PollutedLocationIdentifyRequest
+        var identifyRequest = new ObjectIdentifyRequest
         {
             Id = null
         };
