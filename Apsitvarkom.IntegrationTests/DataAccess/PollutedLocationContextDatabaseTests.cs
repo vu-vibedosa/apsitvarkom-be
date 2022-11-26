@@ -91,6 +91,54 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task PollutedLocation_InsertAsync_InsertionWithEvents_PrimaryKeyUnique_SuccessfullyInsertedAndEventsCreated()
+    {
+        var instanceToInsert = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Notes = "Lithuania",
+            Progress = 12,
+            Radius = 3,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Spotted = new DateTime(2022, 12, 23, 23, 59, 59).ToUniversalTime(),
+            Location = new Location
+            {
+                Title = "Name",
+                Coordinates = new Coordinates
+                {
+                    Latitude = 12.00,
+                    Longitude = 13.00
+                }
+            },
+            Events = new List<TidyingEvent>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Notes = "Harry Potter",
+                    StartTime = DateTime.UtcNow.ToUniversalTime()
+                }
+            }
+        };
+
+        // Use a clean instance of the context to run the test
+        await using var context1 = new PollutedLocationContext(_options);
+        await using var context2 = new PollutedLocationContext(_options);
+        var locationDbRepository = new PollutedLocationDatabaseRepository(context1);
+        var eventDbRepository = new TidyingEventDatabaseRepository(context2);
+
+        Assert.DoesNotThrowAsync(async () => await locationDbRepository.InsertAsync(instanceToInsert));
+
+        var locations = (await locationDbRepository.GetAllAsync()).ToArray();
+        Assert.That(locations.Length, Is.EqualTo(DbInitializer.FakePollutedLocations.Value.Length + 1));
+        Assert.That(locations.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
+
+        var events = (await eventDbRepository.GetAllAsync()).ToArray();
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeTidyingEvents.Value.Length + 1));
+        Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Events.Single().Id), Is.True);
+    }
+
+    [Test]
     public async Task PollutedLocation_DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance
@@ -129,16 +177,16 @@ public class PollutedLocationContextDatabaseTests
         // Use a clean instance of the context to run the test
         await using var context1 = new PollutedLocationContext(_options);
         await using var context2 = new PollutedLocationContext(_options);
-        var dbPollutedLocationRepository = new PollutedLocationDatabaseRepository(context1);
-        var eventDatabaseRepository = new TidyingEventDatabaseRepository(context2);
+        var locationDbRepository = new PollutedLocationDatabaseRepository(context1);
+        var eventDbRepository = new TidyingEventDatabaseRepository(context2);
 
-        Assert.DoesNotThrowAsync(async () => await dbPollutedLocationRepository.DeleteAsync(dbRow));
+        Assert.DoesNotThrowAsync(async () => await locationDbRepository.DeleteAsync(dbRow));
 
-        Assert.That((await dbPollutedLocationRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+        Assert.That((await locationDbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
 
         foreach (var eventId in dbRow.Events.Select(x => x.Id))
         {
-            Assert.That((await eventDatabaseRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(eventId));
+            Assert.That((await eventDbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(eventId));
 
         }
     }
@@ -194,6 +242,28 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task TidyingEvent_InsertAsync_PrimaryKeyUnique_SuccessfullyInserted()
+    {
+        var instanceToInsert = new TidyingEvent
+        {
+            Id = Guid.NewGuid(),
+            PollutedLocationId = Guid.NewGuid(),
+            Notes = "Harry Potter",
+            StartTime = DateTime.UtcNow.ToUniversalTime()
+        };
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var eventDbRepository = new TidyingEventDatabaseRepository(context);
+
+        Assert.DoesNotThrowAsync(async () => await eventDbRepository.InsertAsync(instanceToInsert));
+
+        var events = (await eventDbRepository.GetAllAsync()).ToArray();
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeTidyingEvents.Value.Length + 1));
+        Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
+    }
+
+    [Test]
     public async Task TidyingEvent_DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance
@@ -207,18 +277,24 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task TidyingEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted()
+    public async Task TidyingEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted_PollutedLocationDoesNotInclude()
     {
         // Try to delete one of the values that was inserted in [SetUp]
         var dbRow = DbInitializer.FakeTidyingEvents.Value.TakeLast(1).Single();
 
         // Use a clean instance of the context to run the test
-        await using var context = new PollutedLocationContext(_options);
-        var dbRepository = new TidyingEventDatabaseRepository(context);
+        await using var context1 = new PollutedLocationContext(_options);
+        await using var context2 = new PollutedLocationContext(_options);
+        var locationDbRepository = new PollutedLocationDatabaseRepository(context2); 
+        var eventDbRepository = new TidyingEventDatabaseRepository(context1);
 
-        Assert.DoesNotThrowAsync(async () => await dbRepository.DeleteAsync(dbRow));
+        Assert.DoesNotThrowAsync(async () => await eventDbRepository.DeleteAsync(dbRow));
 
-        Assert.That((await dbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+        Assert.That((await eventDbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+
+        var pollutedLocation = await locationDbRepository.GetByPropertyAsync(x => x.Id == dbRow.PollutedLocationId);
+
+        Assert.That(pollutedLocation?.Events.Select(x => x.Id), Does.Not.Contain(dbRow.Id));
     }
     #endregion
 }
