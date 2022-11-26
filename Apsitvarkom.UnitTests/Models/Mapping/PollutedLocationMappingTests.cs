@@ -128,15 +128,6 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(pollutedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
-            Assert.That(pollutedLocation.Events.Count, Is.EqualTo(businessLogicObject.Events.Count));
-            Assert.That(pollutedLocation.Events[0].PollutedLocationId, Is.EqualTo(businessLogicObject.Events[0].PollutedLocationId));
-            Assert.That(pollutedLocation.Events[0].Id, Is.EqualTo(businessLogicObject.Events[0].Id));
-            Assert.That(pollutedLocation.Events[0].StartTime, Is.EqualTo(businessLogicObject.Events[0].StartTime));
-            Assert.That(pollutedLocation.Events[0].Notes, Is.EqualTo(businessLogicObject.Events[0].Notes));
-            Assert.That(pollutedLocation.Events[1].PollutedLocationId, Is.EqualTo(businessLogicObject.Events[1].PollutedLocationId));
-            Assert.That(pollutedLocation.Events[1].Id, Is.EqualTo(businessLogicObject.Events[1].Id));
-            Assert.That(pollutedLocation.Events[1].StartTime, Is.EqualTo(businessLogicObject.Events[1].StartTime));
-            Assert.That(pollutedLocation.Events[1].Notes, Is.Null);
         });
     }
     #endregion

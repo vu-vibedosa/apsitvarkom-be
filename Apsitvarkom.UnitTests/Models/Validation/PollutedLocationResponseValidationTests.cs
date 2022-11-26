@@ -29,7 +29,6 @@ public class PollutedLocationResponseValidationTests
             Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
             Progress = 41,
             Notes = "Prisoners broke a window.",
-            Events = new List<TidyingEvent>()
         },
         new()
         {
@@ -46,16 +45,6 @@ public class PollutedLocationResponseValidationTests
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
             Progress = 13,
-            Events = new List<TidyingEvent>
-            {
-                new()
-                {
-                    Id = DummyGuid,
-                    PollutedLocationId = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
-                    Notes = "Pick up some tools.",
-                    StartTime = DateTime.Parse("2023-05-14T08:17:56Z").ToUniversalTime(),
-                }
-            }
         },
     };
 
@@ -78,7 +67,6 @@ public class PollutedLocationResponseValidationTests
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
             Spotted = new DateTime(1990, 3, 11),
-            Events = new List<TidyingEvent>()
         },
         new()
         { 
@@ -96,7 +84,6 @@ public class PollutedLocationResponseValidationTests
             Radius = 2,
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = new DateTime(1995, 8, 24),
-            Events = new List<TidyingEvent>()
         },
         new()
         { 
@@ -114,9 +101,7 @@ public class PollutedLocationResponseValidationTests
             Radius = 0,
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = new DateTime(1995, 8, 24),
-            Events = new List<TidyingEvent>()
         },
-        // TODO: add invalid case for Events.
     };
 
     [Test]

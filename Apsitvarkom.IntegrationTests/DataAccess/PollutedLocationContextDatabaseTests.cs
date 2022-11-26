@@ -73,7 +73,7 @@ public class PollutedLocationContextDatabaseTests
             Assert.That(response.Spotted, Is.EqualTo(dbRow.Spotted));
             Assert.That(response.Progress, Is.EqualTo(dbRow.Progress));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
-            Assert.That(response.Events, Is.EqualTo(dbRow.Events));
+            Assert.That(response.Events, Is.Empty);
         });
     }
 

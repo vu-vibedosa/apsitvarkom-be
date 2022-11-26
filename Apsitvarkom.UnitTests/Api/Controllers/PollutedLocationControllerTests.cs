@@ -141,7 +141,6 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-                Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
             });
         }
     }
@@ -188,7 +187,6 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-                Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
             });
         }
     }
@@ -254,7 +252,6 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-            Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
         });
     }
 
@@ -453,7 +450,6 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-            Assert.That(resultLocation.Events, Is.EqualTo(location.Events));
         });
     }
 
