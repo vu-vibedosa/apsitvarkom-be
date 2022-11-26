@@ -280,7 +280,7 @@ public class PollutedLocationContextDatabaseTests
     public async Task TidyingEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted_PollutedLocationDoesNotInclude()
     {
         // Try to delete one of the values that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakeTidyingEvents.Value.TakeLast(1).Single();
+        var dbRow = DbInitializer.FakeTidyingEvents.Value.Skip(3).Take(1).First();
 
         // Use a clean instance of the context to run the test
         await using var context1 = new PollutedLocationContext(_options);
@@ -294,7 +294,8 @@ public class PollutedLocationContextDatabaseTests
 
         var pollutedLocation = await locationDbRepository.GetByPropertyAsync(x => x.Id == dbRow.PollutedLocationId);
 
-        Assert.That(pollutedLocation?.Events.Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+        Assert.That(pollutedLocation, Is.Not.Null);
+        Assert.That(pollutedLocation.Events.Select(x => x.Id), Does.Not.Contain(dbRow.Id));
     }
     #endregion
 }
