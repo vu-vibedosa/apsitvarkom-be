@@ -66,6 +66,7 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Title = "title",
                 Coordinates =
                 {
                     Latitude = 85,
@@ -84,6 +85,7 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Title = string.Empty,
                 Coordinates =
                 {
                     Latitude = 89.9,
