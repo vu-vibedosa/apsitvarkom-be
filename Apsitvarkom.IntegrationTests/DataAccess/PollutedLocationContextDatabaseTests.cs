@@ -87,7 +87,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
+        Assert.ThrowsAsync<ArgumentException>(async () => await dbRepository.InsertAsync(dbRow));
     }
 
     [Test]
@@ -100,7 +100,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.DeleteAsync(instanceToDelete));
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.DeleteAsync(instanceToDelete));
     }
 
     [Test]
@@ -113,9 +113,34 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        Assert.DoesNotThrowAsync(() => dbRepository.DeleteAsync(dbRow));
+        Assert.DoesNotThrowAsync(async () => await dbRepository.DeleteAsync(dbRow));
 
         Assert.That((await dbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+    }
+
+    [Test]
+    public async Task PollutedLocation_DeleteAsync_LocationWithEventsExists_SuccessfullyDeleted_AssociatedEventsDeletedTogether()
+    {
+        // Try to delete one of the values that was inserted in [SetUp]
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+
+        Assert.That(dbRow.Events, Is.Not.Empty);
+
+        // Use a clean instance of the context to run the test
+        await using var context1 = new PollutedLocationContext(_options);
+        await using var context2 = new PollutedLocationContext(_options);
+        var dbPollutedLocationRepository = new PollutedLocationDatabaseRepository(context1);
+        var eventDatabaseRepository = new TidyingEventDatabaseRepository(context2);
+
+        Assert.DoesNotThrowAsync(async () => await dbPollutedLocationRepository.DeleteAsync(dbRow));
+
+        Assert.That((await dbPollutedLocationRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+
+        foreach (var eventId in dbRow.Events.Select(x => x.Id))
+        {
+            Assert.That((await eventDatabaseRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(eventId));
+
+        }
     }
     #endregion
 
@@ -165,7 +190,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new TidyingEventDatabaseRepository(context);
 
-        Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
+        Assert.ThrowsAsync<ArgumentException>(async () => await dbRepository.InsertAsync(dbRow));
     }
 
     [Test]
@@ -178,7 +203,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new TidyingEventDatabaseRepository(context);
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.DeleteAsync(instanceToDelete));
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.DeleteAsync(instanceToDelete));
     }
 
     [Test]
@@ -191,7 +216,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new TidyingEventDatabaseRepository(context);
 
-        Assert.DoesNotThrowAsync(() => dbRepository.DeleteAsync(dbRow));
+        Assert.DoesNotThrowAsync(async () => await dbRepository.DeleteAsync(dbRow));
 
         Assert.That((await dbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
     }
