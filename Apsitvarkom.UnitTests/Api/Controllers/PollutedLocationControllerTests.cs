@@ -5,6 +5,7 @@ using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -75,7 +76,9 @@ public class PollutedLocationControllerTests
             _mapper,
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(), 
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+            new PollutedLocationUpdateRequestValidator()
+
         );
     }
 
@@ -86,7 +89,8 @@ public class PollutedLocationControllerTests
             _mapper,
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
-            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()))
+            new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
+             new PollutedLocationUpdateRequestValidator()
         ), Is.Not.Null);
     #endregion
 
@@ -349,4 +353,48 @@ public class PollutedLocationControllerTests
         });
     }
     #endregion
+
+    #region Update tests
+    [Test]
+    public async Task Update_InvalidDataEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Progress = 101
+        };
+
+        var updateResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(updateResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = updateResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+    #endregion
+
+    [Test]
+    public async Task Update_RepositoryUpdates_OkObjectResultReturned()
+    {
+        var location = PollutedLocations.First();
+        int radius = 5;
+        string notes = "test";
+        int progress = 15;
+
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = location.Id,
+            Radius = 5,
+            Progress = progress,
+            Notes = notes
+        };
+
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        var result = actionResult.Result as OkObjectResult;
+    }
 }

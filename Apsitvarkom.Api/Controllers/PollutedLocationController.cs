@@ -111,7 +111,7 @@ public class PollutedLocationController : ControllerBase
     public async Task<ActionResult<PollutedLocationResponse>> Create(PollutedLocationCreateRequest pollutedLocationCreateRequest)
     {
         var validationResult = await _pollutedLocationValidator.ValidateAsync(pollutedLocationCreateRequest);
-        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+        if (!validationResult.IsValid) return BadRequest(error: validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
         var mappedPollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         if (mappedPollutedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);

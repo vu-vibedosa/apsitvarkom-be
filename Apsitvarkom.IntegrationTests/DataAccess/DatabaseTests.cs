@@ -86,4 +86,19 @@ public class DatabaseTests
 
         Assert.ThrowsAsync<ArgumentException>(() => dbRepository.InsertAsync(dbRow));
     }
+
+    [Test]
+    public async Task UpdateAsync_InstanceDoesNotExist_Throws()
+    {
+        // gwt existing record from database
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        dbRow.Id = Guid.NewGuid();
+        
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.UpdateAsync(dbRow));
+    }
 }
