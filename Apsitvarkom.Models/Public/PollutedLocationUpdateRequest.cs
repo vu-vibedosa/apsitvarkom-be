@@ -14,7 +14,6 @@ public class PollutedLocationUpdateRequest
     public int? Progress { get; set; }
 
     public string? Notes { get; set; }
-
 }
 
 public class PollutedLocationUpdateRequestValidator : AbstractValidator<PollutedLocationUpdateRequest>
@@ -26,4 +25,3 @@ public class PollutedLocationUpdateRequestValidator : AbstractValidator<Polluted
        RuleFor(l => l.Progress).InclusiveBetween(0, 100);
     }
 }
-

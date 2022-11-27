@@ -78,7 +78,6 @@ public class PollutedLocationControllerTests
             new CoordinatesCreateRequestValidator(), 
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
             new PollutedLocationUpdateRequestValidator()
-
         );
     }
 
@@ -374,7 +373,7 @@ public class PollutedLocationControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
-    #endregion
+   
 
     [Test]
     public async Task Update_RepositoryUpdates_OkObjectResultReturned()
@@ -397,4 +396,5 @@ public class PollutedLocationControllerTests
 
         var result = actionResult.Result as OkObjectResult;
     }
+    #endregion
 }

@@ -87,7 +87,6 @@ public class PollutedLocationMappingTests
         });
     }
 
-
     [Test]
     [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4, 12)]
     public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius, int progress)
@@ -163,4 +162,3 @@ public class PollutedLocationMappingTests
         });
     }
     #endregion
-}

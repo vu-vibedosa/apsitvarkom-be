@@ -2,7 +2,6 @@
 using Apsitvarkom.Models;
 using FluentValidation;
 
-
 namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationUpdateRequestValidatorTests
@@ -76,5 +75,4 @@ public class PollutedLocationUpdateRequestValidatorTests
         Assert.That(result.Errors.Count, Is.EqualTo(1));
         Assert.That(result.IsValid, Is.False);
     }
-
 }
