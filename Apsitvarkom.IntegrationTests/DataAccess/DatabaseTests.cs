@@ -97,9 +97,18 @@ public class DatabaseTests
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        dbRow.Id = Guid.NewGuid();
+        var locationToUpdate = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Notes = dbRow.Notes,
+            Location = dbRow.Location,
+            Progress = dbRow.Progress,
+            Radius = dbRow.Radius,
+            Severity = dbRow.Severity,
+            Spotted = dbRow.Spotted,
+        };
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.UpdateAsync(dbRow));
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.UpdateAsync(locationToUpdate));
     }
 
     [Test]
