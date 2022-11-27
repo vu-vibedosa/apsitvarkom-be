@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Apsitvarkom.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +49,13 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     public async Task UpdateAsync(PollutedLocation modelToUpdate)
     {
         _context.PollutedLocations.Update(modelToUpdate);
+        await _context.Instance.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(PollutedLocation modelToDelete)
+    {
+        _context.PollutedLocations.Remove(modelToDelete);
         await _context.Instance.SaveChangesAsync();
     }
 }

@@ -43,59 +43,13 @@ public class PollutedLocationMappingTests
     }
 
     [Test]
-    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f",  78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4, 12, 7, PollutedLocation.SeverityLevel.Moderate, 16, "testt")]
-    public void PollutedLocationUpdateRequestToPollutedLocation(string guidString, double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius, int progress, int updateRadius, PollutedLocation.SeverityLevel updateSeverity, int updateProgress, string updateNotes)
-    {
-        var guid = new Guid(guidString);
-        var businessLogicObject = new PollutedLocation
-        {
-            Id = guid,
-            Location =
-            {
-                Coordinates = new Coordinates
-                {
-                    Longitude = longitude,
-                    Latitude = latitude
-                },
-            },
-            Radius = radius,
-            Severity = severity,
-            Spotted = DateTime.UtcNow,
-            Progress = progress,
-            Notes = notes
-        };
-        
-        var updateModel = new PollutedLocationUpdateRequest
-        {
-            Id = guid,
-            Radius = updateRadius,
-            Severity = updateSeverity,
-            Progress = updateProgress,
-            Notes = updateNotes
-        };
-
-        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(updateModel, businessLogicObject);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
-            Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
-            Assert.That(mappedLocation.Notes, Is.EqualTo(updateNotes));
-            Assert.That(mappedLocation.Progress, Is.EqualTo(updateProgress));
-            Assert.That(mappedLocation.Radius, Is.EqualTo(updateRadius));
-            Assert.That(mappedLocation.Severity, Is.EqualTo(updateSeverity));
-        });
-    }
-
-    [Test]
-    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4, 12)]
-    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius, int progress)
+    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4)]
+    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius)
     {
         var pollutedLocationCreateRequest = new PollutedLocationCreateRequest
         {
             Severity = severity,
             Notes = notes,
-            Progress = progress,
             Radius = radius,
             Location = new LocationCreateRequest
             {
@@ -113,9 +67,55 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
-            Assert.That(pollutedLocation.Progress, Is.EqualTo(progress));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
             Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
+        });
+    }
+
+    [Test]
+    public void PollutedLocationUpdateRequestToPollutedLocation()
+    {
+        var businessLogicObject = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Location = 
+            {
+                Title = "title",
+                Coordinates = new Coordinates
+                {
+                    Longitude = 35.929673,
+                    Latitude = 78.948237
+                },
+            },
+            Radius = 4,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Spotted = DateTime.UtcNow,
+            Progress = 12,
+            Notes = "notez"
+        };
+
+        var updateModel = new PollutedLocationUpdateRequest
+        {
+            Id = businessLogicObject.Id,
+            Radius = 7,
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+            Progress = 16,
+            Notes = "testt"
+        };
+
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(updateModel, businessLogicObject);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
+            Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
+            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
+            Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
+            Assert.That(mappedLocation.Notes, Is.EqualTo(updateModel.Notes));
+            Assert.That(mappedLocation.Progress, Is.EqualTo(updateModel.Progress));
+            Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
+            Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));
         });
     }
     #endregion
@@ -162,3 +162,4 @@ public class PollutedLocationMappingTests
         });
     }
     #endregion
+}
