@@ -96,7 +96,7 @@ public class PollutedLocationDatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasSeveralInstances_InstancesReturnedInCorrectOrder()
     {
-        var dbRows = DbInitializer.FakePollutedLocations.Value;
+        var dbRows = DbInitializer.FakePollutedLocations;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
         _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);

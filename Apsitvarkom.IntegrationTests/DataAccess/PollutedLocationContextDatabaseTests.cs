@@ -24,7 +24,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_GetAllTest()
     {
-        var objectIds = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
+        var objectIds = DbInitializer.FakePollutedLocations.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -38,7 +38,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_GetAllSortedTest()
     {
-        var objectIds = DbInitializer.FakePollutedLocations.Value.Select(location => location.Id).ToArray();
+        var objectIds = DbInitializer.FakePollutedLocations.Select(location => location.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -54,7 +54,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_GetByPropertyTest()
     {
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(4).Take(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.Skip(4).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -80,7 +80,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task PollutedLocation_ExistsByPropertyTest()
     {
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(4).Take(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.Skip(4).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -95,7 +95,7 @@ public class PollutedLocationContextDatabaseTests
     public async Task PollutedLocation_InsertAsync_SamePrimaryKeys_Throws()
     {
         // Try to insert the same row that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -144,11 +144,11 @@ public class PollutedLocationContextDatabaseTests
         Assert.DoesNotThrowAsync(async () => await locationDbRepository.InsertAsync(instanceToInsert));
 
         var locations = (await locationDbRepository.GetAllAsync()).ToArray();
-        Assert.That(locations.Length, Is.EqualTo(DbInitializer.FakePollutedLocations.Value.Length + 1));
+        Assert.That(locations.Length, Is.EqualTo(DbInitializer.FakePollutedLocations.Length + 1));
         Assert.That(locations.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
 
         var events = (await eventDbRepository.GetAllAsync()).ToArray();
-        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Value.Length + 1));
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Length + 1));
         Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Events.Single().Id), Is.True);
     }
 
@@ -169,7 +169,7 @@ public class PollutedLocationContextDatabaseTests
     public async Task PollutedLocation_DeleteAsync_InstanceExists_SuccessfullyDeleted()
     {
         // Try to delete one of the values that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakePollutedLocations.Value.TakeLast(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.TakeLast(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -184,7 +184,7 @@ public class PollutedLocationContextDatabaseTests
     public async Task PollutedLocation_DeleteAsync_LocationWithEventsExists_SuccessfullyDeleted_AssociatedEventsDeletedTogether()
     {
         // Try to delete one of the values that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakePollutedLocations.Skip(3).Take(1).Single();
 
         Assert.That(dbRow.Events, Is.Not.Empty);
 
@@ -210,7 +210,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task CleaningEvent_GetAllTest()
     {
-        var objectIds = DbInitializer.FakeCleaningEvents.Value.Select(cleaningEvent => cleaningEvent.Id).ToArray();
+        var objectIds = DbInitializer.FakeCleaningEvents.Select(cleaningEvent => cleaningEvent.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -224,7 +224,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task CleaningEvent_GetByPropertyTest()
     {
-        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -236,7 +236,6 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(response.PollutedLocationId, Is.EqualTo(dbRow.PollutedLocationId));
             Assert.That(response.StartTime, Is.EqualTo(dbRow.StartTime));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
         });
@@ -245,7 +244,7 @@ public class PollutedLocationContextDatabaseTests
     [Test]
     public async Task CleaningEvent_ExistsByPropertyTest()
     {
-        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -260,7 +259,7 @@ public class PollutedLocationContextDatabaseTests
     public async Task CleaningEvent_InsertAsync_SamePrimaryKeys_Throws()
     {
         // Try to insert the same row that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
@@ -287,7 +286,7 @@ public class PollutedLocationContextDatabaseTests
         Assert.DoesNotThrowAsync(async () => await eventDbRepository.InsertAsync(instanceToInsert));
 
         var events = (await eventDbRepository.GetAllAsync()).ToArray();
-        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Value.Length + 1));
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Length + 1));
         Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
     }
 
@@ -308,17 +307,20 @@ public class PollutedLocationContextDatabaseTests
     public async Task CleaningEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted_PollutedLocationDoesNotInclude()
     {
         // Try to delete one of the values that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).First();
+        var dbRowId = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).First().Id;
 
         // Use a clean instance of the context to run the test
         await using var context1 = new PollutedLocationContext(_options);
         await using var context2 = new PollutedLocationContext(_options);
-        var locationDbRepository = new PollutedLocationDatabaseRepository(context2); 
-        var eventDbRepository = new CleaningEventDatabaseRepository(context1);
+        var locationDbRepository = new PollutedLocationDatabaseRepository(context1); 
+        var eventDbRepository = new CleaningEventDatabaseRepository(context2);
 
+        var dbRow = await eventDbRepository.GetByPropertyAsync(x => x.Id == dbRowId);
+
+        Assert.That(dbRow, Is.Not.Null);
         Assert.DoesNotThrowAsync(async () => await eventDbRepository.DeleteAsync(dbRow));
 
-        Assert.That((await eventDbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
+        Assert.That(await eventDbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id), Is.Null);
 
         var pollutedLocation = await locationDbRepository.GetByPropertyAsync(x => x.Id == dbRow.PollutedLocationId);
 

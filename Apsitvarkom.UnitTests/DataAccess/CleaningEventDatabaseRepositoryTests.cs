@@ -68,7 +68,7 @@ public class CleaningEventDatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasSeveralInstances_InstancesReturnedInCorrectOrder()
     {
-        var dbRows = DbInitializer.FakeCleaningEvents.Value;
+        var dbRows = DbInitializer.FakeCleaningEvents;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
         _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
         var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);

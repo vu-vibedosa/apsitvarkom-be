@@ -7,12 +7,12 @@ namespace Apsitvarkom.DataAccess;
 /// </summary>
 public static class DbInitializer
 {
-    public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
-    public static readonly Lazy<CleaningEvent[]> FakeCleaningEvents = new(InitializeFakeCleaningEventsArray);
+    public static PollutedLocation[] FakePollutedLocations => InitializeFakePollutedLocationsArray();
+    public static CleaningEvent[] FakeCleaningEvents => InitializeFakeCleaningEventsArray();
 
     public static async Task<int> InitializePollutedLocations(IPollutedLocationContext context)
     {
-        context.PollutedLocations.AddRange(FakePollutedLocations.Value);
+        await context.PollutedLocations.AddRangeAsync(FakePollutedLocations);
         return await context.Instance.SaveChangesAsync();
     }
 
@@ -58,7 +58,7 @@ public static class DbInitializer
                 Notes = "A lot of cigarettes waste on the pavement.",
                 Events = new List<CleaningEvent>
                 {
-                    FakeCleaningEvents.Value[0]
+                    FakeCleaningEvents[0]
                 }
             },
             new()
@@ -98,7 +98,7 @@ public static class DbInitializer
                 Notes = "Apsitvarkom to the moooooon",
                 Events = new List<CleaningEvent>
                 {
-                    FakeCleaningEvents.Value[1]
+                    FakeCleaningEvents[1]
                 }
             },
             new()
@@ -120,8 +120,8 @@ public static class DbInitializer
                 Notes = "After the celebration of the latest Euroleague trophy, Zalgiris fans have left the grass trashy.",
                 Events = new List<CleaningEvent>
                 {
-                    FakeCleaningEvents.Value[2],
-                    FakeCleaningEvents.Value[3]
+                    FakeCleaningEvents[2],
+                    FakeCleaningEvents[3]
                 }
             },
             new()
@@ -181,7 +181,7 @@ public static class DbInitializer
                 Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city.",
                 Events = new List<CleaningEvent>
                 {
-                    FakeCleaningEvents.Value[4]
+                    FakeCleaningEvents[4]
                 }
             },
             new()
