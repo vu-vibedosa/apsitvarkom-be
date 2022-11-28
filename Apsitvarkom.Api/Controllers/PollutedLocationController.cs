@@ -153,31 +153,43 @@ public class PollutedLocationController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpPut("Update")]
+    [HttpPatch("Update")]
     public async Task<ActionResult<PollutedLocationResponse>> Update(PollutedLocationUpdateRequest pollutedLocationUpdateRequest)
     {
-        var validatorResponse = await _pollutedLocationUpdateValidator.ValidateAsync(pollutedLocationUpdateRequest);
-        if (!validatorResponse.IsValid) return BadRequest(validatorResponse.Errors.Select(e => e.ErrorMessage).ToList());
+        var validationResult = await _pollutedLocationUpdateValidator.ValidateAsync(pollutedLocationUpdateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var existingLocation = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationUpdateRequest.Id);
-        if (existingLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
-
-        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(pollutedLocationUpdateRequest, existingLocation);
-        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
-
+        PollutedLocation? location;
         try
         {
-            await _repository.UpdateAsync(mappedLocation);
-
-            return Ok(mappedLocation);
+            location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationUpdateRequest.Id);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
+        if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationUpdateRequest.Id}' was not found.");
+
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(pollutedLocationUpdateRequest, location);
+        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<PollutedLocationResponse>(mappedLocation);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.UpdateAsync(mappedLocation);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        return Ok(response);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]

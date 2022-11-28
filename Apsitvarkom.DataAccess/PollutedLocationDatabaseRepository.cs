@@ -45,7 +45,7 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
         await _context.PollutedLocations.AddAsync(modelToInsert);
         await _context.Instance.SaveChangesAsync();
     }
-
+    /// <inheritdoc />
     public async Task UpdateAsync(PollutedLocation modelToUpdate)
     {
         _context.PollutedLocations.Update(modelToUpdate);

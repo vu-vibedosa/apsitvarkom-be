@@ -26,7 +26,8 @@ public class PollutedLocationProfile : Profile
             .ForMember(x => x.Progress, opt => opt.Ignore());
         CreateMap<PollutedLocationUpdateRequest, PollutedLocation>()
             .ForMember(x => x.Spotted, opt => opt.Ignore())
-            .ForMember(x => x.Location, opt => opt.Ignore()); ;
+            .ForMember(x => x.Location, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, sourceMember) => sourceMember != null));
     }
 
     private void MapResponses()
