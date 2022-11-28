@@ -25,15 +25,15 @@ public class CleaningEventDatabaseRepository : IRepository<CleaningEvent>
     }
 
     /// <inheritdoc />
-    public async Task<CleaningEvent?> GetByPropertyAsync(Expression<Func<CleaningEvent, bool>> propertyCondition)
+    public Task<CleaningEvent?> GetByPropertyAsync(Expression<Func<CleaningEvent, bool>> propertyCondition)
     {
-        return await _context.CleaningEvents.FirstOrDefaultAsync(propertyCondition);
+        return _context.CleaningEvents.FirstOrDefaultAsync(propertyCondition);
     }
 
     /// <inheritdoc />
-    public async Task<bool> ExistsByPropertyAsync(Expression<Func<CleaningEvent, bool>> propertyCondition)
+    public Task<bool> ExistsByPropertyAsync(Expression<Func<CleaningEvent, bool>> propertyCondition)
     {
-        return await _context.CleaningEvents.AnyAsync(propertyCondition);
+        return _context.CleaningEvents.AnyAsync(propertyCondition);
     }
 
     /// <inheritdoc />

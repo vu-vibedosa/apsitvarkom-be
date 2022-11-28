@@ -35,17 +35,17 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     }
 
     /// <inheritdoc />
-    public async Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    public Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
-        return await _context.PollutedLocations
+        return _context.PollutedLocations
             .Include(l => l.Events)
             .FirstOrDefaultAsync(propertyCondition);
     }
 
     /// <inheritdoc />
-    public async Task<bool> ExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    public Task<bool> ExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
-        return await _context.PollutedLocations
+        return _context.PollutedLocations
             .Include(l => l.Events)
             .AnyAsync(propertyCondition);
     }
