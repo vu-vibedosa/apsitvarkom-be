@@ -69,6 +69,19 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Severity, Is.EqualTo(pollutedLocationCreateRequest.Severity));
         });
     }
+
+    [Test]
+    public void ObjectIdentifyRequestToPollutedLocation()
+    {
+        var objectIdentifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        var location = _mapper.Map<PollutedLocation>(objectIdentifyRequest);
+
+        Assert.That(location.Id, Is.EqualTo(objectIdentifyRequest.Id));
+    }
     #endregion
 
     #region Response mappings

@@ -175,11 +175,9 @@ public class PollutedLocationController : ControllerBase
         }
         
         if (locationExists is false) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
-        
-        var location = new PollutedLocation
-        {
-            Id = (Guid)pollutedLocationIdentifyRequest.Id!
-        };
+
+        var location = _mapper.Map<PollutedLocation>(pollutedLocationIdentifyRequest);
+        if (location is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
         {
