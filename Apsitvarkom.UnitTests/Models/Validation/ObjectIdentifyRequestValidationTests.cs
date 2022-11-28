@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace Apsitvarkom.UnitTests.Models.Validation;
 
-public class PollutedLocationIdentifyRequestValidationTests
+public class ObjectIdentifyRequestValidationTests
 {
-    private static readonly IValidator<PollutedLocationIdentifyRequest> Validator = new PollutedLocationIdentifyRequestValidator();
+    private static readonly IValidator<ObjectIdentifyRequest> Validator = new ObjectIdentifyRequestValidator();
 
-    private static readonly PollutedLocationIdentifyRequest[] ValidPollutedLocationIdentifyRequest =
+    private static readonly ObjectIdentifyRequest[] ValidObjectIdentifyRequest =
     {
         new()
         {
@@ -19,7 +19,7 @@ public class PollutedLocationIdentifyRequestValidationTests
         },
     };
 
-    private static readonly PollutedLocationIdentifyRequest[] InvalidPollutedLocationIdentifyRequest =
+    private static readonly ObjectIdentifyRequest[] InvalidObjectIdentifyRequest =
     {
         new()
         {
@@ -28,8 +28,8 @@ public class PollutedLocationIdentifyRequestValidationTests
     };
 
     [Test]
-    [TestCaseSource(nameof(ValidPollutedLocationIdentifyRequest))]
-    public async Task ValidInputShouldSucceedValidation(PollutedLocationIdentifyRequest input)
+    [TestCaseSource(nameof(ValidObjectIdentifyRequest))]
+    public async Task ValidInputShouldSucceedValidation(ObjectIdentifyRequest input)
     {
         var result = await Validator.ValidateAsync(input);
 
@@ -39,8 +39,8 @@ public class PollutedLocationIdentifyRequestValidationTests
     }
 
     [Test]
-    [TestCaseSource(nameof(InvalidPollutedLocationIdentifyRequest))]
-    public async Task InvalidInputShouldFailValidation(PollutedLocationIdentifyRequest input)
+    [TestCaseSource(nameof(InvalidObjectIdentifyRequest))]
+    public async Task InvalidInputShouldFailValidation(ObjectIdentifyRequest input)
     {
         var result = await Validator.ValidateAsync(input);
 

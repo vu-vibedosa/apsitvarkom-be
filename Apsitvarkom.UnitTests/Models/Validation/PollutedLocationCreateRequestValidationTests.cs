@@ -6,8 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationCreateRequestValidationTests
 {
-    private static readonly IValidator<PollutedLocationCreateRequest> Validator =
-        new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()));
+    private static readonly IValidator<PollutedLocationCreateRequest> Validator = new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator()));
 
     private static readonly PollutedLocationCreateRequest[] ValidPollutedLocationCreateRequests =
     {
@@ -67,7 +66,7 @@ public class PollutedLocationCreateRequestValidationTests
                     Longitude = -720
                 }
             },
-            Notes = "gtfo with these cringy notes",
+            Notes = "get outta here with these notes:)",
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
         },

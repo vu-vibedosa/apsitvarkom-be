@@ -1,8 +1,8 @@
 ﻿using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
-using Moq;
-using MockQueryable.Moq;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.Moq;
+using Moq;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
@@ -39,10 +39,11 @@ public class PollutedLocationDatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasOneInstance_SingleInstanceReturnedWithCorrectProperties()
     {
-        var pollutedLocationInstance = new PollutedLocation 
-        { 
-            Id = Guid.NewGuid(),
-            Location = 
+        var pollutedLocationId = Guid.NewGuid();
+        var pollutedLocationInstance = new PollutedLocation
+        {
+            Id = pollutedLocationId,
+            Location =
             {
                 Title = "title",
                 Coordinates =
@@ -50,12 +51,22 @@ public class PollutedLocationDatabaseRepositoryTests
                     Latitude = 47.12,
                     Longitude = -41.1251
                 }
-            }, 
-            Radius = 35, 
-            Severity = PollutedLocation.SeverityLevel.Moderate, 
-            Spotted = new DateTime(2022, 11, 12, 19, 23, 30), 
-            Notes = "notes", 
-            Progress = 67
+            },
+            Radius = 35,
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+            Spotted = new DateTime(2022, 11, 12, 19, 23, 30),
+            Notes = "notes",
+            Progress = 67,
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    PollutedLocationId = pollutedLocationId,
+                    Notes = "ho-ho-ho",
+                    StartTime = new DateTime(2022, 12, 23, 20, 00, 00),
+                }
+            }
         };
         var dbRows = new List<PollutedLocation> { pollutedLocationInstance };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
@@ -78,13 +89,14 @@ public class PollutedLocationDatabaseRepositoryTests
             Assert.That(instance.Spotted, Is.EqualTo(pollutedLocationInstance.Spotted));
             Assert.That(instance.Progress, Is.EqualTo(pollutedLocationInstance.Progress));
             Assert.That(instance.Notes, Is.EqualTo(pollutedLocationInstance.Notes));
+            Assert.That(instance.Events, Is.EqualTo(pollutedLocationInstance.Events));
         });
     }
 
     [Test]
     public async Task GetAllAsync_DbContextHasSeveralInstances_InstancesReturnedInCorrectOrder()
     {
-        var dbRows = DbInitializer.FakePollutedLocations.Value;
+        var dbRows = DbInitializer.FakePollutedLocations;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
         _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
         var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
@@ -185,6 +197,47 @@ public class PollutedLocationDatabaseRepositoryTests
 
         Assert.That(instance, Is.Not.Null);
         Assert.That(instance?.Id, Is.EqualTo(id));
+    }
+    #endregion
+
+    #region ExistsByPropertyAsync tests
+    [Test]
+    public async Task ExistsByPropertyAsync_InstanceWithRequestedPropertyNotFound_FalseReturned()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Id == Guid.NewGuid());
+
+        Assert.That(instance, Is.False);
+    }
+
+    [Test]
+    public async Task ExistsByPropertyAsync_AtLeastOneInstanceWithPropertyFound_TrueReturned()
+    {
+        var notes = "123";
+        var dbRows = new List<PollutedLocation>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid(), Notes = notes },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Notes == notes);
+
+        Assert.That(instance, Is.True);
     }
     #endregion
 

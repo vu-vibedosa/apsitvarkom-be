@@ -18,6 +18,8 @@ public class PollutedLocationResponse
     public DateTime Spotted { get; init; }
 
     public string? Notes { get; set; }
+
+    public List<CleaningEventResponse> Events { get; set; } = new();
 }
 
 public class PollutedLocationResponseValidator : AbstractValidator<PollutedLocationResponse>

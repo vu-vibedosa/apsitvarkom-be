@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Apsitvarkom.Models;
+﻿using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
@@ -16,6 +15,7 @@ public class PollutedLocationMappingTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
 
         config.AssertConfigurationIsValid();
@@ -25,38 +25,36 @@ public class PollutedLocationMappingTests
 
     #region Request mappings
     [Test]
-    [TestCase(-78.948237, 35.929673)]
-    public void CoordinatesCreateRequestToCoordinates(double latitude, double longitude)
+    public void CoordinatesCreateRequestToCoordinates()
     {
         var coordinatesCreateRequest = new CoordinatesCreateRequest
         {
-            Latitude = latitude,
-            Longitude = longitude
+            Latitude = -78.948237,
+            Longitude = 35.929673
         };
 
         var coordinates = _mapper.Map<Coordinates>(coordinatesCreateRequest);
         Assert.Multiple(() =>
         {
-            Assert.That(coordinates.Longitude, Is.EqualTo(longitude));
-            Assert.That(coordinates.Latitude, Is.EqualTo(latitude));
+            Assert.That(coordinates.Longitude, Is.EqualTo(coordinatesCreateRequest.Longitude));
+            Assert.That(coordinates.Latitude, Is.EqualTo(coordinatesCreateRequest.Latitude));
         });
     }
 
     [Test]
-    [TestCase(-78.948237, 35.929673, PollutedLocation.SeverityLevel.High, "notez", 4)]
-    public void PollutedLocationCreateRequestToPollutedLocation(double latitude, double longitude, PollutedLocation.SeverityLevel severity, string notes, int radius)
+    public void PollutedLocationCreateRequestToPollutedLocation()
     {
         var pollutedLocationCreateRequest = new PollutedLocationCreateRequest
         {
-            Severity = severity,
-            Notes = notes,
-            Radius = radius,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Notes = "notez",
+            Radius = 4,
             Location = new LocationCreateRequest
             {
-                Coordinates = new CoordinatesCreateRequest()
+                Coordinates = new CoordinatesCreateRequest
                 {
-                    Latitude = latitude,
-                    Longitude = longitude
+                    Latitude = -78.948237,
+                    Longitude = 35.929673
                 }
             }
         };
@@ -64,54 +62,89 @@ public class PollutedLocationMappingTests
         var pollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
-            Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
-            Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
-            Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
-            Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
+            Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(pollutedLocationCreateRequest.Location.Coordinates.Latitude));
+            Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(pollutedLocationCreateRequest.Location.Coordinates.Longitude));
+            Assert.That(pollutedLocation.Notes, Is.EqualTo(pollutedLocationCreateRequest.Notes));
+            Assert.That(pollutedLocation.Radius, Is.EqualTo(pollutedLocationCreateRequest.Radius));
+            Assert.That(pollutedLocation.Severity, Is.EqualTo(pollutedLocationCreateRequest.Severity));
         });
+    }
+
+    [Test]
+    public void ObjectIdentifyRequestToPollutedLocation()
+    {
+        var objectIdentifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        var location = _mapper.Map<PollutedLocation>(objectIdentifyRequest);
+
+        Assert.That(location.Id, Is.EqualTo(objectIdentifyRequest.Id));
     }
     #endregion
 
     #region Response mappings
     [Test]
-    [TestCase("5be2354e-2500-4289-bbe2-66210592e17f", "title", -78.948237, 35.929673, 10, PollutedLocation.SeverityLevel.Low, "2022-09-16T21:43:31.0000000", 25, "Hello world")]
-    public void PollutedLocationToPollutedLocationResponse(string guidString, string title, double longitude, double latitude, int radius, PollutedLocation.SeverityLevel severity, string dateTimeString, int progress, string notes)
+    public void PollutedLocationToPollutedLocationResponse()
     {
-        var guid = new Guid(guidString);
-        var dateTime = DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
+        var pollutedLocationId = Guid.NewGuid();
 
         var businessLogicObject = new PollutedLocation
         {
-            Id = guid,
+            Id = pollutedLocationId,
             Location =
             {
-                Title = title,
+                Title = "title",
                 Coordinates = new Coordinates
                 {
-                    Longitude = longitude,
-                    Latitude = latitude
-                },
+                    Longitude = -78.948237,
+                    Latitude = 35.929673
+                }
             },
-            Radius = radius,
-            Severity = severity,
-            Spotted = dateTime,
-            Progress = progress,
-            Notes = notes
+            Radius = 10,
+            Severity = PollutedLocation.SeverityLevel.Low,
+            Spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            Progress = 25,
+            Notes = "Hello world",
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    PollutedLocationId = pollutedLocationId,
+                    Id = Guid.NewGuid(),
+                    Notes = "Hello NPC",
+                    StartTime = new DateTime(2022, 10, 11, 12, 13, 14).ToUniversalTime(),
+                },
+                new()
+                {
+                    PollutedLocationId = pollutedLocationId,
+                    Id = Guid.NewGuid(),
+                    StartTime = new DateTime(2022, 11, 12, 13, 14, 15).ToUniversalTime(),
+                }
+            }
         };
 
         var pollutedLocation = _mapper.Map<PollutedLocationResponse>(businessLogicObject);
         Assert.Multiple(() =>
         {
-            Assert.That(pollutedLocation.Id, Is.EqualTo(guid));
-            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(title));
-            Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(longitude));
-            Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(latitude));
-            Assert.That(pollutedLocation.Radius, Is.EqualTo(radius));
-            Assert.That(pollutedLocation.Severity, Is.EqualTo(severity));
-            Assert.That(pollutedLocation.Spotted, Is.EqualTo(dateTime));
-            Assert.That(pollutedLocation.Progress, Is.EqualTo(progress));
-            Assert.That(pollutedLocation.Notes, Is.EqualTo(notes));
+            Assert.That(pollutedLocation.Id, Is.EqualTo(businessLogicObject.Id));
+            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
+            Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
+            Assert.That(pollutedLocation.Radius, Is.EqualTo(businessLogicObject.Radius));
+            Assert.That(pollutedLocation.Severity, Is.EqualTo(businessLogicObject.Severity));
+            Assert.That(pollutedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
+            Assert.That(pollutedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
+            Assert.That(pollutedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
+            Assert.That(pollutedLocation.Events.Count, Is.EqualTo(businessLogicObject.Events.Count));
+            for (var j = 0; j < pollutedLocation.Events.Count; ++j)
+            {
+                Assert.That(pollutedLocation.Events[j].PollutedLocationId, Is.EqualTo(businessLogicObject.Events[j].PollutedLocationId));
+                Assert.That(pollutedLocation.Events[j].Id, Is.EqualTo(businessLogicObject.Events[j].Id));
+                Assert.That(pollutedLocation.Events[j].Notes, Is.EqualTo(businessLogicObject.Events[j].Notes));
+                Assert.That(pollutedLocation.Events[j].StartTime, Is.EqualTo(businessLogicObject.Events[j].StartTime));
+            }
         });
     }
     #endregion

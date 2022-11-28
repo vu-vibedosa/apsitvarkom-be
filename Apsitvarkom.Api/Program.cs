@@ -7,6 +7,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Apsitvarkom.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetReq
 builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
 
 builder.Services.AddScoped<IPollutedLocationRepository, PollutedLocationDatabaseRepository>();
+builder.Services.AddScoped<IRepository<CleaningEvent>, CleaningEventDatabaseRepository>();
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {

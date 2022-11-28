@@ -23,7 +23,10 @@ public class PollutedLocationProfile : Profile
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
             .ForMember(x => x.Spotted, opt => opt.Ignore())
             .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.Progress, opt => opt.Ignore());
+            .ForMember(x => x.Progress, opt => opt.Ignore())
+            .ForMember(x => x.Events, opt => opt.Ignore());
+        CreateMap<ObjectIdentifyRequest, PollutedLocation>(MemberList.None)
+            .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
     }
 
     private void MapResponses()
