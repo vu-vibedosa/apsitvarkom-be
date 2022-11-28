@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services
     .AddAutoMapper(typeof(PollutedLocationProfile))
-    .AddAutoMapper(typeof(TidyingEventProfile))
+    .AddAutoMapper(typeof(CleaningEventProfile))
     .AddValidatorsFromAssemblyContaining<CoordinatesCreateRequestValidator>()
     .AddFluentValidationRulesToSwagger();
 
@@ -48,7 +48,7 @@ builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetReq
 builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
 
 builder.Services.AddScoped<IPollutedLocationRepository, PollutedLocationDatabaseRepository>();
-builder.Services.AddScoped<IRepository<TidyingEvent>, TidyingEventDatabaseRepository>();
+builder.Services.AddScoped<IRepository<CleaningEvent>, CleaningEventDatabaseRepository>();
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {

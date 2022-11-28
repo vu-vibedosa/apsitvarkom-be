@@ -8,7 +8,7 @@ namespace Apsitvarkom.DataAccess;
 public static class DbInitializer
 {
     public static readonly Lazy<PollutedLocation[]> FakePollutedLocations = new(InitializeFakePollutedLocationsArray);
-    public static readonly Lazy<TidyingEvent[]> FakeTidyingEvents = new(InitializeFakeTidyingEventsArray);
+    public static readonly Lazy<CleaningEvent[]> FakeCleaningEvents = new(InitializeFakeCleaningEventsArray);
 
     public static async Task<int> InitializePollutedLocations(IPollutedLocationContext context)
     {
@@ -37,7 +37,7 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
                 Progress = 41,
                 Notes = "Prisoners broke a window.",
-                Events = new List<TidyingEvent>()
+                Events = new List<CleaningEvent>()
             },
             new()
             {
@@ -56,9 +56,9 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
                 Progress = 13,
                 Notes = "A lot of cigarettes waste on the pavement.",
-                Events = new List<TidyingEvent>
+                Events = new List<CleaningEvent>
                 {
-                    FakeTidyingEvents.Value[0]
+                    FakeCleaningEvents.Value[0]
                 }
             },
             new()
@@ -77,7 +77,7 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.High,
                 Spotted = DateTime.Parse("2023-03-12T23:41:21Z").ToUniversalTime(),
                 Progress = 80,
-                Events = new List<TidyingEvent>()
+                Events = new List<CleaningEvent>()
             },
             new()
             {
@@ -96,9 +96,9 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2023-11-11T11:11:11Z").ToUniversalTime(),
                 Progress = 11,
                 Notes = "Apsitvarkom to the moooooon",
-                Events = new List<TidyingEvent>
+                Events = new List<CleaningEvent>
                 {
-                    FakeTidyingEvents.Value[1]
+                    FakeCleaningEvents.Value[1]
                 }
             },
             new()
@@ -118,10 +118,10 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2023-07-11T02:13:14Z").ToUniversalTime(),
                 Progress = 0,
                 Notes = "After the celebration of the latest Euroleague trophy, Zalgiris fans have left the grass trashy.",
-                Events = new List<TidyingEvent>
+                Events = new List<CleaningEvent>
                 {
-                    FakeTidyingEvents.Value[2],
-                    FakeTidyingEvents.Value[3]
+                    FakeCleaningEvents.Value[2],
+                    FakeCleaningEvents.Value[3]
                 }
             },
             new()
@@ -141,7 +141,7 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2023-01-01T04:00:01Z").ToUniversalTime(),
                 Progress = 0,
                 Notes = "The Vilnius Castle has slipped off the mountain.",
-                Events = new List<TidyingEvent>()
+                Events = new List<CleaningEvent>()
             },
             new()
             {
@@ -160,7 +160,7 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2022-06-08T01:12:23Z").ToUniversalTime(),
                 Progress = 80,
                 Notes = "Couldn't manage to grab all the beer cans I found on the beach.",
-                Events = new List<TidyingEvent>()
+                Events = new List<CleaningEvent>()
             },
             new()
             {
@@ -179,9 +179,9 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2023-04-01T13:14:15Z").ToUniversalTime(),
                 Progress = 0,
                 Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city.",
-                Events = new List<TidyingEvent>
+                Events = new List<CleaningEvent>
                 {
-                    FakeTidyingEvents.Value[4]
+                    FakeCleaningEvents.Value[4]
                 }
             },
             new()
@@ -201,14 +201,14 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2022-06-20T11:22:33Z").ToUniversalTime(),
                 Progress = 20,
                 Notes = "The fans made a big mess after the game. Apsitvarkom?",
-                Events = new List<TidyingEvent>()
+                Events = new List<CleaningEvent>()
             }
         };
     }
 
-    private static TidyingEvent[] InitializeFakeTidyingEventsArray()
+    private static CleaningEvent[] InitializeFakeCleaningEventsArray()
     {
-        return new TidyingEvent[]
+        return new CleaningEvent[]
         {
             new()
             {

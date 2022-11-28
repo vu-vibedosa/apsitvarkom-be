@@ -28,7 +28,7 @@ public class PollutedLocationResponseValidationTests
             Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
             Progress = 41,
             Notes = "Prisoners broke a window.",
-            Events = new List<TidyingEventResponse>()
+            Events = new List<CleaningEventResponse>()
         },
         new()
         {
@@ -45,7 +45,7 @@ public class PollutedLocationResponseValidationTests
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
             Progress = 13,
-            Events = new List<TidyingEventResponse>
+            Events = new List<CleaningEventResponse>
             {
                 new()
                 {

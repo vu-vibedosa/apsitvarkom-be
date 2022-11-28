@@ -1,6 +1,6 @@
 ﻿namespace Apsitvarkom.Models.Public;
 
-public class TidyingEventResponse
+public class CleaningEventResponse
 {
     public Guid Id { get; init; }
 

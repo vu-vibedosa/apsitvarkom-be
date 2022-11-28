@@ -19,7 +19,7 @@ public class PollutedLocationResponse
 
     public string? Notes { get; set; }
 
-    public List<TidyingEventResponse> Events { get; set; } = new();
+    public List<CleaningEventResponse> Events { get; set; } = new();
 }
 
 public class PollutedLocationResponseValidator : AbstractValidator<PollutedLocationResponse>

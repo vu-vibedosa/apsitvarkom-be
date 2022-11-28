@@ -5,7 +5,7 @@ using AutoMapper;
 
 namespace Apsitvarkom.UnitTests.Models.Mapping;
 
-public class TidyingEventMappingTests
+public class CleaningEventMappingTests
 {
     private IMapper _mapper = null!;
 
@@ -14,7 +14,7 @@ public class TidyingEventMappingTests
     {
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<TidyingEventProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
 
         config.AssertConfigurationIsValid();
@@ -28,9 +28,9 @@ public class TidyingEventMappingTests
 
     #region Response mappings
     [Test]
-    public void TidyingEventToTidyingEventResponse()
+    public void CleaningEventToCleaningEventResponse()
     {
-        var businessLogicObject = new TidyingEvent
+        var businessLogicObject = new CleaningEvent
         {
             Id = Guid.NewGuid(),
             StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
@@ -38,7 +38,7 @@ public class TidyingEventMappingTests
             PollutedLocationId = Guid.NewGuid()
         };
 
-        var response = _mapper.Map<TidyingEventResponse>(businessLogicObject);
+        var response = _mapper.Map<CleaningEventResponse>(businessLogicObject);
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(businessLogicObject.Id));

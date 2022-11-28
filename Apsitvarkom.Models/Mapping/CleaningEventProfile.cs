@@ -5,11 +5,11 @@ namespace Apsitvarkom.Models.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class
-/// <see cref="TidyingEvent" /> related objects (Requests, Responses, Business objects).
+/// <see cref="CleaningEvent" /> related objects (Requests, Responses, Business objects).
 /// </summary>
-public class TidyingEventProfile : Profile
+public class CleaningEventProfile : Profile
 {
-    public TidyingEventProfile()
+    public CleaningEventProfile()
     {
         MapRequests();
         MapResponses();
@@ -22,6 +22,6 @@ public class TidyingEventProfile : Profile
 
     private void MapResponses()
     {
-        CreateMap<TidyingEvent, TidyingEventResponse>();
+        CreateMap<CleaningEvent, CleaningEventResponse>();
     }
 }

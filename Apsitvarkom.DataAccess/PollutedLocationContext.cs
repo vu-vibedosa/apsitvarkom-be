@@ -6,14 +6,14 @@ namespace Apsitvarkom.DataAccess;
 public interface IPollutedLocationContext
 {
     DbSet<PollutedLocation> PollutedLocations { get; }
-    DbSet<TidyingEvent> TidyingEvents { get; }
+    DbSet<CleaningEvent> CleaningEvents { get; }
     DbContext Instance { get; }
 }
 
 public class PollutedLocationContext : DbContext, IPollutedLocationContext
 {
     public DbSet<PollutedLocation> PollutedLocations { get; private set; } = null!;
-    public DbSet<TidyingEvent> TidyingEvents { get; private set; } = null!;
+    public DbSet<CleaningEvent> CleaningEvents { get; private set; } = null!;
     public DbContext Instance => this;
 
     public PollutedLocationContext(DbContextOptions<PollutedLocationContext> options) : base(options) { }

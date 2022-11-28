@@ -57,7 +57,7 @@ public class PollutedLocationDatabaseRepositoryTests
             Spotted = new DateTime(2022, 11, 12, 19, 23, 30),
             Notes = "notes",
             Progress = 67,
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {

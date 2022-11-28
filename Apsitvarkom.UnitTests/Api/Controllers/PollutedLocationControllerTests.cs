@@ -37,7 +37,7 @@ public class PollutedLocationControllerTests
             Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
             Progress = 42,
             Notes = "Lorem ipsum",
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {
@@ -71,7 +71,7 @@ public class PollutedLocationControllerTests
             Spotted = DateTime.Parse("2023-11-23T21:12:14Z"),
             Progress = 11,
             Notes = "11111",
-            Events = new List<TidyingEvent>()
+            Events = new List<CleaningEvent>()
         }
     };
 
@@ -81,7 +81,7 @@ public class PollutedLocationControllerTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
-            cfg.AddProfile<TidyingEventProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();

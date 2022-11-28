@@ -15,7 +15,7 @@ public class PollutedLocationMappingTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
-            cfg.AddProfile<TidyingEventProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
 
         config.AssertConfigurationIsValid();
@@ -94,7 +94,7 @@ public class PollutedLocationMappingTests
             Spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
             Progress = 25,
             Notes = "Hello world",
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {
