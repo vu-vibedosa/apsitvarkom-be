@@ -125,8 +125,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
-        var resultLocations = result as IEnumerable<PollutedLocationResponse>;
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
         for (var i = 0; i < PollutedLocations.Count(); i++)
         {
@@ -195,8 +195,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
-        var resultLocations = result as IEnumerable<PollutedLocationResponse>;
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<PollutedLocationResponse>>());
+        var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
         for (var i = 0; i < PollutedLocations.Count(); i++)
         {
@@ -243,9 +243,9 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result, Is.TypeOf<List<string>>());
+        Assert.That(result.Value, Is.TypeOf<List<string>>());
 
-        var errorList = result as List<string>;
+        var errorList = result.Value as List<string>;
         Assert.That(errorList, Is.Not.Null);
         Assert.That(errorList.Count, Is.EqualTo(2));
     }
@@ -292,8 +292,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
-        var resultLocation = result as PollutedLocationResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
         Assert.That(resultLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -334,7 +334,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
@@ -354,7 +354,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
@@ -414,8 +414,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
 
-        Assert.That(result, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
-        var resultLocation = result as PollutedLocationResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
         Assert.That(resultLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -461,8 +461,8 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
 
-        Assert.That(result, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
-        var resultLocation = result as PollutedLocationResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
         Assert.That(resultLocation, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -491,7 +491,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
@@ -576,7 +576,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
@@ -596,7 +596,7 @@ public class PollutedLocationControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]

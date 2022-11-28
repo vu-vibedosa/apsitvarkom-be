@@ -83,8 +83,8 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result, Is.Not.Null.And.InstanceOf<IEnumerable<CleaningEventResponse>>());
-        var resultEvents = result as IEnumerable<CleaningEventResponse>;
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<CleaningEventResponse>>());
+        var resultEvents = result.Value as IEnumerable<CleaningEventResponse>;
         Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(CleaningEvents.Count()));
         for (var i = 0; i < CleaningEvents.Count(); i++)
         {
@@ -137,8 +137,8 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result, Is.Not.Null.And.TypeOf<CleaningEventResponse>());
-        var resultEvent = result as CleaningEventResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<CleaningEventResponse>());
+        var resultEvent = result.Value as CleaningEventResponse;
         Assert.That(resultEvent, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -167,7 +167,7 @@ public class CleaningEventControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
@@ -187,7 +187,7 @@ public class CleaningEventControllerTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
-        Assert.That(result, Is.Not.Null.And.Not.Empty);
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
     }
 
     [Test]
