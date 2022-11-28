@@ -3,7 +3,7 @@
 /// <summary>
 /// Class for storing records of events for cleaning of specific <see cref="PollutedLocation" />.
 /// </summary>
-public class TidyingEvent
+public class CleaningEvent
 {
     /// <summary>Unique identifier of the given event.</summary>
     public Guid Id { get; init; }

@@ -34,5 +34,5 @@ public class PollutedLocation
     public Location Location { get; set; } = new();
 
     /// <summary>Collection of events linked to the location.</summary>
-    public List<TidyingEvent> Events { get; set; } = new();
+    public List<CleaningEvent> Events { get; set; } = new();
 }

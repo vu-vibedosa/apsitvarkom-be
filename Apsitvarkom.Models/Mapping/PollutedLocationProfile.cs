@@ -25,6 +25,8 @@ public class PollutedLocationProfile : Profile
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.Progress, opt => opt.Ignore())
             .ForMember(x => x.Events, opt => opt.Ignore());
+        CreateMap<ObjectIdentifyRequest, PollutedLocation>(MemberList.None)
+            .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
     }
 
     private void MapResponses()

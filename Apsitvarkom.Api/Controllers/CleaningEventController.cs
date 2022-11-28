@@ -9,14 +9,14 @@ namespace Apsitvarkom.Api.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class TidyingEventController : ControllerBase
+public class CleaningEventController : ControllerBase
 {
-    private readonly IRepository<TidyingEvent> _repository;
+    private readonly IRepository<CleaningEvent> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
 
-    public TidyingEventController(
-        IRepository<TidyingEvent> repository, 
+    public CleaningEventController(
+        IRepository<CleaningEvent> repository, 
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator)
     {
@@ -28,9 +28,9 @@ public class TidyingEventController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("All")]
-    public async Task<ActionResult<IEnumerable<TidyingEventResponse>>> GetAll()
+    public async Task<ActionResult<IEnumerable<CleaningEventResponse>>> GetAll()
     {
-        IEnumerable<TidyingEvent> events;
+        IEnumerable<CleaningEvent> events;
         try
         {
             events = await _repository.GetAllAsync();
@@ -40,7 +40,7 @@ public class TidyingEventController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        var mappedEvents = _mapper.Map<IEnumerable<TidyingEventResponse>>(events);
+        var mappedEvents = _mapper.Map<IEnumerable<CleaningEventResponse>>(events);
         if (mappedEvents is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvents);
@@ -51,24 +51,24 @@ public class TidyingEventController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<ActionResult<TidyingEventResponse>> GetById([FromQuery] ObjectIdentifyRequest tidyingEventIdentifyRequest)
+    public async Task<ActionResult<CleaningEventResponse>> GetById([FromQuery] ObjectIdentifyRequest cleaningEventIdentifyRequest)
     {
-        var validationResult = await _objectIdentifyValidator.ValidateAsync(tidyingEventIdentifyRequest);
+        var validationResult = await _objectIdentifyValidator.ValidateAsync(cleaningEventIdentifyRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
-        TidyingEvent? tidyingEvent;
+        CleaningEvent? cleaningEvent;
         try
         {
-            tidyingEvent = await _repository.GetByPropertyAsync(x => x.Id == tidyingEventIdentifyRequest.Id);
+            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        if (tidyingEvent is null) return NotFound($"Polluted location with the specified id '{tidyingEventIdentifyRequest.Id}' was not found.");
+        if (cleaningEvent is null) return NotFound($"Polluted location with the specified id '{cleaningEventIdentifyRequest.Id}' was not found.");
 
-        var mappedEvent = _mapper.Map<TidyingEventResponse>(tidyingEvent);
+        var mappedEvent = _mapper.Map<CleaningEventResponse>(cleaningEvent);
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvent);

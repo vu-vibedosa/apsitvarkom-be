@@ -6,7 +6,7 @@ using Moq;
 
 namespace Apsitvarkom.UnitTests.DataAccess;
 
-public class TidyingEventDatabaseRepositoryTests
+public class CleaningEventDatabaseRepositoryTests
 {
     private Mock<IPollutedLocationContext> _mockContext = null!;
 
@@ -18,18 +18,18 @@ public class TidyingEventDatabaseRepositoryTests
 
     #region Constructor tests
     [Test]
-    public void TidyingEventDatabaseRepositoryConstructor_HappyPath() =>
-        Assert.DoesNotThrow(() => new TidyingEventDatabaseRepository(_mockContext.Object));
+    public void CleaningEventDatabaseRepositoryConstructor_HappyPath() =>
+        Assert.DoesNotThrow(() => new CleaningEventDatabaseRepository(_mockContext.Object));
     #endregion
 
     #region GetAllAsync tests
     [Test]
     public async Task GetAllAsync_DbContextHasNoInstances_EmptyListReturned()
     {
-        var dbRows = new List<TidyingEvent>();
+        var dbRows = new List<CleaningEvent>();
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
 
@@ -39,17 +39,17 @@ public class TidyingEventDatabaseRepositoryTests
     [Test]
     public async Task GetAllAsync_DbContextHasOneInstance_SingleInstanceReturnedWithCorrectProperties()
     {
-        var tidyingEventInstance = new TidyingEvent
+        var cleaningEventInstance = new CleaningEvent
         {
             Id = Guid.NewGuid(),
             PollutedLocationId = Guid.NewGuid(),
             StartTime = new DateTime(2022, 11, 12, 19, 23, 30),
             Notes = "notes"
         };
-        var dbRows = new List<TidyingEvent> { tidyingEventInstance };
+        var dbRows = new List<CleaningEvent> { cleaningEventInstance };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
         var instance = instances.FirstOrDefault();
@@ -58,20 +58,20 @@ public class TidyingEventDatabaseRepositoryTests
         Assert.That(instance, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(instance.Id, Is.EqualTo(tidyingEventInstance.Id));
-            Assert.That(instance.PollutedLocationId, Is.EqualTo(tidyingEventInstance.PollutedLocationId));
-            Assert.That(instance.StartTime, Is.EqualTo(tidyingEventInstance.StartTime));
-            Assert.That(instance.Notes, Is.EqualTo(tidyingEventInstance.Notes));
+            Assert.That(instance.Id, Is.EqualTo(cleaningEventInstance.Id));
+            Assert.That(instance.PollutedLocationId, Is.EqualTo(cleaningEventInstance.PollutedLocationId));
+            Assert.That(instance.StartTime, Is.EqualTo(cleaningEventInstance.StartTime));
+            Assert.That(instance.Notes, Is.EqualTo(cleaningEventInstance.Notes));
         });
     }
 
     [Test]
     public async Task GetAllAsync_DbContextHasSeveralInstances_InstancesReturnedInCorrectOrder()
     {
-        var dbRows = DbInitializer.FakeTidyingEvents.Value;
+        var dbRows = DbInitializer.FakeCleaningEvents.Value;
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instances = (await dataManager.GetAllAsync()).ToArray();
         var instanceIds = instances.Select(x => x.Id);
@@ -85,7 +85,7 @@ public class TidyingEventDatabaseRepositoryTests
     [Test]
     public async Task GetByPropertyAsync_InstanceWithRequestedPropertyNotFound_NullReturned()
     {
-        var dbRows = new List<TidyingEvent>
+        var dbRows = new List<CleaningEvent>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() },
@@ -93,8 +93,8 @@ public class TidyingEventDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.Id == Guid.NewGuid());
 
@@ -106,7 +106,7 @@ public class TidyingEventDatabaseRepositoryTests
     {
         var id = Guid.NewGuid();
         var notes = "123";
-        var dbRows = new List<TidyingEvent>
+        var dbRows = new List<CleaningEvent>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = Guid.NewGuid() },
@@ -114,8 +114,8 @@ public class TidyingEventDatabaseRepositoryTests
             new() { Id = Guid.NewGuid() }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.Notes == notes);
 
@@ -128,7 +128,7 @@ public class TidyingEventDatabaseRepositoryTests
     {
         var id = Guid.NewGuid();
         var matchingPollutedLocationId = Guid.NewGuid();
-        var dbRows = new List<TidyingEvent>
+        var dbRows = new List<CleaningEvent>
         {
             new() { Id = Guid.NewGuid() },
             new() { Id = id, PollutedLocationId = matchingPollutedLocationId },
@@ -136,8 +136,8 @@ public class TidyingEventDatabaseRepositoryTests
             new() { Id = Guid.NewGuid(), PollutedLocationId = matchingPollutedLocationId }
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         var instance = await dataManager.GetByPropertyAsync(x => x.PollutedLocationId == matchingPollutedLocationId);
 
@@ -146,25 +146,66 @@ public class TidyingEventDatabaseRepositoryTests
     }
     #endregion
 
+    #region GetByPropertyAsync tests
+    [Test]
+    public async Task ExistsByPropertyAsync_InstanceWithRequestedPropertyNotFound_FalseReturned()
+    {
+        var dbRows = new List<CleaningEvent>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Id == Guid.NewGuid());
+
+        Assert.That(instance, Is.False);
+    }
+
+    [Test]
+    public async Task ExistsByPropertyAsync_AtLeastOneInstanceWithPropertyFound_TrueReturned()
+    {
+        var notes = "123";
+        var dbRows = new List<CleaningEvent>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid(), Notes = notes },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Notes == notes);
+
+        Assert.That(instance, Is.True);
+    }
+    #endregion
+
     #region InsertAsync tests
     [Test]
     public async Task InsertAsync_OneInstanceInserted_InstanceFoundInDbSet()
     {
-        var dbRows = new List<TidyingEvent>
+        var dbRows = new List<CleaningEvent>
         {
             new()
         };
         var mock = dbRows.AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
         _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         await dataManager.InsertAsync(dbRows[0]);
 
         Assert.Multiple(() =>
         {
-            Assert.That(_mockContext.Object.TidyingEvents.Count(), Is.EqualTo(1));
-            Assert.That(_mockContext.Object.TidyingEvents.Contains(dbRows[0]), Is.True);
+            Assert.That(_mockContext.Object.CleaningEvents.Count(), Is.EqualTo(1));
+            Assert.That(_mockContext.Object.CleaningEvents.Contains(dbRows[0]), Is.True);
         });
     }
     #endregion
@@ -173,7 +214,7 @@ public class TidyingEventDatabaseRepositoryTests
     [Test]
     public async Task DeleteAsync_InstanceExists_SuccessfullyDeleted()
     {
-        var dbRows = new List<TidyingEvent>
+        var dbRows = new List<CleaningEvent>
         {
             new() { Id = new Guid() },
             new() { Id = new Guid() },
@@ -181,17 +222,17 @@ public class TidyingEventDatabaseRepositoryTests
         };
         var locationToDelete = dbRows.TakeLast(1).Single();
         var mock = dbRows.SkipLast(1).AsQueryable().BuildMockDbSet();
-        _mockContext.Setup(m => m.TidyingEvents).Returns(mock.Object);
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
         _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
-        var dataManager = new TidyingEventDatabaseRepository(_mockContext.Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
 
         await dataManager.DeleteAsync(locationToDelete);
 
         Assert.Multiple(() =>
         {
-            Assert.That(_mockContext.Object.TidyingEvents.Count(), Is.EqualTo(2));
-            Assert.That(_mockContext.Object.TidyingEvents.Select(x => x.Id), Is.EqualTo(dbRows.SkipLast(1).Select(x => x.Id)));
-            Assert.That(_mockContext.Object.TidyingEvents.Contains(locationToDelete), Is.False);
+            Assert.That(_mockContext.Object.CleaningEvents.Count(), Is.EqualTo(2));
+            Assert.That(_mockContext.Object.CleaningEvents.Select(x => x.Id), Is.EqualTo(dbRows.SkipLast(1).Select(x => x.Id)));
+            Assert.That(_mockContext.Object.CleaningEvents.Contains(locationToDelete), Is.False);
         });
     }
     #endregion

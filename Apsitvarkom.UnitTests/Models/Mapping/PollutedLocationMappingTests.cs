@@ -15,7 +15,7 @@ public class PollutedLocationMappingTests
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<PollutedLocationProfile>();
-            cfg.AddProfile<TidyingEventProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
 
         config.AssertConfigurationIsValid();
@@ -69,6 +69,19 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Severity, Is.EqualTo(pollutedLocationCreateRequest.Severity));
         });
     }
+
+    [Test]
+    public void ObjectIdentifyRequestToPollutedLocation()
+    {
+        var objectIdentifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        var location = _mapper.Map<PollutedLocation>(objectIdentifyRequest);
+
+        Assert.That(location.Id, Is.EqualTo(objectIdentifyRequest.Id));
+    }
     #endregion
 
     #region Response mappings
@@ -94,7 +107,7 @@ public class PollutedLocationMappingTests
             Spotted = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
             Progress = 25,
             Notes = "Hello world",
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {

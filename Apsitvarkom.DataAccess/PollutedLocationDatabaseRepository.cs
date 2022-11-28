@@ -43,6 +43,14 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     }
 
     /// <inheritdoc />
+    public async Task<bool> ExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    {
+        return await _context.PollutedLocations
+            .Include(l => l.Events)
+            .AnyAsync(propertyCondition);
+    }
+
+    /// <inheritdoc />
     public async Task InsertAsync(PollutedLocation modelToInsert)
     {
         await _context.PollutedLocations.AddAsync(modelToInsert);

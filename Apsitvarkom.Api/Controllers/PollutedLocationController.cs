@@ -154,30 +154,30 @@ public class PollutedLocationController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete("Delete")]
-    public async Task<ActionResult<PollutedLocationResponse>> Delete([FromQuery] ObjectIdentifyRequest pollutedLocationIdentifyRequest)
+    public async Task<ActionResult> Delete([FromQuery] ObjectIdentifyRequest pollutedLocationIdentifyRequest)
     {
         var validationResult = await _objectIdentifyValidator.ValidateAsync(pollutedLocationIdentifyRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
-        PollutedLocation? location;
+        bool locationExists;
         try
         {
-            location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
+            locationExists = await _repository.ExistsByPropertyAsync(x => x.Id == pollutedLocationIdentifyRequest.Id);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         
-        if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
+        if (locationExists is false) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
 
-        var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
-        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+        var location = _mapper.Map<PollutedLocation>(pollutedLocationIdentifyRequest);
+        if (location is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
         {
@@ -188,6 +188,6 @@ public class PollutedLocationController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        return Ok(mappedLocation);
+        return NoContent();
     }
 }

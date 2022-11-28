@@ -11,13 +11,13 @@ using Moq;
 
 namespace Apsitvarkom.UnitTests.Api.Controllers;
 
-public class TidyingEventControllerTests
+public class CleaningEventControllerTests
 {
-    private TidyingEventController _controller;
+    private CleaningEventController _controller;
     private IMapper _mapper;
-    private Mock<IRepository<TidyingEvent>> _repository;
+    private Mock<IRepository<CleaningEvent>> _repository;
 
-    private readonly IEnumerable<TidyingEvent> TidyingEvents = new List<TidyingEvent>
+    private readonly IEnumerable<CleaningEvent> CleaningEvents = new List<CleaningEvent>
     {
         new()
         {
@@ -46,13 +46,13 @@ public class TidyingEventControllerTests
     {
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<TidyingEventProfile>();
+            cfg.AddProfile<CleaningEventProfile>();
         });
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
 
-        _repository = new Mock<IRepository<TidyingEvent>>();
-        _controller = new TidyingEventController(
+        _repository = new Mock<IRepository<CleaningEvent>>();
+        _controller = new CleaningEventController(
             _repository.Object, 
             _mapper, 
             new ObjectIdentifyRequestValidator()
@@ -61,7 +61,7 @@ public class TidyingEventControllerTests
 
     #region Constructor tests
     [Test]
-    public void Constructor_HappyPath_IsSuccess() => Assert.That(new TidyingEventController(
+    public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
             _repository.Object, 
             _mapper, 
             new ObjectIdentifyRequestValidator()
@@ -70,10 +70,10 @@ public class TidyingEventControllerTests
 
     #region GetAll tests
     [Test]
-    public async Task GetAll_RepositoryReturnsTidyingEvents_OKActionResultReturned()
+    public async Task GetAll_RepositoryReturnsCleaningEvents_OKActionResultReturned()
     {
         _repository.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(TidyingEvents);
+            .ReturnsAsync(CleaningEvents);
 
         var actionResult = await _controller.GetAll();
 
@@ -83,19 +83,19 @@ public class TidyingEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<TidyingEventResponse>>());
-        var resultEvents = result.Value as IEnumerable<TidyingEventResponse>;
-        Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(TidyingEvents.Count()));
-        for (var i = 0; i < TidyingEvents.Count(); i++)
+        Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<CleaningEventResponse>>());
+        var resultEvents = result.Value as IEnumerable<CleaningEventResponse>;
+        Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(CleaningEvents.Count()));
+        for (var i = 0; i < CleaningEvents.Count(); i++)
         {
-            var tidyingEvent = TidyingEvents.ElementAt(i);
+            var cleaningEvent = CleaningEvents.ElementAt(i);
             var resultEvent = resultEvents.ElementAt(i);
             Assert.Multiple(() =>
             {
-                Assert.That(resultEvent.Id, Is.EqualTo(tidyingEvent.Id));
-                Assert.That(resultEvent.StartTime, Is.EqualTo(tidyingEvent.StartTime));
-                Assert.That(resultEvent.Notes, Is.EqualTo(tidyingEvent.Notes));
-                Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(tidyingEvent.PollutedLocationId));
+                Assert.That(resultEvent.Id, Is.EqualTo(cleaningEvent.Id));
+                Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
+                Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
+                Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(cleaningEvent.PollutedLocationId));
             });
         }
     }
@@ -118,16 +118,16 @@ public class TidyingEventControllerTests
 
     #region GetById tests
     [Test]
-    public async Task GetById_RepositoryReturnsTidyingEvent_OKActionResultReturned()
+    public async Task GetById_RepositoryReturnsCleaningEvent_OKActionResultReturned()
     {
-        var tidyingEvent = TidyingEvents.First();
+        var cleaningEvent = CleaningEvents.First();
         var identifyRequest = new ObjectIdentifyRequest
         {
-            Id = tidyingEvent.Id
+            Id = cleaningEvent.Id
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<TidyingEvent, bool>>>()))
-            .ReturnsAsync(tidyingEvent);
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+            .ReturnsAsync(cleaningEvent);
 
         var actionResult = await _controller.GetById(identifyRequest);
 
@@ -137,15 +137,15 @@ public class TidyingEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-        Assert.That(result.Value, Is.Not.Null.And.TypeOf<TidyingEventResponse>());
-        var resultEvent = result.Value as TidyingEventResponse;
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<CleaningEventResponse>());
+        var resultEvent = result.Value as CleaningEventResponse;
         Assert.That(resultEvent, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(resultEvent.Id, Is.EqualTo(tidyingEvent.Id));
-            Assert.That(resultEvent.StartTime, Is.EqualTo(tidyingEvent.StartTime));
-            Assert.That(resultEvent.Notes, Is.EqualTo(tidyingEvent.Notes));
-            Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(tidyingEvent.PollutedLocationId));
+            Assert.That(resultEvent.Id, Is.EqualTo(cleaningEvent.Id));
+            Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
+            Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
+            Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(cleaningEvent.PollutedLocationId));
         });
     }
 
@@ -157,8 +157,8 @@ public class TidyingEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<TidyingEvent, bool>>>()))
-            .ReturnsAsync((TidyingEvent?)null);
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+            .ReturnsAsync((CleaningEvent?)null);
 
         var actionResult = await _controller.GetById(identifyRequest);
 
@@ -180,7 +180,7 @@ public class TidyingEventControllerTests
 
         var actionResult = await _controller.GetById(identifyRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<TidyingEvent, bool>>>()), Times.Never);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -198,7 +198,7 @@ public class TidyingEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<TidyingEvent, bool>>>()))
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
             .Throws<Exception>();
 
         var actionResult = await _controller.GetById(identifyRequest);

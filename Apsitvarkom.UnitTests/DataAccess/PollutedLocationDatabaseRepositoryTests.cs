@@ -57,7 +57,7 @@ public class PollutedLocationDatabaseRepositoryTests
             Spotted = new DateTime(2022, 11, 12, 19, 23, 30),
             Notes = "notes",
             Progress = 67,
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {
@@ -197,6 +197,47 @@ public class PollutedLocationDatabaseRepositoryTests
 
         Assert.That(instance, Is.Not.Null);
         Assert.That(instance?.Id, Is.EqualTo(id));
+    }
+    #endregion
+
+    #region ExistsByPropertyAsync tests
+    [Test]
+    public async Task ExistsByPropertyAsync_InstanceWithRequestedPropertyNotFound_FalseReturned()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Id == Guid.NewGuid());
+
+        Assert.That(instance, Is.False);
+    }
+
+    [Test]
+    public async Task ExistsByPropertyAsync_AtLeastOneInstanceWithPropertyFound_TrueReturned()
+    {
+        var notes = "123";
+        var dbRows = new List<PollutedLocation>
+        {
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid(), Notes = notes },
+            new() { Id = Guid.NewGuid() }
+        };
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        var instance = await dataManager.ExistsByPropertyAsync(x => x.Notes == notes);
+
+        Assert.That(instance, Is.True);
     }
     #endregion
 

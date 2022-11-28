@@ -78,6 +78,20 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task PollutedLocation_ExistsByPropertyTest()
+    {
+        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(4).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        var response = await dbRepository.ExistsByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(response, Is.True);
+    }
+
+    [Test]
     public async Task PollutedLocation_InsertAsync_SamePrimaryKeys_Throws()
     {
         // Try to insert the same row that was inserted in [SetUp]
@@ -110,7 +124,7 @@ public class PollutedLocationContextDatabaseTests
                     Longitude = 13.00
                 }
             },
-            Events = new List<TidyingEvent>
+            Events = new List<CleaningEvent>
             {
                 new()
                 {
@@ -125,7 +139,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context1 = new PollutedLocationContext(_options);
         await using var context2 = new PollutedLocationContext(_options);
         var locationDbRepository = new PollutedLocationDatabaseRepository(context1);
-        var eventDbRepository = new TidyingEventDatabaseRepository(context2);
+        var eventDbRepository = new CleaningEventDatabaseRepository(context2);
 
         Assert.DoesNotThrowAsync(async () => await locationDbRepository.InsertAsync(instanceToInsert));
 
@@ -134,7 +148,7 @@ public class PollutedLocationContextDatabaseTests
         Assert.That(locations.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
 
         var events = (await eventDbRepository.GetAllAsync()).ToArray();
-        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeTidyingEvents.Value.Length + 1));
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Value.Length + 1));
         Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Events.Single().Id), Is.True);
     }
 
@@ -178,7 +192,7 @@ public class PollutedLocationContextDatabaseTests
         await using var context1 = new PollutedLocationContext(_options);
         await using var context2 = new PollutedLocationContext(_options);
         var locationDbRepository = new PollutedLocationDatabaseRepository(context1);
-        var eventDbRepository = new TidyingEventDatabaseRepository(context2);
+        var eventDbRepository = new CleaningEventDatabaseRepository(context2);
 
         Assert.DoesNotThrowAsync(async () => await locationDbRepository.DeleteAsync(dbRow));
 
@@ -192,15 +206,15 @@ public class PollutedLocationContextDatabaseTests
     }
     #endregion
 
-    #region TidyingEvent
+    #region CleaningEvent
     [Test]
-    public async Task TidyingEvent_GetAllTest()
+    public async Task CleaningEvent_GetAllTest()
     {
-        var objectIds = DbInitializer.FakeTidyingEvents.Value.Select(tidyingEvent => tidyingEvent.Id).ToArray();
+        var objectIds = DbInitializer.FakeCleaningEvents.Value.Select(cleaningEvent => cleaningEvent.Id).ToArray();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
-        var dbRepository = new TidyingEventDatabaseRepository(context);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
         var response = (await dbRepository.GetAllAsync()).ToArray();
 
         Assert.That(response.Length, Is.EqualTo(objectIds.Length));
@@ -208,13 +222,13 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task TidyingEvent_GetByPropertyTest()
+    public async Task CleaningEvent_GetByPropertyTest()
     {
-        var dbRow = DbInitializer.FakeTidyingEvents.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
-        var dbRepository = new TidyingEventDatabaseRepository(context);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
 
         var response = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
 
@@ -229,22 +243,36 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task TidyingEvent_InsertAsync_SamePrimaryKeys_Throws()
+    public async Task CleaningEvent_ExistsByPropertyTest()
     {
-        // Try to insert the same row that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakeTidyingEvents.Value.Skip(3).Take(1).Single();
+        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
-        var dbRepository = new TidyingEventDatabaseRepository(context);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
+
+        var response = await dbRepository.ExistsByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(response, Is.True);
+    }
+
+    [Test]
+    public async Task CleaningEvent_InsertAsync_SamePrimaryKeys_Throws()
+    {
+        // Try to insert the same row that was inserted in [SetUp]
+        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
 
         Assert.ThrowsAsync<ArgumentException>(async () => await dbRepository.InsertAsync(dbRow));
     }
 
     [Test]
-    public async Task TidyingEvent_InsertAsync_PrimaryKeyUnique_SuccessfullyInserted()
+    public async Task CleaningEvent_InsertAsync_PrimaryKeyUnique_SuccessfullyInserted()
     {
-        var instanceToInsert = new TidyingEvent
+        var instanceToInsert = new CleaningEvent
         {
             Id = Guid.NewGuid(),
             PollutedLocationId = Guid.NewGuid(),
@@ -254,39 +282,39 @@ public class PollutedLocationContextDatabaseTests
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
-        var eventDbRepository = new TidyingEventDatabaseRepository(context);
+        var eventDbRepository = new CleaningEventDatabaseRepository(context);
 
         Assert.DoesNotThrowAsync(async () => await eventDbRepository.InsertAsync(instanceToInsert));
 
         var events = (await eventDbRepository.GetAllAsync()).ToArray();
-        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeTidyingEvents.Value.Length + 1));
+        Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Value.Length + 1));
         Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
     }
 
     [Test]
-    public async Task TidyingEvent_DeleteAsync_InstanceDoesNotExist_Throws()
+    public async Task CleaningEvent_DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance
-        var instanceToDelete = new TidyingEvent();
+        var instanceToDelete = new CleaningEvent();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
-        var dbRepository = new TidyingEventDatabaseRepository(context);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
 
         Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.DeleteAsync(instanceToDelete));
     }
 
     [Test]
-    public async Task TidyingEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted_PollutedLocationDoesNotInclude()
+    public async Task CleaningEvent_DeleteAsync_InstanceExists_SuccessfullyDeleted_PollutedLocationDoesNotInclude()
     {
         // Try to delete one of the values that was inserted in [SetUp]
-        var dbRow = DbInitializer.FakeTidyingEvents.Value.Skip(3).Take(1).First();
+        var dbRow = DbInitializer.FakeCleaningEvents.Value.Skip(3).Take(1).First();
 
         // Use a clean instance of the context to run the test
         await using var context1 = new PollutedLocationContext(_options);
         await using var context2 = new PollutedLocationContext(_options);
         var locationDbRepository = new PollutedLocationDatabaseRepository(context2); 
-        var eventDbRepository = new TidyingEventDatabaseRepository(context1);
+        var eventDbRepository = new CleaningEventDatabaseRepository(context1);
 
         Assert.DoesNotThrowAsync(async () => await eventDbRepository.DeleteAsync(dbRow));
 
