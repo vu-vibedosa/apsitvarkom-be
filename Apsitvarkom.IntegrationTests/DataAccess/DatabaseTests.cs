@@ -90,59 +90,47 @@ public class DatabaseTests
     [Test]
     public async Task UpdateAsync_InstanceDoesNotExist_Throws()
     {
-        // gwt existing record from database
-        var dbRow = DbInitializer.FakePollutedLocations.Value.Skip(3).Take(1).Single();
-
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
         var locationToUpdate = new PollutedLocation
         {
-            Id = Guid.NewGuid(),
-            Notes = dbRow.Notes,
-            Location = dbRow.Location,
-            Progress = dbRow.Progress,
-            Radius = dbRow.Radius,
-            Severity = dbRow.Severity,
-            Spotted = dbRow.Spotted,
+            Id = Guid.NewGuid()
         };
 
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => dbRepository.UpdateAsync(locationToUpdate));
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.UpdateAsync(locationToUpdate));
     }
 
     [Test]
     public async Task UpdateAsync_InstanceExists_SuccessfullyUpdated()
     {
-        // gwt existing record from database
+        // Get an existing record from the database
         var dbRow = DbInitializer.FakePollutedLocations.Value.TakeLast(1).Single();
 
         // Use a clean instance of the context to run the test
         await using var context = new PollutedLocationContext(_options);
         var dbRepository = new PollutedLocationDatabaseRepository(context);
 
-        var notes = "test notes";
-        var progress = 15;
+        dbRow.Notes = "test notes";
+        dbRow.Progress = 15;
 
-        dbRow.Notes = notes;
-        dbRow.Progress = progress;
-
-        Assert.DoesNotThrowAsync(() => dbRepository.UpdateAsync(dbRow));
-        var response = dbRepository.UpdateAsync(dbRow);
+        Assert.DoesNotThrowAsync(async () => await dbRepository.UpdateAsync(dbRow));
 
         var updatedObject = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
 
         Assert.That(updatedObject, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            //if null values were not changed
+            Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(updatedObject.Location.Title, Is.EqualTo(dbRow.Location.Title));
+            Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
+            Assert.That(updatedObject.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));
             Assert.That(updatedObject.Severity, Is.EqualTo(dbRow.Severity));
-            //checking if values that are not null were changed
-            Assert.That(updatedObject.Progress, Is.EqualTo(progress));
-            Assert.That(updatedObject.Notes, Is.EqualTo(notes));
-            //checking if other values remain the same
             Assert.That(updatedObject.Spotted, Is.EqualTo(dbRow.Spotted));
+            Assert.That(updatedObject.Progress, Is.EqualTo(dbRow.Progress));
+            Assert.That(updatedObject.Notes, Is.EqualTo(dbRow.Notes));
         });
     }
 

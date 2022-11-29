@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Apsitvarkom.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +44,7 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
         await _context.PollutedLocations.AddAsync(modelToInsert);
         await _context.Instance.SaveChangesAsync();
     }
+
     /// <inheritdoc />
     public async Task UpdateAsync(PollutedLocation modelToUpdate)
     {

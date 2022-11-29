@@ -31,14 +31,14 @@ public class PollutedLocationUpdateRequestValidatorTests
    {
         new()
         {
-             // Invalid missing id
+             // Missing id
             Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
         },
         new()
         { 
-            // Invalid Progress
+            // Invalid progress
             Id = Guid.NewGuid(),
             Progress = 101,
             Radius = 2,
@@ -46,7 +46,7 @@ public class PollutedLocationUpdateRequestValidatorTests
         },
         new()
         { 
-            // Invalid Radius
+            // Invalid radius
             Id = Guid.NewGuid(),
             Progress = 11,
             Radius = 0,

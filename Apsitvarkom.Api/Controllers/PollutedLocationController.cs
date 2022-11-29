@@ -189,11 +189,12 @@ public class PollutedLocationController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+
         return Ok(response);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete("Delete")]
@@ -211,7 +212,7 @@ public class PollutedLocationController : ControllerBase
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
-        
+
         if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationIdentifyRequest.Id}' was not found.");
 
         var mappedLocation = _mapper.Map<PollutedLocationResponse>(location);
