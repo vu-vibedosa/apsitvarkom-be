@@ -338,6 +338,48 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task CleaningEvent_UpdateAsync_InstanceDoesNotExist_Throws()
+    {
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
+
+        var eventToUpdate = new CleaningEvent
+        {
+            Id = Guid.NewGuid()
+        };
+
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.UpdateAsync(eventToUpdate));
+    }
+
+    [Test]
+    public async Task CleaningEvent_UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        // Get an existing record from the database
+        var dbRow = DbInitializer.FakeCleaningEvents.TakeLast(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
+
+        dbRow.Notes = "test notes";
+        dbRow.StartTime = new DateTime(2023, 01, 02);
+
+        Assert.DoesNotThrowAsync(async () => await dbRepository.UpdateAsync(dbRow));
+
+        var updatedObject = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(updatedObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(updatedObject.Notes, Is.EqualTo(dbRow.Notes));
+            Assert.That(updatedObject.StartTime, Is.EqualTo(dbRow.StartTime));
+            Assert.That(updatedObject.PollutedLocationId, Is.EqualTo(dbRow.PollutedLocationId));
+        });
+    }
+
+    [Test]
     public async Task CleaningEvent_DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance
