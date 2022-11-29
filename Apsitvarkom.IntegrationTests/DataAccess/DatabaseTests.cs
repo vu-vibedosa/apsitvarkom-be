@@ -112,6 +112,41 @@ public class DatabaseTests
     }
 
     [Test]
+    public async Task UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        // gwt existing record from database
+        var dbRow = DbInitializer.FakePollutedLocations.Value.TakeLast(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        var notes = "test notes";
+        var progress = 15;
+
+        dbRow.Notes = notes;
+        dbRow.Progress = progress;
+
+        Assert.DoesNotThrowAsync(() => dbRepository.UpdateAsync(dbRow));
+        var response = dbRepository.UpdateAsync(dbRow);
+
+        var updatedObject = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(updatedObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //if null values were not changed
+            Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));
+            Assert.That(updatedObject.Severity, Is.EqualTo(dbRow.Severity));
+            //checking if values that are not null were changed
+            Assert.That(updatedObject.Progress, Is.EqualTo(progress));
+            Assert.That(updatedObject.Notes, Is.EqualTo(notes));
+            //checking if other values remain the same
+            Assert.That(updatedObject.Spotted, Is.EqualTo(dbRow.Spotted));
+        });
+    }
+
+    [Test]
     public async Task DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance

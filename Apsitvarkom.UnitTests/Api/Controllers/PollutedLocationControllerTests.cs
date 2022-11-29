@@ -410,7 +410,7 @@ public class PollutedLocationControllerTests
 
         var updateResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Never);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
 
         Assert.That(updateResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = updateResult.Result as BadRequestObjectResult;
@@ -421,25 +421,48 @@ public class PollutedLocationControllerTests
     }
 
     [Test]
-    public async Task Update_RepositoryUpdates_OkObjectResultReturned()
+    public async Task Update_RepositoryUpdates_OkObjectResultReturnedAndSuccessfullyUpdated()
     {
-        var location = PollutedLocations.First();
-        int radius = 5;
         string notes = "test";
         int progress = 15;
 
-        var updateRequest = new PollutedLocationUpdateRequest
+        var location = PollutedLocations.First();
+        var createRequest = new PollutedLocationUpdateRequest()
         {
             Id = location.Id,
-            Radius = 5,
-            Progress = progress,
-            Notes = notes
+            Notes = notes,
+            Progress = progress
+          
         };
 
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(location);
 
-        var actionResult = await _controller.Update(updateRequest);
+        var actionResult = await _controller.Update(createRequest);
 
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+
+        Assert.Multiple(() =>
+        {
+            //if null values were not changed
+            Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
+            //checking if values that are not null were changed
+            Assert.That(resultLocation.Progress, Is.EqualTo(progress));
+            Assert.That(resultLocation.Notes, Is.EqualTo(notes));
+            //checking if other values remain the same
+            Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+        });
     }
     #endregion
 
