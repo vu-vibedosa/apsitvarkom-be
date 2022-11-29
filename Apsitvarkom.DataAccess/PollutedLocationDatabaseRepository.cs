@@ -12,7 +12,7 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     private readonly IPollutedLocationContext _context;
 
     /// <summary>Constructor for the reader.</summary>
-    /// <param name="context">Database context for <see cref="PollutedLocation"/>.</param>
+    /// <param name="context">Database context for <see cref="PollutedLocation" />.</param>
     public PollutedLocationDatabaseRepository(IPollutedLocationContext context)
     {
         _context = context;
@@ -21,13 +21,15 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocation>> GetAllAsync()
     {
-        return await _context.PollutedLocations.ToListAsync();
+        return await _context.PollutedLocations
+            .Include(l => l.Events)
+            .ToListAsync();
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<PollutedLocation>> GetAllAsync(Coordinates inRelationTo)
     {
-        return from pollutedLocation in await _context.PollutedLocations.ToListAsync()
+        return from pollutedLocation in await _context.PollutedLocations.Include(l => l.Events).ToListAsync()
             orderby pollutedLocation.Location.Coordinates.DistanceTo(inRelationTo)
             select pollutedLocation;
     }
@@ -35,7 +37,17 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     /// <inheritdoc />
     public Task<PollutedLocation?> GetByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
     {
-        return _context.PollutedLocations.FirstOrDefaultAsync(propertyCondition);
+        return _context.PollutedLocations
+            .Include(l => l.Events)
+            .FirstOrDefaultAsync(propertyCondition);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> ExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    {
+        return _context.PollutedLocations
+            .Include(l => l.Events)
+            .AnyAsync(propertyCondition);
     }
 
     /// <inheritdoc />

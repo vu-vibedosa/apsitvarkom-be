@@ -6,8 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationResponse> Validator =
-        new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
+    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
@@ -28,11 +27,12 @@ public class PollutedLocationResponseValidationTests
             Severity = PollutedLocation.SeverityLevel.Moderate,
             Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
             Progress = 41,
-            Notes = "Prisoners broke a window."
+            Notes = "Prisoners broke a window.",
+            Events = new List<CleaningEventResponse>()
         },
         new()
         {
-            Id = DummyGuid,
+            Id = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
             Location =
             {
                 Coordinates =
@@ -45,7 +45,17 @@ public class PollutedLocationResponseValidationTests
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
             Progress = 13,
-        },
+            Events = new List<CleaningEventResponse>
+            {
+                new()
+                {
+                    Id = DummyGuid,
+                    PollutedLocationId = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
+                    Notes = "Pick up some tools.",
+                    StartTime = DateTime.Parse("2023-05-14T08:17:56Z").ToUniversalTime(),
+                }
+            }
+        }
     };
 
     private static readonly PollutedLocationResponse[] InvalidPollutedLocationResponses =
@@ -54,8 +64,9 @@ public class PollutedLocationResponseValidationTests
         {
             // Invalid Location coordinates
             Id = DummyGuid,
-            Location = 
+            Location =
             {
+                Title = "title",
                 Coordinates =
                 {
                     Latitude = 85,
@@ -69,16 +80,17 @@ public class PollutedLocationResponseValidationTests
             Spotted = new DateTime(1990, 3, 11)
         },
         new()
-        { 
+        {
             // Invalid Progress
             Id = DummyGuid,
             Location =
             {
+                Title = string.Empty,
                 Coordinates =
                 {
                     Latitude = 89.9,
                     Longitude = 89.9
-                },
+                }
             },
             Progress = 101,
             Radius = 2,
@@ -86,7 +98,7 @@ public class PollutedLocationResponseValidationTests
             Spotted = new DateTime(1995, 8, 24)
         },
         new()
-        { 
+        {
             // Invalid Radius
             Id = DummyGuid,
             Location =
@@ -95,13 +107,13 @@ public class PollutedLocationResponseValidationTests
                 {
                     Latitude = 89.9,
                     Longitude = 89.9
-                },
+                }
             },
             Progress = 11,
             Radius = 0,
             Severity = PollutedLocation.SeverityLevel.Low,
             Spotted = new DateTime(1995, 8, 24)
-        },
+        }
     };
 
     [Test]
