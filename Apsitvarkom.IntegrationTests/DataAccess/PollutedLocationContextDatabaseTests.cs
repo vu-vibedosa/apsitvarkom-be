@@ -22,7 +22,7 @@ public class PollutedLocationContextDatabaseTests
 
     #region PollutedLocation
     [Test]
-    public async Task PollutedLocation_GetAllTest()
+    public async Task PollutedLocation_GetAllAsyncTest()
     {
         var objectIds = DbInitializer.FakePollutedLocations.Select(location => location.Id).ToArray();
 
@@ -36,7 +36,7 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task PollutedLocation_GetAllSortedTest()
+    public async Task PollutedLocation_GetAllAsyncSortedTest()
     {
         var objectIds = DbInitializer.FakePollutedLocations.Select(location => location.Id).ToArray();
 
@@ -52,7 +52,7 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task PollutedLocation_GetByPropertyTest()
+    public async Task PollutedLocation_GetByPropertyAsyncTest()
     {
         var dbRow = DbInitializer.FakePollutedLocations.Skip(4).Take(1).Single();
 
@@ -78,7 +78,7 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task PollutedLocation_ExistsByPropertyTest()
+    public async Task PollutedLocation_ExistsByPropertyAsyncTest()
     {
         var dbRow = DbInitializer.FakePollutedLocations.Skip(4).Take(1).Single();
 
@@ -153,6 +153,53 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
+    public async Task PollutedLocation_UpdateAsync_InstanceDoesNotExist_Throws()
+    {
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        var locationToUpdate = new PollutedLocation
+        {
+            Id = Guid.NewGuid()
+        };
+
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.UpdateAsync(locationToUpdate));
+    }
+
+    [Test]
+    public async Task PollutedLocation_UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        // Get an existing record from the database
+        var dbRow = DbInitializer.FakePollutedLocations.TakeLast(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new PollutedLocationDatabaseRepository(context);
+
+        dbRow.Notes = "test notes";
+        dbRow.Progress = 15;
+
+        Assert.DoesNotThrowAsync(async () => await dbRepository.UpdateAsync(dbRow));
+
+        var updatedObject = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(updatedObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(updatedObject.Location.Title, Is.EqualTo(dbRow.Location.Title));
+            Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
+            Assert.That(updatedObject.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
+            Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));
+            Assert.That(updatedObject.Severity, Is.EqualTo(dbRow.Severity));
+            Assert.That(updatedObject.Spotted, Is.EqualTo(dbRow.Spotted));
+            Assert.That(updatedObject.Progress, Is.EqualTo(dbRow.Progress));
+            Assert.That(updatedObject.Notes, Is.EqualTo(dbRow.Notes));
+        });
+    }
+
+    [Test]
     public async Task PollutedLocation_DeleteAsync_InstanceDoesNotExist_Throws()
     {
         // Try to delete a newly created instance
@@ -208,7 +255,7 @@ public class PollutedLocationContextDatabaseTests
 
     #region CleaningEvent
     [Test]
-    public async Task CleaningEvent_GetAllTest()
+    public async Task CleaningEvent_GetAllAsyncTest()
     {
         var objectIds = DbInitializer.FakeCleaningEvents.Select(cleaningEvent => cleaningEvent.Id).ToArray();
 
@@ -222,7 +269,7 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task CleaningEvent_GetByPropertyTest()
+    public async Task CleaningEvent_GetByPropertyAsyncTest()
     {
         var dbRow = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).Single();
 
@@ -242,7 +289,7 @@ public class PollutedLocationContextDatabaseTests
     }
 
     [Test]
-    public async Task CleaningEvent_ExistsByPropertyTest()
+    public async Task CleaningEvent_ExistsByPropertyAsyncTest()
     {
         var dbRow = DbInitializer.FakeCleaningEvents.Skip(3).Take(1).Single();
 
@@ -288,6 +335,48 @@ public class PollutedLocationContextDatabaseTests
         var events = (await eventDbRepository.GetAllAsync()).ToArray();
         Assert.That(events.Length, Is.EqualTo(DbInitializer.FakeCleaningEvents.Length + 1));
         Assert.That(events.Select(x => x.Id).Contains(instanceToInsert.Id), Is.True);
+    }
+
+    [Test]
+    public async Task CleaningEvent_UpdateAsync_InstanceDoesNotExist_Throws()
+    {
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
+
+        var eventToUpdate = new CleaningEvent
+        {
+            Id = Guid.NewGuid()
+        };
+
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.UpdateAsync(eventToUpdate));
+    }
+
+    [Test]
+    public async Task CleaningEvent_UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        // Get an existing record from the database
+        var dbRow = DbInitializer.FakeCleaningEvents.TakeLast(1).Single();
+
+        // Use a clean instance of the context to run the test
+        await using var context = new PollutedLocationContext(_options);
+        var dbRepository = new CleaningEventDatabaseRepository(context);
+
+        dbRow.Notes = "test notes";
+        dbRow.StartTime = new DateTime(2023, 01, 02);
+
+        Assert.DoesNotThrowAsync(async () => await dbRepository.UpdateAsync(dbRow));
+
+        var updatedObject = await dbRepository.GetByPropertyAsync(x => x.Id == dbRow.Id);
+
+        Assert.That(updatedObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(updatedObject.Notes, Is.EqualTo(dbRow.Notes));
+            Assert.That(updatedObject.StartTime, Is.EqualTo(dbRow.StartTime));
+            Assert.That(updatedObject.PollutedLocationId, Is.EqualTo(dbRow.PollutedLocationId));
+        });
     }
 
     [Test]

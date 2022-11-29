@@ -45,7 +45,7 @@ public class ObjectIdentifyRequestValidationTests
         var result = await Validator.ValidateAsync(input);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Errors, Is.Not.Empty);
+        Assert.That(result.Errors.Count, Is.EqualTo(1));
         Assert.That(result.IsValid, Is.False);
     }
 }

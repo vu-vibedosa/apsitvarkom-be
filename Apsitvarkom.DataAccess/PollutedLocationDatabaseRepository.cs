@@ -58,6 +58,13 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
     }
 
     /// <inheritdoc />
+    public async Task UpdateAsync(PollutedLocation modelToUpdate)
+    {
+        _context.PollutedLocations.Update(modelToUpdate);
+        await _context.Instance.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
     public async Task DeleteAsync(PollutedLocation modelToDelete)
     {
         _context.PollutedLocations.Remove(modelToDelete);

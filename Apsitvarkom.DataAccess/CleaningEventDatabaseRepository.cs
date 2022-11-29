@@ -44,6 +44,13 @@ public class CleaningEventDatabaseRepository : IRepository<CleaningEvent>
     }
 
     /// <inheritdoc />
+    public async Task UpdateAsync(CleaningEvent modelToUpdate)
+    {
+        _context.CleaningEvents.Update(modelToUpdate);
+        await _context.Instance.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
     public async Task DeleteAsync(CleaningEvent modelToDelete)
     {
         _context.CleaningEvents.Remove(modelToDelete);

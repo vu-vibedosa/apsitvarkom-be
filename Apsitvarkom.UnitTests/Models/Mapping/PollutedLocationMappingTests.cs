@@ -34,6 +34,7 @@ public class PollutedLocationMappingTests
         };
 
         var coordinates = _mapper.Map<Coordinates>(coordinatesCreateRequest);
+
         Assert.Multiple(() =>
         {
             Assert.That(coordinates.Longitude, Is.EqualTo(coordinatesCreateRequest.Longitude));
@@ -60,6 +61,7 @@ public class PollutedLocationMappingTests
         };
 
         var pollutedLocation = _mapper.Map<PollutedLocation>(pollutedLocationCreateRequest);
+
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(pollutedLocationCreateRequest.Location.Coordinates.Latitude));
@@ -81,6 +83,98 @@ public class PollutedLocationMappingTests
         var location = _mapper.Map<PollutedLocation>(objectIdentifyRequest);
 
         Assert.That(location.Id, Is.EqualTo(objectIdentifyRequest.Id));
+    }
+
+    [Test]
+    public void PollutedLocationUpdateRequestToPollutedLocation_AllPropertiesNotNull()
+    {
+        var businessLogicObject = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Location = 
+            {
+                Title = "title",
+                Coordinates = new Coordinates
+                {
+                    Longitude = 35.929673,
+                    Latitude = 78.948237
+                },
+            },
+            Radius = 4,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Spotted = DateTime.UtcNow,
+            Progress = 12,
+            Notes = "notez"
+        };
+
+        var updateModel = new PollutedLocationUpdateRequest
+        {
+            Id = businessLogicObject.Id,
+            Radius = 7,
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+            Progress = 16,
+            Notes = "testt"
+        };
+
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(updateModel, businessLogicObject);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
+            Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
+            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
+            Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
+            Assert.That(mappedLocation.Notes, Is.EqualTo(updateModel.Notes));
+            Assert.That(mappedLocation.Progress, Is.EqualTo(updateModel.Progress));
+            Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
+            Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));
+        });
+    }
+
+    [Test]
+    public void PollutedLocationUpdateRequestToPollutedLocation_SomePropertiesNull_KeepsBusinessObjectValues()
+    {
+        var businessLogicObject = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Location =
+            {
+                Title = "title",
+                Coordinates = new Coordinates
+                {
+                    Longitude = 35.929673,
+                    Latitude = 78.948237
+                },
+            },
+            Radius = 4,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Spotted = DateTime.UtcNow,
+            Progress = 12,
+            Notes = "notez"
+        };
+
+        var updateModel = new PollutedLocationUpdateRequest
+        {
+            Id = businessLogicObject.Id,
+            Radius = 7,
+            Severity = PollutedLocation.SeverityLevel.Moderate,
+        };
+
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(updateModel, businessLogicObject);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
+            Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
+            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
+            Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
+            Assert.That(mappedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
+            Assert.That(mappedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
+            Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
+            Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));
+        });
     }
     #endregion
 
@@ -126,6 +220,7 @@ public class PollutedLocationMappingTests
         };
 
         var pollutedLocation = _mapper.Map<PollutedLocationResponse>(businessLogicObject);
+
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(businessLogicObject.Id));

@@ -1,4 +1,5 @@
-﻿using Apsitvarkom.Api.Controllers;
+﻿using System.Linq.Expressions;
+using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
 using Apsitvarkom.Models;
 using Apsitvarkom.Models.Mapping;
@@ -7,7 +8,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Linq.Expressions;
 
 namespace Apsitvarkom.UnitTests.Api.Controllers;
 
@@ -94,7 +94,8 @@ public class PollutedLocationControllerTests
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new PollutedLocationUpdateRequestValidator()
         );
     }
 
@@ -106,7 +107,8 @@ public class PollutedLocationControllerTests
             _geocoder.Object,
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new PollutedLocationUpdateRequestValidator()
         ), Is.Not.Null);
     #endregion
 
@@ -532,9 +534,155 @@ public class PollutedLocationControllerTests
     }
     #endregion
 
+    #region Update tests
+    [Test]
+    public async Task Update_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult.Result as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Update_RepositoryThrowsAcquiringPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = Guid.NewGuid(),
+            Progress = 12,
+            Radius = 3,
+            Severity = PollutedLocation.SeverityLevel.High
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+    }
+
+    [Test]
+    public async Task Update_RepositoryReturnsNullAcquiringInstance_NotFoundActionResultReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = Guid.NewGuid(),
+            Progress = 12,
+            Radius = 3,
+            Severity = PollutedLocation.SeverityLevel.High
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync((PollutedLocation?)null);
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
+
+        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult.Result as NotFoundObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Update_RepositoryThrowsUpdatingPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = Guid.NewGuid(),
+            Progress = 12,
+            Radius = 3,
+            Severity = PollutedLocation.SeverityLevel.High
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(PollutedLocations.First());
+        _repository.Setup(r => r.UpdateAsync(It.IsAny<PollutedLocation>())).Throws<Exception>();
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+    }
+
+    [Test]
+    public async Task Update_RepositoryGetsAndUpdatesOnce_OkActionResultReturned()
+    {
+        var updateRequest = new PollutedLocationUpdateRequest
+        {
+            Id = Guid.NewGuid(),
+            Radius = 3,
+            Severity = PollutedLocation.SeverityLevel.High
+        };
+        var location = PollutedLocations.First();
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(location);
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
+        var result = actionResult.Result as OkObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<PollutedLocationResponse>());
+        var resultLocation = result.Value as PollutedLocationResponse;
+        Assert.That(resultLocation, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
+            Assert.That(resultLocation.Spotted, Is.EqualTo(location.Spotted));
+            Assert.That(resultLocation.Radius, Is.EqualTo(updateRequest.Radius));
+            Assert.That(resultLocation.Severity, Is.EqualTo(updateRequest.Severity));
+            Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
+            Assert.That(resultLocation.Location.Title, Is.EqualTo(location.Location.Title));
+            Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
+            Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
+            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+            for (var j = 0; j < resultLocation.Events.Count; ++j)
+            {
+                Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
+                Assert.That(resultLocation.Events[j].Id, Is.EqualTo(location.Events[j].Id));
+                Assert.That(resultLocation.Events[j].Notes, Is.EqualTo(location.Events[j].Notes));
+                Assert.That(resultLocation.Events[j].StartTime, Is.EqualTo(location.Events[j].StartTime));
+            }
+        });
+    }
+    #endregion
+
     #region Delete tests
     [Test]
-    public async Task Delete_RepositoryGetsAndDeletesOnce_OkActionResultReturned()
+    public async Task Delete_RepositoryGetsAndDeletesOnce_NoContentResultReturned()
     {
         var identifyRequest = new ObjectIdentifyRequest
         {

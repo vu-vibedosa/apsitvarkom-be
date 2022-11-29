@@ -17,6 +17,7 @@ public class PollutedLocationController : ControllerBase
     private readonly IValidator<CoordinatesCreateRequest> _coordinatesValidator;
     private readonly IValidator<PollutedLocationCreateRequest> _pollutedLocationCreateValidator;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
+    private readonly IValidator<PollutedLocationUpdateRequest> _pollutedLocationUpdateValidator;
 
     public PollutedLocationController(
         IPollutedLocationRepository repository,
@@ -24,7 +25,8 @@ public class PollutedLocationController : ControllerBase
         IGeocoder geocoder,
         IValidator<CoordinatesCreateRequest> coordinatesValidator, 
         IValidator<PollutedLocationCreateRequest> pollutedLocationCreateValidator,
-        IValidator<ObjectIdentifyRequest> objectIdentifyValidator)
+        IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
+        IValidator<PollutedLocationUpdateRequest> pollutedLocationUpdateValidator)
     {
         _repository = repository;
         _mapper = mapper;
@@ -32,6 +34,7 @@ public class PollutedLocationController : ControllerBase
         _coordinatesValidator = coordinatesValidator;
         _pollutedLocationCreateValidator = pollutedLocationCreateValidator;
         _objectIdentifyValidator = objectIdentifyValidator;
+        _pollutedLocationUpdateValidator = pollutedLocationUpdateValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -154,8 +157,48 @@ public class PollutedLocationController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPatch("Update")]
+    public async Task<ActionResult<PollutedLocationResponse>> Update(PollutedLocationUpdateRequest pollutedLocationUpdateRequest)
+    {
+        var validationResult = await _pollutedLocationUpdateValidator.ValidateAsync(pollutedLocationUpdateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        PollutedLocation? location;
+        try
+        {
+            location = await _repository.GetByPropertyAsync(x => x.Id == pollutedLocationUpdateRequest.Id);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (location is null) return NotFound($"Polluted location with the specified id '{pollutedLocationUpdateRequest.Id}' was not found.");
+
+        var mappedLocation = _mapper.Map<PollutedLocationUpdateRequest, PollutedLocation>(pollutedLocationUpdateRequest, location);
+        if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<PollutedLocationResponse>(mappedLocation);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.UpdateAsync(mappedLocation);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok(response);
+    }
+
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete("Delete")]

@@ -26,6 +26,11 @@ public interface IRepository<T> where T: class
     /// <returns>The <see cref="Task"/> to insert the model.</returns>
     public Task InsertAsync(T modelToInsert);
 
+    /// <summary>Updates a single <see cref="T" /> record from the data source.</summary>
+    /// <param name="modelToUpdate">Model to be updated in the repository.</param>
+    /// <returns>The <see cref="Task"/> to update the model.</returns>
+    public Task UpdateAsync(T modelToUpdate);
+
     /// <summary>Deletes a single <see cref="T" /> record from the data source.</summary>
     /// <param name="modelToDelete">Model to be deleted from the repository.</param>
     /// <returns>The <see cref="Task"/> to delete the model.</returns>

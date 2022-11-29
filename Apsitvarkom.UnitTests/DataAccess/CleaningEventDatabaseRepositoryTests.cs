@@ -210,6 +210,30 @@ public class CleaningEventDatabaseRepositoryTests
     }
     #endregion
 
+    #region UpdateAsync
+    [Test]
+    public async Task UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        var dbRows = new List<CleaningEvent>
+        {
+            new()
+        };
+
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.CleaningEvents).Returns(mock.Object);
+        _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new CleaningEventDatabaseRepository(_mockContext.Object);
+
+        await dataManager.UpdateAsync(dbRows[0]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_mockContext.Object.CleaningEvents.Count(), Is.EqualTo(1));
+            Assert.That(_mockContext.Object.CleaningEvents.Contains(dbRows[0]), Is.True);
+        });
+    }
+    #endregion
+
     #region DeleteAsync
     [Test]
     public async Task DeleteAsync_InstanceExists_SuccessfullyDeleted()

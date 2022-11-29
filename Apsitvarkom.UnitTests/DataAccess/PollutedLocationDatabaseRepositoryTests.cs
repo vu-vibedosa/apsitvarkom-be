@@ -264,6 +264,30 @@ public class PollutedLocationDatabaseRepositoryTests
     }
     #endregion
 
+    #region UpdateAsync
+    [Test]
+    public async Task UpdateAsync_InstanceExists_SuccessfullyUpdated()
+    {
+        var dbRows = new List<PollutedLocation>
+        {
+            new()
+        };
+
+        var mock = dbRows.AsQueryable().BuildMockDbSet();
+        _mockContext.Setup(m => m.PollutedLocations).Returns(mock.Object);
+        _mockContext.Setup(m => m.Instance).Returns(new Mock<DbContext>().Object);
+        var dataManager = new PollutedLocationDatabaseRepository(_mockContext.Object);
+
+        await dataManager.UpdateAsync(dbRows[0]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_mockContext.Object.PollutedLocations.Count(), Is.EqualTo(1));
+            Assert.That(_mockContext.Object.PollutedLocations.Contains(dbRows[0]), Is.True);
+        });
+    }
+    #endregion
+
     #region DeleteAsync
     [Test]
     public async Task DeleteAsync_InstanceExists_SuccessfullyDeleted()
