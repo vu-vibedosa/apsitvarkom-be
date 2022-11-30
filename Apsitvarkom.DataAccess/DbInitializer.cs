@@ -26,7 +26,7 @@ public static class DbInitializer
                 Id = Guid.Parse("02f16033-232b-42e4-bfe7-1f9a223a1446"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Lukiskes prison" },
                         new() { Code = LocationCode.lt, Name = "Lukiškių kalėjimas" },
@@ -49,7 +49,7 @@ public static class DbInitializer
                 Id = Guid.Parse("461911ac-ff85-41f8-860a-be0240f0653f"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "VU faculty of mathematics and informatics" },
                         new() { Code = LocationCode.lt, Name = "VU, matematikos ir informatikos fakultetas" },
@@ -75,7 +75,7 @@ public static class DbInitializer
                 Id = Guid.Parse("b2ed322d-331b-4f28-9dbf-4a71dce7504e"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Didlaukis st. 47" },
                         new() { Code = LocationCode.lt, Name = "Didlaukio g. 47" },
@@ -97,7 +97,7 @@ public static class DbInitializer
                 Id = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "" } , 
                         new() { Code = LocationCode.lt, Name = "" },
@@ -123,7 +123,7 @@ public static class DbInitializer
                 Id = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Zalgiris arena" } , 
                         new() { Code = LocationCode.lt, Name = "Žalgirio arena" },
@@ -150,7 +150,7 @@ public static class DbInitializer
                 Id = Guid.Parse("d37c6b91-6363-44ce-99a8-2f15287cc5ab"),
                 Location =
                 {
-                    Title =
+                    Titles =
                     {
                         new() { Code = LocationCode.en, Name = "Gediminas Tower" } ,
                         new() { Code = LocationCode.lt, Name = "Gedimino pilis" },
@@ -173,7 +173,7 @@ public static class DbInitializer
                 Id = Guid.Parse("151757e9-fce3-4bb3-93db-08b93d71245e"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Beach of Panevezys" } , 
                         new() { Code = LocationCode.lt, Name = "Panevėžio paplūdimys" },
@@ -196,7 +196,7 @@ public static class DbInitializer
                 Id = Guid.Parse("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Cruise Ship Terminal of Klaipeda" } , 
                         new() { Code = LocationCode.lt, Name = "Klaipėdos kruizinių laivų terminalas" },
@@ -222,7 +222,7 @@ public static class DbInitializer
                 Id = Guid.Parse("dc1513da-a60b-49e5-adba-d0aeed77f125"),
                 Location =
                 {
-                    Title = 
+                    Titles = 
                     {
                         new() { Code = LocationCode.en, Name = "Mazeikiai Central Stadium" } , 
                         new() { Code = LocationCode.lt, Name = "Mažeikių miesto centrinis stadionas" },

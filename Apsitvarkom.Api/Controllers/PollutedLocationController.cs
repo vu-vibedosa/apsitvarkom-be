@@ -135,7 +135,7 @@ public class PollutedLocationController : ControllerBase
             Progress = 0,
             Location = 
             {
-                Title = title
+                Titles = title
             }
         };
 

@@ -19,7 +19,7 @@ public class PollutedLocationProfile : Profile
     {
         CreateMap<CoordinatesCreateRequest, Coordinates>();
         CreateMap<LocationCreateRequest, Location>()
-            .ForMember(x => x.Title, opt => opt.Ignore());
+            .ForMember(x => x.Titles, opt => opt.Ignore());
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
             .ForMember(x => x.Spotted, opt => opt.Ignore())
             .ForMember(x => x.Id, opt => opt.Ignore())
