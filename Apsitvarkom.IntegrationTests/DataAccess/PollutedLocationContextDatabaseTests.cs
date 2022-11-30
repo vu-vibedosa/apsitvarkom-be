@@ -66,6 +66,7 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(response.Location.Titles.Select(x => (x.Code, Title: x.Name)), Is.EqualTo(dbRow.Location.Titles.Select(x => (x.Code, Title: x.Name))));
             Assert.That(response.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(response.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(response.Radius, Is.EqualTo(dbRow.Radius));
@@ -117,7 +118,11 @@ public class PollutedLocationContextDatabaseTests
             Spotted = new DateTime(2022, 12, 23, 23, 59, 59).ToUniversalTime(),
             Location = new Location
             {
-                Title = "Name",
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "text sample" },
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "teksto pavyzdys" },
+                },
                 Coordinates = new Coordinates
                 {
                     Latitude = 12.00,
@@ -188,7 +193,7 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(updatedObject.Location.Title, Is.EqualTo(dbRow.Location.Title));
+            Assert.That(updatedObject.Location.Titles, Is.EqualTo(dbRow.Location.Titles));
             Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(updatedObject.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));

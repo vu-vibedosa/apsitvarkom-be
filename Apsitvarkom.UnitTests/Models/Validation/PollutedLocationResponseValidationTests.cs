@@ -17,6 +17,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Titles =
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                },
                 Coordinates =
                 {
                     Latitude = 54.691452,
@@ -35,6 +40,11 @@ public class PollutedLocationResponseValidationTests
             Id = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
             Location =
             {
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                },
                 Coordinates =
                 {
                     Latitude = 54.675369,
@@ -66,14 +76,40 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Title = "title",
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                },
                 Coordinates =
                 {
                     Latitude = 85,
                     Longitude = -720
                 }
             },
-            Notes = "gtfo with these cringy notes",
+            Notes = ":D",
+            Progress = 1,
+            Radius = 1,
+            Severity = PollutedLocation.SeverityLevel.High,
+            Spotted = new DateTime(1990, 3, 11)
+        },
+        new()
+        {
+            // Invalid Location title (missing LocationTitleResponses)
+            Id = DummyGuid,
+            Location =
+            {
+                Titles =
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                },
+                Coordinates =
+                {
+                    Latitude = 85,
+                    Longitude = -130
+                }
+            },
+            Notes = ":D",
             Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
@@ -85,7 +121,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Title = string.Empty,
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                },
                 Coordinates =
                 {
                     Latitude = 89.9,
@@ -103,6 +143,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                },
                 Coordinates =
                 {
                     Latitude = 89.9,

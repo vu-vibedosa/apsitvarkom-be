@@ -93,7 +93,11 @@ public class PollutedLocationMappingTests
             Id = Guid.NewGuid(),
             Location = 
             {
-                Title = "title",
+                Titles =
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "title"},
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "pavadinimas"}
+                },
                 Coordinates = new Coordinates
                 {
                     Longitude = 35.929673,
@@ -122,7 +126,7 @@ public class PollutedLocationMappingTests
         {
             Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
-            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Location.Titles.Select(x => (x.Code, x.Name)), Is.EqualTo(businessLogicObject.Location.Titles.Select(x => (x.Code, x.Name))));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedLocation.Notes, Is.EqualTo(updateModel.Notes));
@@ -140,7 +144,11 @@ public class PollutedLocationMappingTests
             Id = Guid.NewGuid(),
             Location =
             {
-                Title = "title",
+                Titles =
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "title"},
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "pavadinimas"}
+                },
                 Coordinates = new Coordinates
                 {
                     Longitude = 35.929673,
@@ -167,7 +175,7 @@ public class PollutedLocationMappingTests
         {
             Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
-            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Location.Titles.Select(x => (x.Code, x.Name)), Is.EqualTo(businessLogicObject.Location.Titles.Select(x => (x.Code, x.Name))));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
@@ -189,7 +197,11 @@ public class PollutedLocationMappingTests
             Id = pollutedLocationId,
             Location =
             {
-                Title = "title",
+                Titles = 
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "title"},
+                    new() { Code = LocationTitle.LocationCode.lt, Name = "pavadinimas"}
+                },
                 Coordinates = new Coordinates
                 {
                     Longitude = -78.948237,
@@ -224,7 +236,7 @@ public class PollutedLocationMappingTests
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(pollutedLocation.Location.Titles.Select(x => (x.Code, x.Name)), Is.EqualTo(businessLogicObject.Location.Titles.Select(x => (x.Code, x.Name))));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(businessLogicObject.Radius));

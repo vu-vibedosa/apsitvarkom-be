@@ -45,7 +45,10 @@ public class PollutedLocationDatabaseRepositoryTests
             Id = pollutedLocationId,
             Location =
             {
-                Title = "title",
+                Titles =
+                {
+                    new() { Code = LocationTitle.LocationCode.en, Name = "englishman in new york"}
+                },
                 Coordinates =
                 {
                     Latitude = 47.12,
@@ -81,7 +84,7 @@ public class PollutedLocationDatabaseRepositoryTests
         Assert.Multiple(() =>
         {
             Assert.That(instance.Id, Is.EqualTo(pollutedLocationInstance.Id));
-            Assert.That(instance.Location.Title, Is.EqualTo(pollutedLocationInstance.Location.Title));
+            Assert.That(instance.Location.Titles.Select(x => (x.Code, x.Name)), Is.EqualTo(pollutedLocationInstance.Location.Titles.Select(x => (x.Code, x.Name))));
             Assert.That(instance.Location.Coordinates.Latitude, Is.EqualTo(pollutedLocationInstance.Location.Coordinates.Latitude));
             Assert.That(instance.Location.Coordinates.Longitude, Is.EqualTo(pollutedLocationInstance.Location.Coordinates.Longitude));
             Assert.That(instance.Radius, Is.EqualTo(pollutedLocationInstance.Radius));

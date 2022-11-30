@@ -32,7 +32,7 @@ public class GoogleGeocoder : IGeocoder
         return response?.Results?.FirstOrDefault()?.FormattedAddress; ;
     }
 
-    public async Task<List<LocationTitle>> GetLocationTitles(Coordinates coordinates)
+    public async Task<List<LocationTitle>> GetLocationTitlesAsync(Coordinates coordinates)
     {
         var resultList = new List<LocationTitle>();
         foreach (var languageCode in _languages)

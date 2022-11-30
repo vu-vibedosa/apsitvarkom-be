@@ -6,5 +6,5 @@ public interface IGeocoder
 {
     Task<string?> ReverseGeocodeAsync(Coordinates coordinates, string languageCode = "lt");
 
-    Task<List<LocationTitle>> GetLocationTitles(Coordinates coordinates);
+    Task<List<LocationTitle>> GetLocationTitlesAsync(Coordinates coordinates);
 }
