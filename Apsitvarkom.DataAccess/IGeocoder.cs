@@ -4,5 +4,5 @@ namespace Apsitvarkom.DataAccess;
 
 public interface IGeocoder
 {
-    Task<string?> ReverseGeocodeAsync(Coordinates coordinates);
+    Task<List<LocationTitle>> ReverseGeocodeAsync(Coordinates coordinates);
 }

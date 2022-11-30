@@ -126,14 +126,14 @@ public class PollutedLocationController : ControllerBase
         var mappedLocation = _mapper.Map<Location>(pollutedLocationCreateRequest.Location);
         if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
-        var title = await _geocoder.ReverseGeocodeAsync(mappedLocation.Coordinates) ?? string.Empty;
+        var title = await _geocoder.ReverseGeocodeAsync(mappedLocation.Coordinates);
 
         var pollutedLocationDefaults = new PollutedLocation
         {
             Id = Guid.NewGuid(),
             Spotted = DateTime.UtcNow,
             Progress = 0,
-            Location = new()
+            Location = 
             {
                 Title = title
             }

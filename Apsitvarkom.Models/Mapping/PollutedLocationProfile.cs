@@ -42,5 +42,6 @@ public class PollutedLocationProfile : Profile
         CreateMap<PollutedLocation, PollutedLocationResponse>();
         CreateMap<Location, LocationResponse>();
         CreateMap<Coordinates, CoordinatesResponse>();
+        CreateMap<LocationTitle, LocationTitleResponse>();
     }
 }
