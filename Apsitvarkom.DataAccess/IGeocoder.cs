@@ -4,5 +4,7 @@ namespace Apsitvarkom.DataAccess;
 
 public interface IGeocoder
 {
-    Task<List<LocationTitle>> ReverseGeocodeAsync(Coordinates coordinates);
+    Task<string?> ReverseGeocodeAsync(Coordinates coordinates, string languageCode = "lt");
+
+    Task<List<LocationTitle>> GetLocationTitles(Coordinates coordinates);
 }

@@ -24,17 +24,23 @@ public class GoogleGeocoder : IGeocoder
         _httpClient = httpClient;
     }
 
-    public async Task<List<LocationTitle>> ReverseGeocodeAsync(Coordinates coordinates)
+    public async Task<string?> ReverseGeocodeAsync(Coordinates coordinates, string languageCode = "lt")
     {
-        var result = new List<LocationTitle>();
+        var query = $"json?latlng={coordinates.Latitude.ToString(CultureInfo.InvariantCulture)},{coordinates.Longitude.ToString(CultureInfo.InvariantCulture)}&language={languageCode}&key={_apiKey}";
+        var jsonStream = await _httpClient.GetStreamAsync(query);
+        var response = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(jsonStream, SerializerOptions);
+        return response?.Results?.FirstOrDefault()?.FormattedAddress; ;
+    }
+
+    public async Task<List<LocationTitle>> GetLocationTitles(Coordinates coordinates)
+    {
+        var resultList = new List<LocationTitle>();
         foreach (var languageCode in _languages)
         {
-            var query = $"json?latlng={coordinates.Latitude.ToString(CultureInfo.InvariantCulture)},{coordinates.Longitude.ToString(CultureInfo.InvariantCulture)}&language={languageCode}&key={_apiKey}";
-            var jsonStream = await _httpClient.GetStreamAsync(query);
-            var response = await JsonSerializer.DeserializeAsync<ReverseGeocodingApiResponse>(jsonStream, SerializerOptions);
-            result.Add(new() { Code = languageCode, Name = response?.Results?.FirstOrDefault()?.FormattedAddress ?? string.Empty });
+            var response = await ReverseGeocodeAsync(coordinates, languageCode.ToString());
+            resultList.Add(new() { Code = languageCode, Name = response ?? string.Empty });
         }
-        return result;
+        return resultList;
     }
 
     private class ReverseGeocodingApiResult
