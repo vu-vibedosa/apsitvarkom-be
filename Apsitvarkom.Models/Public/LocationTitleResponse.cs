@@ -1,7 +1,6 @@
-﻿namespace Apsitvarkom.Models.Public;
+﻿using static Apsitvarkom.Models.LocationTitle;
 
-using FluentValidation;
-using static LocationTitle;
+namespace Apsitvarkom.Models.Public;
 
 public class LocationTitleResponse
 {
