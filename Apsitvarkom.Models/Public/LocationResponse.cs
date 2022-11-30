@@ -11,10 +11,9 @@ public class LocationResponse
 
 public class LocationResponseValidator : AbstractValidator<LocationResponse>
 {
-    public LocationResponseValidator(IValidator<CoordinatesResponse> coordinatesResponseValidator, IValidator<LocationTitleResponse> locationTitleResponseValidator)
+    public LocationResponseValidator(IValidator<CoordinatesResponse> coordinatesResponseValidator)
     {
         RuleFor(location => location.Coordinates).SetValidator(coordinatesResponseValidator);
-        RuleForEach(location => location.Titles).SetValidator(locationTitleResponseValidator);
         RuleFor(location => location.Titles.Count).Equal(Enum.GetValues(typeof(LocationCode)).Length);
     }
 }
