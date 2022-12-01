@@ -66,7 +66,8 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(response.Location.Titles.Select(x => (x.Code, Title: x.Name)), Is.EqualTo(dbRow.Location.Titles.Select(x => (x.Code, Title: x.Name))));
+            Assert.That(response.Location.Title.English, Is.EqualTo(dbRow.Location.Title.English));
+            Assert.That(response.Location.Title.Lithuanian, Is.EqualTo(dbRow.Location.Title.Lithuanian));
             Assert.That(response.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(response.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(response.Radius, Is.EqualTo(dbRow.Radius));
@@ -118,11 +119,7 @@ public class PollutedLocationContextDatabaseTests
             Spotted = new DateTime(2022, 12, 23, 23, 59, 59).ToUniversalTime(),
             Location = new Location
             {
-                Titles = 
-                {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "text sample" },
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "teksto pavyzdys" },
-                },
+                Title = new("text sample", "teksto pavyzdys"),
                 Coordinates = new Coordinates
                 {
                     Latitude = 12.00,
@@ -172,7 +169,6 @@ public class PollutedLocationContextDatabaseTests
         Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.UpdateAsync(locationToUpdate));
     }
 
-    [Ignore("failing due to in-memory testing")]
     [Test]
     public async Task PollutedLocation_UpdateAsync_InstanceExists_SuccessfullyUpdated()
     {
@@ -194,8 +190,8 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(updatedObject.Location.Titles, Is.EqualTo(dbRow.Location.Titles));
-            Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
+            Assert.That(updatedObject.Location.Title.English, Is.EqualTo(dbRow.Location.Title.English));
+            Assert.That(updatedObject.Location.Title.Lithuanian, Is.EqualTo(dbRow.Location.Title.Lithuanian)); Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(updatedObject.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));
             Assert.That(updatedObject.Severity, Is.EqualTo(dbRow.Severity));
@@ -218,7 +214,6 @@ public class PollutedLocationContextDatabaseTests
         Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await dbRepository.DeleteAsync(instanceToDelete));
     }
 
-    [Ignore("failing due to in-memory testing")]
     [Test]
     public async Task PollutedLocation_DeleteAsync_InstanceExists_SuccessfullyDeleted()
     {
@@ -234,7 +229,6 @@ public class PollutedLocationContextDatabaseTests
         Assert.That((await dbRepository.GetAllAsync()).Select(x => x.Id), Does.Not.Contain(dbRow.Id));
     }
 
-    [Ignore("failing due to in-memory testing")]
     [Test]
     public async Task PollutedLocation_DeleteAsync_LocationWithEventsExists_SuccessfullyDeleted_AssociatedEventsDeletedTogether()
     {

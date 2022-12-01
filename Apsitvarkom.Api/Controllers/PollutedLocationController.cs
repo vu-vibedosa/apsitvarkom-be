@@ -126,7 +126,7 @@ public class PollutedLocationController : ControllerBase
         var mappedLocation = _mapper.Map<Location>(pollutedLocationCreateRequest.Location);
         if (mappedLocation is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
-        var title = await _geocoder.GetLocationTitlesAsync(mappedLocation.Coordinates);
+        var title = await _geocoder.ReverseGeocodeAsync(mappedLocation.Coordinates);
 
         var pollutedLocationDefaults = new PollutedLocation
         {
@@ -135,7 +135,7 @@ public class PollutedLocationController : ControllerBase
             Progress = 0,
             Location = 
             {
-                Titles = title
+                Title = title
             }
         };
 

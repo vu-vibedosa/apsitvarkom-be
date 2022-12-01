@@ -19,7 +19,7 @@ public class PollutedLocationProfile : Profile
     {
         CreateMap<CoordinatesCreateRequest, Coordinates>();
         CreateMap<LocationCreateRequest, Location>()
-            .ForMember(x => x.Titles, opt => opt.Ignore());
+            .ForMember(x => x.Title, opt => opt.Ignore());
         CreateMap<PollutedLocationCreateRequest, PollutedLocation>()
             .ForMember(x => x.Spotted, opt => opt.Ignore())
             .ForMember(x => x.Id, opt => opt.Ignore())
@@ -42,6 +42,8 @@ public class PollutedLocationProfile : Profile
         CreateMap<PollutedLocation, PollutedLocationResponse>();
         CreateMap<Location, LocationResponse>();
         CreateMap<Coordinates, CoordinatesResponse>();
-        CreateMap<LocationTitle, LocationTitleResponse>();
+        CreateMap<Translated<string>, TranslatedResponse<string>>()
+            .ForMember(x => x.lt, opt => opt.MapFrom(x => x.Lithuanian))
+            .ForMember(x => x.en, opt => opt.MapFrom(x => x.English));
     }
 }

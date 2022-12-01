@@ -6,7 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
+    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator(), new TranslatedResponseValidator<string>()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
@@ -17,10 +17,10 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Titles =
+                Title = 
                 {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                    en = "nameEN",
+                    lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -40,10 +40,10 @@ public class PollutedLocationResponseValidationTests
             Id = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
             Location =
             {
-                Titles = 
+                Title =
                 {
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
+                    en = "nameEN",
+                    lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -76,10 +76,10 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Titles = 
+                Title =
                 {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                    en = "nameEN",
+                    lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -95,36 +95,14 @@ public class PollutedLocationResponseValidationTests
         },
         new()
         {
-            // Invalid Location title (missing LocationTitleResponses)
-            Id = DummyGuid,
-            Location =
-            {
-                Titles =
-                {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
-                },
-                Coordinates =
-                {
-                    Latitude = 85,
-                    Longitude = -130
-                }
-            },
-            Notes = ":D",
-            Progress = 1,
-            Radius = 1,
-            Severity = PollutedLocation.SeverityLevel.High,
-            Spotted = new DateTime(1990, 3, 11)
-        },
-        new()
-        {
             // Invalid Progress
             Id = DummyGuid,
             Location =
             {
-                Titles = 
+                Title =
                 {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                    en = "nameEN",
+                    lt = "nameLT"
                 },
                 Coordinates =
                 {
@@ -143,10 +121,10 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Titles = 
+                Title =
                 {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "nameEN" },
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "nameLT" },
+                    en = "nameEN",
+                    lt = "nameLT"
                 },
                 Coordinates =
                 {

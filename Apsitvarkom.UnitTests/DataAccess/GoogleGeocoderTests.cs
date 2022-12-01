@@ -89,20 +89,13 @@ public class GoogleGeocoderTests
             .ReturnsAsync(response1)
             .ReturnsAsync(response2);
 
-        var expectedResult = new List<LocationTitle>
-        {
-            new() { Code = LocationTitle.LocationCode.en, Name = title1 },
-            new() { Code = LocationTitle.LocationCode.lt, Name = string.Empty }
-        };
+        var expectedResult = new Translated<string>(title1, string.Empty);
 
-        var result = await _geocoder.GetLocationTitlesAsync(new Coordinates());
+        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates());
 
-        Assert.That(result.Count, Is.EqualTo(expectedResult.Count));
-        for (var i = 0; i < result.Count; ++i)
-        {
-            Assert.That(result[i].Name, Is.EqualTo(expectedResult[i].Name));
-            Assert.That(result[i].Code, Is.EqualTo(expectedResult[i].Code));
-        }
+        Assert.That(result.English, Is.EqualTo(expectedResult.English));
+        Assert.That(result.Lithuanian, Is.EqualTo(expectedResult.Lithuanian));
+
         _handlerMock.Protected().Verify(
             "SendAsync",
             Times.Exactly(2),
@@ -125,7 +118,7 @@ public class GoogleGeocoderTests
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates());
+        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates(), SupportedLanguages.English);
 
         Assert.That(result, Is.EqualTo(expectedResult));
         _handlerMock.Protected().Verify(

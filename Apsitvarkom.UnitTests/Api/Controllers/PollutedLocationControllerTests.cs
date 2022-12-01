@@ -25,11 +25,7 @@ public class PollutedLocationControllerTests
             Id = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
             Location =
             {
-                Titles =
-                {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "title1"},
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "pavadinimas1"}
-                },
+                Title = new("title1", "pavadinimas1"),
                 Coordinates =
                 {
                     Longitude = 54,
@@ -63,11 +59,7 @@ public class PollutedLocationControllerTests
             Id = Guid.NewGuid(),
             Location =
             {
-                Titles =
-                {
-                    new() { Code = LocationTitle.LocationCode.en, Name = "title2"},
-                    new() { Code = LocationTitle.LocationCode.lt, Name = "pavadinimas2"}
-                },
+                Title = new("title2", "pavadinimas2"),
                 Coordinates =
                 {
                     Latitude = 11.11111,
@@ -149,12 +141,8 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-                Assert.That(resultLocation.Location.Titles.Count, Is.EqualTo(location.Location.Titles.Count));
-                for (var j = 0; j < resultLocation.Location.Titles.Count; ++j)
-                {
-                    Assert.That(resultLocation.Location.Titles[j].Code, Is.EqualTo(location.Location.Titles[j].Code));
-                    Assert.That(resultLocation.Location.Titles[j].Name, Is.EqualTo(location.Location.Titles[j].Name));
-                }
+                Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
+                Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
                 Assert.That(resultLocation.Notes, Is.EqualTo(location.Notes));
@@ -224,12 +212,8 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-                Assert.That(resultLocation.Location.Titles.Count, Is.EqualTo(location.Location.Titles.Count));
-                for (var j = 0; j < resultLocation.Location.Titles.Count; ++j)
-                {
-                    Assert.That(resultLocation.Location.Titles[j].Code, Is.EqualTo(location.Location.Titles[j].Code));
-                    Assert.That(resultLocation.Location.Titles[j].Name, Is.EqualTo(location.Location.Titles[j].Name));
-                }
+                Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
+                Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
                 Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
@@ -322,12 +306,8 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-            Assert.That(resultLocation.Location.Titles.Count, Is.EqualTo(location.Location.Titles.Count));
-            for (var j = 0; j < resultLocation.Location.Titles.Count; ++j)
-            {
-                Assert.That(resultLocation.Location.Titles[j].Code, Is.EqualTo(location.Location.Titles[j].Code));
-                Assert.That(resultLocation.Location.Titles[j].Name, Is.EqualTo(location.Location.Titles[j].Name));
-            }
+            Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
+            Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
@@ -422,11 +402,8 @@ public class PollutedLocationControllerTests
             Severity = location.Severity
         };
 
-        var titleResult = new List<LocationTitle>
-        {
-            new() { Code = LocationTitle.LocationCode.en, Name = "englishman in new york"}
-        };
-        _geocoder.Setup(g => g.GetLocationTitlesAsync(It.Is<Coordinates>(x =>
+        var titleResult = new Translated<string>("englishman in new york", "lietuvis kaune");
+        _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
             Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
             Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
         ))).ReturnsAsync(titleResult);
@@ -434,7 +411,7 @@ public class PollutedLocationControllerTests
         var actionResult = await _controller.Create(createRequest);
 
         _repository.Verify(r => r.InsertAsync(It.IsAny<PollutedLocation>()), Times.Once);
-        _geocoder.Verify(g => g.GetLocationTitlesAsync(It.IsAny<Coordinates>()), Times.Once);
+        _geocoder.Verify(g => g.ReverseGeocodeAsync(It.IsAny<Coordinates>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
         var result = actionResult.Result as CreatedAtActionResult;
@@ -492,11 +469,8 @@ public class PollutedLocationControllerTests
             Severity = location.Severity
         };
 
-        var titleResult = new List<LocationTitle>
-        {
-            new() { Code = LocationTitle.LocationCode.en, Name = "englishman in new york"}
-        };
-        _geocoder.Setup(g => g.GetLocationTitlesAsync(It.Is<Coordinates>(x =>
+        var titleResult = new Translated<string>("englishman in new york", "lietuvis kaune");
+        _geocoder.Setup(g => g.ReverseGeocodeAsync(It.Is<Coordinates>(x =>
             Math.Abs(x.Latitude - location.Location.Coordinates.Latitude) < 0.0001 &&
             Math.Abs(x.Longitude - location.Location.Coordinates.Longitude) < 0.0001
         ))).ReturnsAsync(titleResult);
@@ -511,7 +485,7 @@ public class PollutedLocationControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
 
-        _geocoder.Verify(g => g.GetLocationTitlesAsync(It.IsAny<Coordinates>()), Times.Once);
+        _geocoder.Verify(g => g.ReverseGeocodeAsync(It.IsAny<Coordinates>()), Times.Once);
     }
     #endregion
 
@@ -646,13 +620,8 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(updateRequest.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(updateRequest.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-
-            Assert.That(resultLocation.Location.Titles.Count, Is.EqualTo(location.Location.Titles.Count));
-            for (var j = 0; j < resultLocation.Location.Titles.Count; ++j)
-            {
-                Assert.That(resultLocation.Location.Titles[j].Code, Is.EqualTo(location.Location.Titles[j].Code));
-                Assert.That(resultLocation.Location.Titles[j].Name, Is.EqualTo(location.Location.Titles[j].Name));
-            }
+            Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
+            Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
