@@ -6,7 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator(), new TranslatedResponseValidator<string>()));
+    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator(), new TranslatedResponseStringValidator()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
