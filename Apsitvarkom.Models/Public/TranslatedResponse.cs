@@ -8,9 +8,9 @@ public class TranslatedResponse<T>
     public T lt { get; set; } = default!;
 }
 
-public class TranslatedResponseValidator<T> : AbstractValidator<TranslatedResponse<T>>
+public class TranslatedResponseStringValidator : AbstractValidator<TranslatedResponse<string>>
 {
-    public TranslatedResponseValidator()
+    public TranslatedResponseStringValidator()
     {
         RuleFor(l => l.en).NotNull();
         RuleFor(l => l.lt).NotNull();
