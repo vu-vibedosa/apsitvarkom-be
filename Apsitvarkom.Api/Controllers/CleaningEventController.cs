@@ -40,7 +40,7 @@ public class CleaningEventController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        IEnumerable<CleaningEvent> sortedEvents = events.OrderByDescending(o => o.StartTime);
+        var sortedEvents = events.OrderByDescending(o => o.StartTime);
 
         var mappedEvents = _mapper.Map<IEnumerable<CleaningEventResponse>>(sortedEvents);
         if (mappedEvents is null) return StatusCode(StatusCodes.Status500InternalServerError);

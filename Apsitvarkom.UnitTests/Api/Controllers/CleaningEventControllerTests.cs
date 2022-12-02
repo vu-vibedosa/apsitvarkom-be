@@ -87,13 +87,12 @@ public class CleaningEventControllerTests
         var resultEvents = result.Value as IEnumerable<CleaningEventResponse>;
         Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(CleaningEvents.Count()));
 
-        IEnumerable<CleaningEvent> sortedRepositoryEvents = CleaningEvents.OrderByDescending(o => o.StartTime);
-        IEnumerable<CleaningEventResponse> sortedResultEvents = resultEvents.OrderByDescending(o => o.StartTime);
+        var sortedRepositoryEvents = CleaningEvents.OrderByDescending(o => o.StartTime);
 
         for (var i = 0; i < CleaningEvents.Count(); i++)
         {
             var cleaningEvent = sortedRepositoryEvents.ElementAt(i);
-            var resultEvent = sortedResultEvents.ElementAt(i);
+            var resultEvent = resultEvents.ElementAt(i);
             Assert.Multiple(() =>
             {
                 Assert.That(resultEvent.Id, Is.EqualTo(cleaningEvent.Id));

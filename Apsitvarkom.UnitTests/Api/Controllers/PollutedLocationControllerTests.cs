@@ -131,13 +131,12 @@ public class PollutedLocationControllerTests
         var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
 
-        IEnumerable<PollutedLocation> sortedRepositoryLocations = PollutedLocations.OrderByDescending(o => o.Spotted);
-        IEnumerable<PollutedLocationResponse> sortedResultEvents = resultLocations.OrderByDescending(o => o.Spotted);
+        var sortedRepositoryLocations = PollutedLocations.OrderByDescending(o => o.Spotted);
 
         for (var i = 0; i < PollutedLocations.Count(); i++)
         {
             var location = sortedRepositoryLocations.ElementAt(i);
-            var resultLocation = sortedResultEvents.ElementAt(i);
+            var resultLocation = resultLocations.ElementAt(i);
             Assert.Multiple(() =>
             {
                 Assert.That(resultLocation.Id, Is.EqualTo(location.Id));
