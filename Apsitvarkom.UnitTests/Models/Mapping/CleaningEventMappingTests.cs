@@ -35,8 +35,6 @@ public class CleaningEventMappingTests
 
         Assert.That(response.Id, Is.EqualTo(request.Id));
     }
-
-
     #endregion
 
     #region Response mappings
