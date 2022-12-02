@@ -33,8 +33,14 @@ public class GoogleGeocoder : IGeocoder
     public async Task<Translated<string>> ReverseGeocodeAsync(Coordinates coordinates)
     {
         var title = new Translated<string>();
-        foreach (var language in (SupportedLanguages[])Enum.GetValues(typeof(SupportedLanguages)))
-            title.Update(language, await ReverseGeocodeAsync(coordinates, language) ?? string.Empty);
+        var languages = (SupportedLanguages[])Enum.GetValues(typeof(SupportedLanguages));
+
+        var tasks = languages.Select(language => ReverseGeocodeAsync(coordinates, language));
+        var geocodeResults = await Task.WhenAll(tasks);
+
+        var pairs = geocodeResults.Zip(languages, (name, language) => new { Language = language, Name = name ?? string.Empty });
+        foreach (var pair in pairs)
+            title.Update(pair.Language, pair.Name);
         
         return title;
     }
