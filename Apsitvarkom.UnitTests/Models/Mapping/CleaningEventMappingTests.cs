@@ -24,7 +24,7 @@ public class CleaningEventMappingTests
 
     #region Request mappings
     [Test]
-    public void ObjectIdentifyRequestToCleaningEventResponse()
+    public void ObjectIdentifyRequestToCleaningEvent()
     {
         var request = new ObjectIdentifyRequest
         {

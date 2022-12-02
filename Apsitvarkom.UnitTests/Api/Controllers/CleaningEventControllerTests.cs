@@ -279,7 +279,7 @@ public class CleaningEventControllerTests
     }
 
     [Test]
-    public async Task Delete_RepositoryThrowsAcquiringPollutedLocation_Status500InternalServerErrorReturned()
+    public async Task Delete_RepositoryThrowsAcquiringCleaningEvent_Status500InternalServerErrorReturned()
     {
         var identifyRequest = new ObjectIdentifyRequest
         {
@@ -300,7 +300,7 @@ public class CleaningEventControllerTests
     }
 
     [Test]
-    public async Task Delete_RepositoryThrowsDeletingPollutedLocation_Status500InternalServerErrorReturned()
+    public async Task Delete_RepositoryThrowsDeletingCleaningEvent_Status500InternalServerErrorReturned()
     {
         var identifyRequest = new ObjectIdentifyRequest
         {

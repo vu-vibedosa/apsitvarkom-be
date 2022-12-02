@@ -17,8 +17,8 @@ public class CleaningEventProfile : Profile
 
     private void MapRequests()
     {
-        CreateMap<ObjectIdentifyRequest, CleaningEvent>(MemberList.None).
-            ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
+        CreateMap<ObjectIdentifyRequest, CleaningEvent>(MemberList.None)
+            .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
     }
 
     private void MapResponses()
