@@ -7,7 +7,7 @@ namespace Apsitvarkom.DataAccess;
 /// <summary>
 /// Class for <see cref="CleaningEvent" /> data handling using database.
 /// </summary>
-public class CleaningEventDatabaseRepository : IRepository<CleaningEvent>
+public class CleaningEventDatabaseRepository : ICleaningEventRepository
 {
     private readonly IPollutedLocationContext _context;
 
@@ -55,5 +55,11 @@ public class CleaningEventDatabaseRepository : IRepository<CleaningEvent>
     {
         _context.CleaningEvents.Remove(modelToDelete);
         await _context.Instance.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public Task<bool> ParentExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
+    {
+       return _context.PollutedLocations.AnyAsync(propertyCondition);
     }
 }

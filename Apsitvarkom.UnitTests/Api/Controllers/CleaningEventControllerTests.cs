@@ -15,7 +15,7 @@ public class CleaningEventControllerTests
 {
     private CleaningEventController _controller;
     private IMapper _mapper;
-    private Mock<IRepository<CleaningEvent>> _repository;
+    private Mock<ICleaningEventRepository> _repository;
 
     private readonly IEnumerable<CleaningEvent> CleaningEvents = new List<CleaningEvent>
     {
@@ -51,11 +51,12 @@ public class CleaningEventControllerTests
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
 
-        _repository = new Mock<IRepository<CleaningEvent>>();
+        _repository = new Mock<ICleaningEventRepository>();
         _controller = new CleaningEventController(
             _repository.Object, 
             _mapper, 
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new CleaningEventUpdateRequestValidator()
         );
     }
 
@@ -64,7 +65,8 @@ public class CleaningEventControllerTests
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
             _repository.Object, 
             _mapper, 
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new CleaningEventUpdateRequestValidator()
         ), Is.Not.Null);
     #endregion
 
