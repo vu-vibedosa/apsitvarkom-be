@@ -61,4 +61,3 @@ public class CleaningEventCreateRequestValidationTests
         Assert.That(result.IsValid, Is.False);
     }
 }
-
