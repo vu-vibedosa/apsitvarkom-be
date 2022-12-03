@@ -52,7 +52,7 @@ public class PollutedLocationController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        var sortedLocations = locations.OrderByDescending(o => o.Spotted);
+        var sortedLocations = locations.OrderBy(o => o.Spotted);
 
         var mappedLocations = _mapper.Map<IEnumerable<PollutedLocationResponse>>(sortedLocations);
         if (mappedLocations is null) return StatusCode(StatusCodes.Status500InternalServerError);

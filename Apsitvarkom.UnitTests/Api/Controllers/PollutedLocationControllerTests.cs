@@ -131,7 +131,7 @@ public class PollutedLocationControllerTests
         var resultLocations = result.Value as IEnumerable<PollutedLocationResponse>;
         Assert.That(resultLocations, Is.Not.Null.And.Count.EqualTo(PollutedLocations.Count()));
 
-        var sortedRepositoryLocations = PollutedLocations.OrderByDescending(o => o.Spotted);
+        var sortedRepositoryLocations = PollutedLocations.OrderBy(o => o.Spotted);
 
         for (var i = 0; i < PollutedLocations.Count(); i++)
         {

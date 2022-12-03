@@ -87,7 +87,7 @@ public class CleaningEventControllerTests
         var resultEvents = result.Value as IEnumerable<CleaningEventResponse>;
         Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(CleaningEvents.Count()));
 
-        var sortedRepositoryEvents = CleaningEvents.OrderByDescending(o => o.StartTime);
+        var sortedRepositoryEvents = CleaningEvents.OrderBy(o => o.StartTime);
 
         for (var i = 0; i < CleaningEvents.Count(); i++)
         {
