@@ -68,11 +68,48 @@ public class CleaningEventController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        if (cleaningEvent is null) return NotFound($"Polluted location with the specified id '{cleaningEventIdentifyRequest.Id}' was not found.");
+        if (cleaningEvent is null) return NotFound($"Cleaning event with the specified id '{cleaningEventIdentifyRequest.Id}' was not found.");
 
         var mappedEvent = _mapper.Map<CleaningEventResponse>(cleaningEvent);
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvent);
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpDelete("Delete")]
+    public async Task<ActionResult> Delete([FromQuery] ObjectIdentifyRequest cleaningEventIdentifyRequest)
+    {
+        var validationResult = await _objectIdentifyValidator.ValidateAsync(cleaningEventIdentifyRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        bool cleaningEventExists;
+        try
+        {
+            cleaningEventExists = await _repository.ExistsByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (cleaningEventExists is false) return NotFound($"Cleaning event with the specified id '{cleaningEventIdentifyRequest.Id}' was not found.");
+
+        var mappedEvent = _mapper.Map<CleaningEvent>(cleaningEventIdentifyRequest);
+        if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.DeleteAsync(mappedEvent);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return NoContent();
     }
 }
