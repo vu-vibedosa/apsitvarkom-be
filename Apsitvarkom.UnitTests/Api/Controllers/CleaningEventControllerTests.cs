@@ -55,7 +55,8 @@ public class CleaningEventControllerTests
         _controller = new CleaningEventController(
             _repository.Object, 
             _mapper, 
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new CleaningEventCreateRequestValidator()
         );
     }
 
@@ -64,7 +65,8 @@ public class CleaningEventControllerTests
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
             _repository.Object, 
             _mapper, 
-            new ObjectIdentifyRequestValidator()
+            new ObjectIdentifyRequestValidator(),
+            new CleaningEventCreateRequestValidator()
         ), Is.Not.Null);
     #endregion
 
