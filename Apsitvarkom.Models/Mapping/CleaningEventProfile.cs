@@ -17,7 +17,8 @@ public class CleaningEventProfile : Profile
 
     private void MapRequests()
     {
-
+        CreateMap<CleaningEventCreateRequest, CleaningEvent>()
+            .ForMember(x => x.Id, opt => opt.Ignore());
     }
 
     private void MapResponses()

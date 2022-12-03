@@ -14,15 +14,18 @@ public class CleaningEventController : ControllerBase
     private readonly IRepository<CleaningEvent> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
+    private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateRequestValdiator;
 
     public CleaningEventController(
         IRepository<CleaningEvent> repository, 
         IMapper mapper, 
-        IValidator<ObjectIdentifyRequest> objectIdentifyValidator)
+        IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
+        IValidator<CleaningEventCreateRequest> cleaningEventCreateRequestValdiator)
     {
         _repository = repository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
+        _cleaningEventCreateRequestValdiator = cleaningEventCreateRequestValdiator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -72,5 +75,37 @@ public class CleaningEventController : ControllerBase
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvent);
+    }
+
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("Create")]
+    public async Task<ActionResult<CleaningEventResponse>> Create(CleaningEventCreateRequest cleaningEventCreateRequest)
+    {
+        var validationResult = await _cleaningEventCreateRequestValdiator.ValidateAsync(cleaningEventCreateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        var cleaningEventDefaults = new CleaningEvent
+        {
+            Id = Guid.NewGuid()
+        };
+
+        var mappedCleaningEvent = _mapper.Map<CleaningEventCreateRequest, CleaningEvent>(cleaningEventCreateRequest, cleaningEventDefaults);
+        if (mappedCleaningEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<CleaningEventResponse>(mappedCleaningEvent);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.InsertAsync(mappedCleaningEvent);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 }
