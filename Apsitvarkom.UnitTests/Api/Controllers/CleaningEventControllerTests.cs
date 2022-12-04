@@ -304,11 +304,11 @@ public class CleaningEventControllerTests
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
-        var resultMessage = result.Value as string;
+        var resultMessage = result!.Value as string;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(resultMessage.StartsWith("Parent"));
+        Assert.That(resultMessage!.StartsWith("Parent"));
     }
 
     #endregion

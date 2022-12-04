@@ -21,8 +21,6 @@ public interface IRepository<T> where T: class
     /// <returns>False if the instance was not found, true otherwise.</returns>
     public Task<bool> ExistsByPropertyAsync(Expression<Func<T, bool>> propertyCondition);
 
-    
-
     /// <summary>Inserts a single <see cref="T" /> record to the data source.</summary>
     /// <param name="modelToInsert">Model to be inserted into the repository.</param>
     /// <returns>The <see cref="Task"/> to insert the model.</returns>
