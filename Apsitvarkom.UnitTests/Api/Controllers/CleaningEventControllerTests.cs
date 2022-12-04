@@ -324,10 +324,10 @@ public class CleaningEventControllerTests
         });
     }
 
-        #endregion
+    #endregion
 
-        #region Delete tests
-        [Test]
+    #region Delete tests
+    [Test]
     public async Task Delete_RepositoryGetsAndDeletesOnce_NoContentResultReturned()
     {
         var identifyRequest = new ObjectIdentifyRequest

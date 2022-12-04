@@ -7,7 +7,7 @@ namespace Apsitvarkom.DataAccess;
 /// <summary>
 /// Class for <see cref="CleaningEvent" /> data handling using database.
 /// </summary>
-public class CleaningEventDatabaseRepository : ICleaningEventRepository
+public class CleaningEventDatabaseRepository : IRepository<CleaningEvent>
 {
     private readonly IPollutedLocationContext _context;
 

@@ -47,7 +47,7 @@ builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetReq
 builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ApsitvarkomDatabase")));
 
 builder.Services.AddScoped<IPollutedLocationRepository, PollutedLocationDatabaseRepository>();
-builder.Services.AddScoped<ICleaningEventRepository, CleaningEventDatabaseRepository>();
+builder.Services.AddScoped<IRepository<CleaningEvent>, CleaningEventDatabaseRepository>();
 
 builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
 {
