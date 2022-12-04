@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Apsitvarkom.UnitTests.Models.Validation;
 
-public class CleaningEventUpdateValidatorTests
+public class CleaningEventUpdateValidationTests
 {
     private static readonly IValidator<CleaningEventUpdateRequest> Validator = new CleaningEventUpdateRequestValidator();
 

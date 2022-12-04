@@ -8,7 +8,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NUnit.Framework.Constraints;
 
 namespace Apsitvarkom.UnitTests.Api.Controllers;
 
@@ -218,6 +217,7 @@ public class CleaningEventControllerTests
     #endregion
 
     #region Update tests
+    [Test]
     public async Task Update_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
     {
         var updateRequest = new CleaningEventUpdateRequest
@@ -282,6 +282,31 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Update_RepositoryThrowsUpdatingCleaningEvent_Status500InternalServerErrorReturned()
+    {
+        var updateRequest = new CleaningEventUpdateRequest
+        {
+            Id = Guid.NewGuid(),
+            StartTime = DateTime.Parse("2032-01-01T00:11:22Z"),
+            Notes = "Updated notes"
+        };
+
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(CleaningEvents.First());
+        _repository.Setup(r => r.UpdateAsync(It.IsAny<CleaningEvent>())).Throws<Exception>();
+
+        var actionResult = await _controller.Update(updateRequest);
+
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
 
     [Test]
