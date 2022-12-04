@@ -60,4 +60,3 @@ public class CleaningEventUpdateValidatorTests
         Assert.That(result.IsValid, Is.False);
     }
 }
-
