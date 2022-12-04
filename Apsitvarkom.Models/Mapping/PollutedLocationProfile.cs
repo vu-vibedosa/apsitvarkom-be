@@ -43,7 +43,7 @@ public class PollutedLocationProfile : Profile
         CreateMap<Location, LocationResponse>();
         CreateMap<Coordinates, CoordinatesResponse>();
         CreateMap<Translated<string>, TranslatedResponse<string>>()
-            .ForMember(x => x.lt, opt => opt.MapFrom(x => x.Lithuanian))
-            .ForMember(x => x.en, opt => opt.MapFrom(x => x.English));
+            .ForMember(x => x.Lt, opt => opt.MapFrom(x => x.Lithuanian))
+            .ForMember(x => x.En, opt => opt.MapFrom(x => x.English));
     }
 }

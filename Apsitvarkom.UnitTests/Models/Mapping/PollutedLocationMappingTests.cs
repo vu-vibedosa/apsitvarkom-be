@@ -226,8 +226,8 @@ public class PollutedLocationMappingTests
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(pollutedLocation.Location.Title.en, Is.EqualTo(businessLogicObject.Location.Title.English));
-            Assert.That(pollutedLocation.Location.Title.lt, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
+            Assert.That(pollutedLocation.Location.Title.En, Is.EqualTo(businessLogicObject.Location.Title.English));
+            Assert.That(pollutedLocation.Location.Title.Lt, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(businessLogicObject.Radius));

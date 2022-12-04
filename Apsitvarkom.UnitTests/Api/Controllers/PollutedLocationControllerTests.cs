@@ -141,8 +141,8 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-                Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
-                Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
+                Assert.That(resultLocation.Location.Title.En, Is.EqualTo(location.Location.Title.English));
+                Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
                 Assert.That(resultLocation.Notes, Is.EqualTo(location.Notes));
@@ -212,8 +212,8 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
                 Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
                 Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-                Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
-                Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
+                Assert.That(resultLocation.Location.Title.En, Is.EqualTo(location.Location.Title.English));
+                Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
                 Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
@@ -306,8 +306,8 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(location.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(location.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-            Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
-            Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
+            Assert.That(resultLocation.Location.Title.En, Is.EqualTo(location.Location.Title.English));
+            Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
@@ -620,8 +620,8 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Radius, Is.EqualTo(updateRequest.Radius));
             Assert.That(resultLocation.Severity, Is.EqualTo(updateRequest.Severity));
             Assert.That(resultLocation.Progress, Is.EqualTo(location.Progress));
-            Assert.That(resultLocation.Location.Title.en, Is.EqualTo(location.Location.Title.English));
-            Assert.That(resultLocation.Location.Title.lt, Is.EqualTo(location.Location.Title.Lithuanian));
+            Assert.That(resultLocation.Location.Title.En, Is.EqualTo(location.Location.Title.English));
+            Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
             Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));

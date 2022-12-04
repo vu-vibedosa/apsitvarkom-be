@@ -19,8 +19,8 @@ public class PollutedLocationResponseValidationTests
             {
                 Title = 
                 {
-                    en = "nameEN",
-                    lt = "nameLT",
+                    En = "nameEN",
+                    Lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -42,8 +42,8 @@ public class PollutedLocationResponseValidationTests
             {
                 Title =
                 {
-                    en = "nameEN",
-                    lt = "nameLT",
+                    En = "nameEN",
+                    Lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -78,8 +78,8 @@ public class PollutedLocationResponseValidationTests
             {
                 Title =
                 {
-                    en = "nameEN",
-                    lt = "nameLT",
+                    En = "nameEN",
+                    Lt = "nameLT",
                 },
                 Coordinates =
                 {
@@ -101,8 +101,8 @@ public class PollutedLocationResponseValidationTests
             {
                 Title =
                 {
-                    en = "nameEN",
-                    lt = "nameLT"
+                    En = "nameEN",
+                    Lt = "nameLT"
                 },
                 Coordinates =
                 {
@@ -123,8 +123,8 @@ public class PollutedLocationResponseValidationTests
             {
                 Title =
                 {
-                    en = "nameEN",
-                    lt = "nameLT"
+                    En = "nameEN",
+                    Lt = "nameLT"
                 },
                 Coordinates =
                 {
