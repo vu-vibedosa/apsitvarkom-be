@@ -12,14 +12,12 @@ public class CleaningEventUpdateValidatorTests
         new()
         {
             Id = Guid.NewGuid(),
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
             Notes = "boop"
         },
         new()
         {
             Id = Guid.NewGuid(),
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.Parse("2077-03-12T10:11:12Z")
         },
     };
@@ -29,20 +27,12 @@ public class CleaningEventUpdateValidatorTests
         new()
         {
             // Missing id
-            PollutedLocationId = Guid.NewGuid(),
-            StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
-        },
-        new()
-        {
-            // Missing PollutedLocationId
-            Id = Guid.NewGuid(),
             StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
         },
         new()
         { 
             // Invalid StartTime
             Id = Guid.NewGuid(),
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.Parse("2007-03-12T10:11:12Z"),
             Notes = "boop"
         },

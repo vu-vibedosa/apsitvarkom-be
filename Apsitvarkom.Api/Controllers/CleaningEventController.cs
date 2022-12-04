@@ -11,18 +11,21 @@ namespace Apsitvarkom.Api.Controllers;
 [Route("/api/[controller]")]
 public class CleaningEventController : ControllerBase
 {
-    private readonly ICleaningEventRepository _repository;
+    private readonly IRepository<CleaningEvent> _cleaningEventRepository;
+    private readonly IPollutedLocationRepository _pollutedLocationRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
     private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
 
     public CleaningEventController(
-        ICleaningEventRepository repository, 
+        IRepository<CleaningEvent> cleaningEventRepository,
+        IPollutedLocationRepository pollutedLocationRepository,
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
         IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
-        _repository = repository;
+        _cleaningEventRepository = cleaningEventRepository;
+        _pollutedLocationRepository = pollutedLocationRepository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
         _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
@@ -36,7 +39,7 @@ public class CleaningEventController : ControllerBase
         IEnumerable<CleaningEvent> events;
         try
         {
-            events = await _repository.GetAllAsync();
+            events = await _cleaningEventRepository.GetAllAsync();
         }
         catch (Exception)
         {
@@ -64,7 +67,7 @@ public class CleaningEventController : ControllerBase
         CleaningEvent? cleaningEvent;
         try
         {
-            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
+            cleaningEvent = await _cleaningEventRepository.GetByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
         }
         catch (Exception)
         {
@@ -90,11 +93,9 @@ public class CleaningEventController : ControllerBase
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
         CleaningEvent? cleaningEvent;
-        bool pollutedLocationFound;
         try
         {
-            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.Id);
-            pollutedLocationFound = await _repository.ParentExistsByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.PollutedLocationId);
+            cleaningEvent = await _cleaningEventRepository.GetByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.Id);
         }
         catch (Exception)
         {
@@ -102,7 +103,6 @@ public class CleaningEventController : ControllerBase
         }
 
         if (cleaningEvent is null) return NotFound($"Cleaning event with the specified id '{cleaningEventUpdateRequest.Id}' was not found.");
-        if (pollutedLocationFound is false) return NotFound($"Parent polluted location with the specified id '{cleaningEventUpdateRequest.PollutedLocationId}' was not found.");
 
         var mappedEvent = _mapper.Map(cleaningEventUpdateRequest, cleaningEvent);
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
@@ -112,7 +112,7 @@ public class CleaningEventController : ControllerBase
 
         try
         {
-            await _repository.UpdateAsync(mappedEvent);
+            await _cleaningEventRepository.UpdateAsync(mappedEvent);
         }
         catch (Exception)
         {
@@ -135,7 +135,7 @@ public class CleaningEventController : ControllerBase
         bool cleaningEventExists;
         try
         {
-            cleaningEventExists = await _repository.ExistsByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
+            cleaningEventExists = await _cleaningEventRepository.ExistsByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
         }
         catch
         {
@@ -149,7 +149,7 @@ public class CleaningEventController : ControllerBase
 
         try
         {
-            await _repository.DeleteAsync(mappedEvent);
+            await _cleaningEventRepository.DeleteAsync(mappedEvent);
         }
         catch (Exception)
         {

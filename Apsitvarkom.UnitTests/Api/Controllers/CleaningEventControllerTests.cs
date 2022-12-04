@@ -16,7 +16,8 @@ public class CleaningEventControllerTests
 {
     private CleaningEventController _controller;
     private IMapper _mapper;
-    private Mock<ICleaningEventRepository> _repository;
+    private Mock<IRepository<CleaningEvent>> _repository;
+    private Mock<IPollutedLocationRepository> _pollutedLocationRepository;
 
     private readonly IEnumerable<CleaningEvent> CleaningEvents = new List<CleaningEvent>
     {
@@ -52,9 +53,11 @@ public class CleaningEventControllerTests
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
 
-        _repository = new Mock<ICleaningEventRepository>();
+        _repository = new Mock<IRepository<CleaningEvent>>();
+        _pollutedLocationRepository = new Mock<IPollutedLocationRepository>();
         _controller = new CleaningEventController(
-            _repository.Object, 
+            _repository.Object,
+             _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventUpdateRequestValidator()
@@ -64,7 +67,8 @@ public class CleaningEventControllerTests
     #region Constructor tests
     [Test]
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
-            _repository.Object, 
+            _repository.Object,
+            _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventUpdateRequestValidator()
@@ -243,7 +247,6 @@ public class CleaningEventControllerTests
         var updateRequest = new CleaningEventUpdateRequest
         {
             Id = Guid.NewGuid(),
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.UtcNow,
         };
 
@@ -266,7 +269,6 @@ public class CleaningEventControllerTests
         var updateRequest = new CleaningEventUpdateRequest
         {
             Id = Guid.NewGuid(),
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.UtcNow,
             Notes = "boop"
         };
@@ -287,33 +289,45 @@ public class CleaningEventControllerTests
     }
 
     [Test]
-    public async Task Update_RepositoryDoesntFindPollutedLocation_NotFoundActionResultReturned()
+    public async Task Update_RepositoryGetsAndUpdatesOnce_OkActionResultReturned()
     {
-        var cleaningEvent = CleaningEvents.First();
         var updateRequest = new CleaningEventUpdateRequest
         {
-            Id = cleaningEvent.Id,
-            StartTime = cleaningEvent.StartTime,
-            PollutedLocationId = cleaningEvent.PollutedLocationId,
-            Notes = "Good"
+            Id = Guid.NewGuid(),
+            StartTime = DateTime.UtcNow,
+            Notes = "Updated",
+
         };
+        var cleaningEvent = CleaningEvents.First();
 
         _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(cleaningEvent);
 
         var actionResult = await _controller.Update(updateRequest);
 
-        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
-        var result = actionResult.Result as NotFoundObjectResult;
-        var resultMessage = result!.Value as string;
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
+
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
+        var result = actionResult.Result as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(resultMessage!.StartsWith("Parent"));
-    }
-    #endregion
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
 
-    #region Delete tests
-    [Test]
+        Assert.That(result.Value, Is.Not.Null.And.TypeOf<CleaningEventResponse>());
+        var resultEvent = result.Value as CleaningEventResponse;
+        Assert.That(resultEvent, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultEvent.Id, Is.EqualTo(cleaningEvent.Id));
+            Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
+            Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
+        });
+    }
+
+        #endregion
+
+        #region Delete tests
+        [Test]
     public async Task Delete_RepositoryGetsAndDeletesOnce_NoContentResultReturned()
     {
         var identifyRequest = new ObjectIdentifyRequest

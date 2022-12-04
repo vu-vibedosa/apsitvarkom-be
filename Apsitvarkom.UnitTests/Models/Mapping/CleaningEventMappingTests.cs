@@ -50,7 +50,6 @@ public class CleaningEventMappingTests
         var updateModel = new CleaningEventUpdateRequest
         {
             Id = businessLogicObject.Id,
-            PollutedLocationId = Guid.NewGuid(),
             StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
             Notes = "LL"
         };
@@ -62,7 +61,6 @@ public class CleaningEventMappingTests
             Assert.That(mappedEvent.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedEvent.Notes, Is.EqualTo(updateModel.Notes));
             Assert.That(mappedEvent.StartTime, Is.EqualTo(updateModel.StartTime));
-            Assert.That(mappedEvent.PollutedLocationId, Is.EqualTo(updateModel.PollutedLocationId));
         });
     }
     #endregion

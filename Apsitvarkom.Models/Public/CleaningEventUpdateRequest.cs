@@ -6,8 +6,6 @@ public class CleaningEventUpdateRequest
 {
     public Guid? Id { get; set; }
 
-    public Guid? PollutedLocationId { get; set; }
-
     public DateTime? StartTime { get; set; }
 
     public string? Notes { get; set; }
@@ -18,7 +16,6 @@ public class CleaningEventUpdateRequestValidator : AbstractValidator<CleaningEve
     public CleaningEventUpdateRequestValidator()
     {
         RuleFor(l => l.Id).NotNull();
-        RuleFor(l => l.PollutedLocationId).NotNull();
         RuleFor(l => l.StartTime).NotNull().GreaterThan(DateTime.UtcNow);
     }
 }
