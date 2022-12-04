@@ -25,46 +25,86 @@ public class GoogleGeocoderTests
     }
 
     [Test]
-    public Task OkStatusCodeReturned_SingleAddressRetrieved_TitleSuccessfullyReturned()
+    public Task ReverseGeocodeAsync_OkStatusCodeReturned_SingleAddressRetrieved_TitleSuccessfullyReturned()
     {
         const string title = "Hello World";
         const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}]}";
 
-        return TestReverseGeocodeRequest(responseJsonString, title);
+        return TestReverseGeocodeAsyncRequest(responseJsonString, title);
     }
 
     [Test]
-    public Task OkStatusCodeReturned_SeveralAddressesRetrieved_FirstTitleReturned()
+    public Task ReverseGeocodeAsync_OkStatusCodeReturned_SeveralAddressesRetrieved_FirstTitleReturned()
     {
         const string title = "Hello World";
         const string responseJsonString = "{\"results\":[{\"formatted_address\":\"" + title + "\"}, {\"formatted_address\": \"second address\"}]}";
 
-        return TestReverseGeocodeRequest(responseJsonString, title);
+        return TestReverseGeocodeAsyncRequest(responseJsonString, title);
     }
 
     [Test]
-    public Task OkStatusCodeReturned_NullAddressRetrieved_NullReturned()
+    public Task ReverseGeocodeAsync_OkStatusCodeReturned_NullAddressRetrieved_NullReturned()
     {
         const string responseJsonString = "{\"results\":[{\"formatted_address\":null}]}";
 
-        return TestReverseGeocodeRequest(responseJsonString);
+        return TestReverseGeocodeAsyncRequest(responseJsonString);
     }
 
     [Test]
-    public Task ZeroResultsStatusCodeRetrieved_NullReturned() =>
-        TestReverseGeocodeRequest("{\"results\":[]}");
+    public Task ReverseGeocodeAsync_ZeroResultsStatusCodeRetrieved_NullReturned() =>
+        TestReverseGeocodeAsyncRequest("{\"results\":[]}");
 
     [Test]
-    public Task EmptyResultsResponseRetrieved_NullReturned() =>
-        TestReverseGeocodeRequest("{\"results\":null}");
+    public Task ReverseGeocodeAsync_EmptyResultsResponseRetrieved_NullReturned() =>
+        TestReverseGeocodeAsyncRequest("{\"results\":null}");
 
     [Test]
     [TestCase("null")]
     [TestCase("{}")]
-    public Task EmptyResponseRetrieved_NullReturned(string response) =>
-        TestReverseGeocodeRequest(response);
+    public Task ReverseGeocodeAsync_EmptyResponseRetrieved_NullReturned(string response) =>
+        TestReverseGeocodeAsyncRequest(response);
 
-    private async Task TestReverseGeocodeRequest(string responseJsonString, string? expectedResult = null)
+    [Test]
+    public async Task GetLocationTitlesAsync_TitlesForAllLanguagesReturned()
+    {
+        var title1 = "text";
+        var contentString1 = "{\"results\":[{\"formatted_address\":\"" + title1 + "\"}]}";
+        var response1 = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(contentString1)
+        };
+
+        var contentString2 = "{\"results\":null}";
+        var response2 = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(contentString2)
+        };
+
+        _handlerMock.Protected().SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response1)
+            .ReturnsAsync(response2);
+
+        var expectedResult = new Translated<string>(title1, string.Empty);
+
+        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates());
+
+        Assert.That(result.English, Is.EqualTo(expectedResult.English));
+        Assert.That(result.Lithuanian, Is.EqualTo(expectedResult.Lithuanian));
+
+        _handlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(2),
+            ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get),
+            ItExpr.IsAny<CancellationToken>()
+        );
+    }
+
+    private async Task TestReverseGeocodeAsyncRequest(string responseJsonString, string? expectedResult = null)
     {
         var response = new HttpResponseMessage
         {
@@ -78,7 +118,7 @@ public class GoogleGeocoderTests
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
 
-        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates());
+        var result = await _geocoder.ReverseGeocodeAsync(new Coordinates(), SupportedLanguages.English);
 
         Assert.That(result, Is.EqualTo(expectedResult));
         _handlerMock.Protected().Verify(

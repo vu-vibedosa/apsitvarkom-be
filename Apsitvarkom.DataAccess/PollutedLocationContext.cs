@@ -32,5 +32,6 @@ public class PollutedLocationContext : DbContext, IPollutedLocationContext
             .OwnsOne(l => l.Coordinates)
             .HasCheckConstraint("CK_Coordinates_Latitude", "\"Location_Coordinates_Latitude\" >= -90 and \"Location_Coordinates_Latitude\" <= 90")
             .HasCheckConstraint("CK_Coordinates_Longitude", "\"Location_Coordinates_Longitude\" >= -180 and \"Location_Coordinates_Longitude\" <= 180");
+        modelBuilder.Entity<PollutedLocation>().OwnsOne(l => l.Location).OwnsOne(l => l.Title);
     }
 }

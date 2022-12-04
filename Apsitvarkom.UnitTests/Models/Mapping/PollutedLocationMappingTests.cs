@@ -93,7 +93,7 @@ public class PollutedLocationMappingTests
             Id = Guid.NewGuid(),
             Location = 
             {
-                Title = "title",
+                Title = new("title", "pavadinimas"),
                 Coordinates = new Coordinates
                 {
                     Longitude = 35.929673,
@@ -122,7 +122,8 @@ public class PollutedLocationMappingTests
         {
             Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
-            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Location.Title.English, Is.EqualTo(businessLogicObject.Location.Title.English));
+            Assert.That(mappedLocation.Location.Title.Lithuanian, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedLocation.Notes, Is.EqualTo(updateModel.Notes));
@@ -140,7 +141,7 @@ public class PollutedLocationMappingTests
             Id = Guid.NewGuid(),
             Location =
             {
-                Title = "title",
+                Title = new("title", "pavadinimas"),
                 Coordinates = new Coordinates
                 {
                     Longitude = 35.929673,
@@ -167,7 +168,8 @@ public class PollutedLocationMappingTests
         {
             Assert.That(mappedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(mappedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
-            Assert.That(mappedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(mappedLocation.Location.Title.English, Is.EqualTo(businessLogicObject.Location.Title.English));
+            Assert.That(mappedLocation.Location.Title.Lithuanian, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
@@ -189,7 +191,7 @@ public class PollutedLocationMappingTests
             Id = pollutedLocationId,
             Location =
             {
-                Title = "title",
+                Title = new("title", "pavadinimas"),
                 Coordinates = new Coordinates
                 {
                     Longitude = -78.948237,
@@ -224,7 +226,8 @@ public class PollutedLocationMappingTests
         Assert.Multiple(() =>
         {
             Assert.That(pollutedLocation.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(pollutedLocation.Location.Title, Is.EqualTo(businessLogicObject.Location.Title));
+            Assert.That(pollutedLocation.Location.Title.En, Is.EqualTo(businessLogicObject.Location.Title.English));
+            Assert.That(pollutedLocation.Location.Title.Lt, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(pollutedLocation.Location.Coordinates.Longitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Longitude));
             Assert.That(pollutedLocation.Location.Coordinates.Latitude, Is.EqualTo(businessLogicObject.Location.Coordinates.Latitude));
             Assert.That(pollutedLocation.Radius, Is.EqualTo(businessLogicObject.Radius));
