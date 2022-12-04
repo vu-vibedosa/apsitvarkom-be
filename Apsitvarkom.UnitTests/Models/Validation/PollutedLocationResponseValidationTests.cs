@@ -6,7 +6,7 @@ namespace Apsitvarkom.UnitTests.Models.Validation;
 
 public class PollutedLocationResponseValidationTests
 {
-    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator()));
+    private static readonly IValidator<PollutedLocationResponse> Validator = new PollutedLocationResponseValidator(new LocationResponseValidator(new CoordinatesResponseValidator(), new TranslatedResponseStringValidator()));
 
     private static readonly Guid DummyGuid = Guid.NewGuid();
 
@@ -17,6 +17,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Title = 
+                {
+                    En = "nameEN",
+                    Lt = "nameLT",
+                },
                 Coordinates =
                 {
                     Latitude = 54.691452,
@@ -35,6 +40,11 @@ public class PollutedLocationResponseValidationTests
             Id = Guid.Parse("7ea478d6-9b3d-4bcc-b3b4-04a28d54c0ef"),
             Location =
             {
+                Title =
+                {
+                    En = "nameEN",
+                    Lt = "nameLT",
+                },
                 Coordinates =
                 {
                     Latitude = 54.675369,
@@ -66,14 +76,18 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Title = "title",
+                Title =
+                {
+                    En = "nameEN",
+                    Lt = "nameLT",
+                },
                 Coordinates =
                 {
                     Latitude = 85,
                     Longitude = -720
                 }
             },
-            Notes = "gtfo with these cringy notes",
+            Notes = ":D",
             Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
@@ -85,7 +99,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
-                Title = string.Empty,
+                Title =
+                {
+                    En = "nameEN",
+                    Lt = "nameLT"
+                },
                 Coordinates =
                 {
                     Latitude = 89.9,
@@ -103,6 +121,11 @@ public class PollutedLocationResponseValidationTests
             Id = DummyGuid,
             Location =
             {
+                Title =
+                {
+                    En = "nameEN",
+                    Lt = "nameLT"
+                },
                 Coordinates =
                 {
                     Latitude = 89.9,
