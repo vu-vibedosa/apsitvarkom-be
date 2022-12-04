@@ -35,12 +35,11 @@ public class GoogleGeocoder : IGeocoder
         var title = new Translated<string>();
         var languages = (SupportedLanguages[])Enum.GetValues(typeof(SupportedLanguages));
 
-        var tasks = languages.Select(language => ReverseGeocodeAsync(coordinates, language));
-        var geocodeResults = await Task.WhenAll(tasks);
+        var pairs = languages.Select(language => new { Language = language, Task = ReverseGeocodeAsync(coordinates, language) } ).ToList();
+        await Task.WhenAll(pairs.Select(x => x.Task));
 
-        var pairs = geocodeResults.Zip(languages, (name, language) => new { Language = language, Name = name ?? string.Empty });
         foreach (var pair in pairs)
-            title.Update(pair.Language, pair.Name);
+            title.Update(pair.Language, await pair.Task ?? string.Empty);
         
         return title;
     }
