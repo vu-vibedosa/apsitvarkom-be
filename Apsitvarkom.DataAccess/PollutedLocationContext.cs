@@ -24,10 +24,11 @@ public class PollutedLocationContext : DbContext, IPollutedLocationContext
             v => v.ToString(),
             v => (PollutedLocation.SeverityLevel)Enum.Parse(typeof(PollutedLocation.SeverityLevel), v)
         );
+        var severityLevelsString = string.Join(", ", ((PollutedLocation.SeverityLevel[])Enum.GetValues(typeof(PollutedLocation.SeverityLevel))).Select(p => $"'{p}'"));
         modelBuilder.Entity<PollutedLocation>()
             .HasCheckConstraint("CK_PollutedLocation_Radius", "\"Radius\" >= 1")
             .HasCheckConstraint("CK_PollutedLocation_Progress", "\"Progress\" >= 0 and \"Progress\" <= 100")
-            .HasCheckConstraint("CK_PollutedLocation_Severity", $"\"Severity\" in ({string.Join(", ", ((SupportedLanguages[])Enum.GetValues(typeof(SupportedLanguages))).Select(p => $"'{p}'"))})")
+            .HasCheckConstraint("CK_PollutedLocation_Severity", $"\"Severity\" in ({severityLevelsString})")
             .OwnsOne(l => l.Location)
             .OwnsOne(l => l.Coordinates)
             .HasCheckConstraint("CK_Coordinates_Latitude", "\"Location_Coordinates_Latitude\" >= -90 and \"Location_Coordinates_Latitude\" <= 90")
