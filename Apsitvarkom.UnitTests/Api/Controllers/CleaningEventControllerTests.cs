@@ -310,7 +310,6 @@ public class CleaningEventControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
         Assert.That(resultMessage!.StartsWith("Parent"));
     }
-
     #endregion
 
     #region Delete tests
