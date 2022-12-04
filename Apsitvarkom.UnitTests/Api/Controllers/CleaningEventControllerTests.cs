@@ -344,7 +344,6 @@ public class CleaningEventControllerTests
             Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
         });
     }
-
     #endregion
 
     #region Delete tests
