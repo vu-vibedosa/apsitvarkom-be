@@ -11,18 +11,18 @@ namespace Apsitvarkom.Api.Controllers;
 [Route("/api/[controller]")]
 public class CleaningEventController : ControllerBase
 {
-    private readonly IRepository<CleaningEvent> _cleaningEventRepository;
+    private readonly IRepository<CleaningEvent> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
     private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
 
     public CleaningEventController(
-        IRepository<CleaningEvent> cleaningEventRepository,
+        IRepository<CleaningEvent> repository,
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
         IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
-        _cleaningEventRepository = cleaningEventRepository;
+        _repository = repository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
         _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
@@ -36,7 +36,7 @@ public class CleaningEventController : ControllerBase
         IEnumerable<CleaningEvent> events;
         try
         {
-            events = await _cleaningEventRepository.GetAllAsync();
+            events = await _repository.GetAllAsync();
         }
         catch (Exception)
         {
@@ -64,7 +64,7 @@ public class CleaningEventController : ControllerBase
         CleaningEvent? cleaningEvent;
         try
         {
-            cleaningEvent = await _cleaningEventRepository.GetByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
+            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
         }
         catch (Exception)
         {
@@ -92,7 +92,7 @@ public class CleaningEventController : ControllerBase
         CleaningEvent? cleaningEvent;
         try
         {
-            cleaningEvent = await _cleaningEventRepository.GetByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.Id);
+            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.Id);
         }
         catch (Exception)
         {
@@ -109,7 +109,7 @@ public class CleaningEventController : ControllerBase
 
         try
         {
-            await _cleaningEventRepository.UpdateAsync(mappedEvent);
+            await _repository.UpdateAsync(mappedEvent);
         }
         catch (Exception)
         {
@@ -132,7 +132,7 @@ public class CleaningEventController : ControllerBase
         bool cleaningEventExists;
         try
         {
-            cleaningEventExists = await _cleaningEventRepository.ExistsByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
+            cleaningEventExists = await _repository.ExistsByPropertyAsync(x => x.Id == cleaningEventIdentifyRequest.Id);
         }
         catch
         {
@@ -146,7 +146,7 @@ public class CleaningEventController : ControllerBase
 
         try
         {
-            await _cleaningEventRepository.DeleteAsync(mappedEvent);
+            await _repository.DeleteAsync(mappedEvent);
         }
         catch (Exception)
         {
