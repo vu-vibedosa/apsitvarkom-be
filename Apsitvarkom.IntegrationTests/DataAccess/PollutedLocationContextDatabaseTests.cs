@@ -66,6 +66,8 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(dbRow.Id));
+            Assert.That(response.Location.Title.English, Is.EqualTo(dbRow.Location.Title.English));
+            Assert.That(response.Location.Title.Lithuanian, Is.EqualTo(dbRow.Location.Title.Lithuanian));
             Assert.That(response.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(response.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(response.Radius, Is.EqualTo(dbRow.Radius));
@@ -117,7 +119,7 @@ public class PollutedLocationContextDatabaseTests
             Spotted = new DateTime(2022, 12, 23, 23, 59, 59).ToUniversalTime(),
             Location = new Location
             {
-                Title = "Name",
+                Title = new("text sample", "teksto pavyzdys"),
                 Coordinates = new Coordinates
                 {
                     Latitude = 12.00,
@@ -188,8 +190,8 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(updatedObject.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(updatedObject.Location.Title, Is.EqualTo(dbRow.Location.Title));
-            Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
+            Assert.That(updatedObject.Location.Title.English, Is.EqualTo(dbRow.Location.Title.English));
+            Assert.That(updatedObject.Location.Title.Lithuanian, Is.EqualTo(dbRow.Location.Title.Lithuanian)); Assert.That(updatedObject.Location.Coordinates.Latitude, Is.EqualTo(dbRow.Location.Coordinates.Latitude));
             Assert.That(updatedObject.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(updatedObject.Radius, Is.EqualTo(dbRow.Radius));
             Assert.That(updatedObject.Severity, Is.EqualTo(dbRow.Severity));
