@@ -16,7 +16,7 @@ public class CleaningEventControllerTests
 {
     private CleaningEventController _controller;
     private IMapper _mapper;
-    private Mock<IRepository<CleaningEvent>> _cleaningEventRepository;
+    private Mock<IRepository<CleaningEvent>> _repository;
 
     private readonly IEnumerable<CleaningEvent> CleaningEvents = new List<CleaningEvent>
     {
@@ -52,9 +52,9 @@ public class CleaningEventControllerTests
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
 
-        _cleaningEventRepository = new Mock<IRepository<CleaningEvent>>();
+        _repository = new Mock<IRepository<CleaningEvent>>();
         _controller = new CleaningEventController(
-            _cleaningEventRepository.Object,
+            _repository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventUpdateRequestValidator()
@@ -64,7 +64,7 @@ public class CleaningEventControllerTests
     #region Constructor tests
     [Test]
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
-            _cleaningEventRepository.Object,
+            _repository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventUpdateRequestValidator()
@@ -75,7 +75,7 @@ public class CleaningEventControllerTests
     [Test]
     public async Task GetAll_RepositoryReturnsCleaningEvents_OKActionResultReturned()
     {
-        _cleaningEventRepository.Setup(r => r.GetAllAsync())
+        _repository.Setup(r => r.GetAllAsync())
             .ReturnsAsync(CleaningEvents);
 
         var actionResult = await _controller.GetAll();
@@ -109,7 +109,7 @@ public class CleaningEventControllerTests
     [Test]
     public async Task GetAll_RepositoryThrows_Status500InternalServerErrorReturned()
     {
-        _cleaningEventRepository.Setup(r => r.GetAllAsync())
+        _repository.Setup(r => r.GetAllAsync())
             .Throws<Exception>();
 
         var actionResult = await _controller.GetAll();
@@ -132,7 +132,7 @@ public class CleaningEventControllerTests
             Id = cleaningEvent.Id
         };
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
             .ReturnsAsync(cleaningEvent);
 
         var actionResult = await _controller.GetById(identifyRequest);
@@ -163,7 +163,7 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
             .ReturnsAsync((CleaningEvent?)null);
 
         var actionResult = await _controller.GetById(identifyRequest);
@@ -186,7 +186,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.GetById(identifyRequest);
 
-        _cleaningEventRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Never);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -204,7 +204,7 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
             .Throws<Exception>();
 
         var actionResult = await _controller.GetById(identifyRequest);
@@ -227,7 +227,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _cleaningEventRepository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult.Result as BadRequestObjectResult;
@@ -246,11 +246,11 @@ public class CleaningEventControllerTests
             StartTime = DateTime.UtcNow,
         };
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _cleaningEventRepository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
         var result = actionResult.Result as StatusCodeResult;
@@ -269,12 +269,12 @@ public class CleaningEventControllerTests
             Notes = "boop"
         };
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync((CleaningEvent?)null);
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync((CleaningEvent?)null);
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _cleaningEventRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
-        _cleaningEventRepository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult.Result as NotFoundObjectResult;
@@ -296,12 +296,12 @@ public class CleaningEventControllerTests
         };
         var cleaningEvent = CleaningEvents.First();
 
-        _cleaningEventRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(cleaningEvent);
+        _repository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(cleaningEvent);
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _cleaningEventRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
-        _cleaningEventRepository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
@@ -331,12 +331,12 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
 
         var actionResult = await _controller.Delete(identifyRequest);
 
-        _cleaningEventRepository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Once);
-        _cleaningEventRepository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Once);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
 
         Assert.That(actionResult, Is.TypeOf<NoContentResult>());
         var result = actionResult as NoContentResult;
@@ -353,13 +353,13 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
             .ReturnsAsync(false);
 
         var actionResult = await _controller.Delete(identifyRequest);
 
-        _cleaningEventRepository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
-        _cleaningEventRepository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
 
         Assert.That(actionResult, Is.TypeOf<NotFoundObjectResult>());
         var result = actionResult as NotFoundObjectResult;
@@ -379,7 +379,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Delete(identifyRequest);
 
-        _cleaningEventRepository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
         var result = actionResult as BadRequestObjectResult;
@@ -397,7 +397,7 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
 
         var actionResult = await _controller.Delete(identifyRequest);
 
@@ -407,7 +407,7 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
 
-        _cleaningEventRepository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
     }
 
     [Test]
@@ -418,8 +418,8 @@ public class CleaningEventControllerTests
             Id = Guid.NewGuid()
         };
 
-        _cleaningEventRepository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
-        _cleaningEventRepository.Setup(r => r.DeleteAsync(It.IsAny<CleaningEvent>())).Throws<Exception>();
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
+        _repository.Setup(r => r.DeleteAsync(It.IsAny<CleaningEvent>())).Throws<Exception>();
 
         var actionResult = await _controller.Delete(identifyRequest);
 
