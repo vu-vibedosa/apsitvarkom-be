@@ -25,6 +25,6 @@ public class CleaningEventUpdateRequestValidator : AbstractValidator<CleaningEve
     {
         RuleFor(l => l.Id).NotNull();
         RuleFor(l => l.PollutedLocationId).NotNull();
-        RuleFor(l => l.StartTime).NotNull();
+        RuleFor(l => l.StartTime).NotNull().GreaterThan(DateTime.UtcNow);
     }
 }

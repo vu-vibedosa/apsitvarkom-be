@@ -101,7 +101,7 @@ public class CleaningEventController : ControllerBase
         }
 
         if (cleaningEvent is null) return NotFound($"Cleaning event with the specified id '{cleaningEventUpdateRequest.Id}' was not found.");
-        if (pollutedLocationFound is false) return NotFound($"PIMPTITIM ASD with the specified id '{cleaningEventUpdateRequest.PollutedLocationId}' was not found.");
+        if (pollutedLocationFound is false) return NotFound($"Parent polluted location with the specified id '{cleaningEventUpdateRequest.PollutedLocationId}' was not found.");
 
         var mappedEvent = _mapper.Map(cleaningEventUpdateRequest, cleaningEvent);
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
