@@ -12,20 +12,17 @@ namespace Apsitvarkom.Api.Controllers;
 public class CleaningEventController : ControllerBase
 {
     private readonly IRepository<CleaningEvent> _cleaningEventRepository;
-    private readonly IPollutedLocationRepository _pollutedLocationRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
     private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
 
     public CleaningEventController(
         IRepository<CleaningEvent> cleaningEventRepository,
-        IPollutedLocationRepository pollutedLocationRepository,
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
         IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
         _cleaningEventRepository = cleaningEventRepository;
-        _pollutedLocationRepository = pollutedLocationRepository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
         _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
