@@ -78,6 +78,7 @@ public class CleaningEventController : ControllerBase
 
         return Ok(mappedEvent);
     }
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
