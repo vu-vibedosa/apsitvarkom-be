@@ -70,10 +70,4 @@ public class PollutedLocationDatabaseRepository : IPollutedLocationRepository
         _context.PollutedLocations.Remove(modelToDelete);
         await _context.Instance.SaveChangesAsync();
     }
-
-    /// <inheritdoc />s
-    public Task<bool> ParentExistsByPropertyAsync(Expression<Func<PollutedLocation, bool>> propertyCondition)
-    {
-        throw new NotImplementedException();
-    }
 }
