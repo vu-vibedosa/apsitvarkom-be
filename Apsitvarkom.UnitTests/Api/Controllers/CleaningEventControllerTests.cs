@@ -86,9 +86,12 @@ public class CleaningEventControllerTests
         Assert.That(result.Value, Is.Not.Null.And.InstanceOf<IEnumerable<CleaningEventResponse>>());
         var resultEvents = result.Value as IEnumerable<CleaningEventResponse>;
         Assert.That(resultEvents, Is.Not.Null.And.Count.EqualTo(CleaningEvents.Count()));
+
+        var sortedRepositoryEvents = CleaningEvents.OrderBy(o => o.StartTime);
+
         for (var i = 0; i < CleaningEvents.Count(); i++)
         {
-            var cleaningEvent = CleaningEvents.ElementAt(i);
+            var cleaningEvent = sortedRepositoryEvents.ElementAt(i);
             var resultEvent = resultEvents.ElementAt(i);
             Assert.Multiple(() =>
             {
@@ -205,6 +208,115 @@ public class CleaningEventControllerTests
 
         Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
         var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+    }
+    #endregion
+
+    #region Delete tests
+    [Test]
+    public async Task Delete_RepositoryGetsAndDeletesOnce_NoContentResultReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Once);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+
+        Assert.That(actionResult, Is.TypeOf<NoContentResult>());
+        var result = actionResult as NoContentResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+    }
+
+    [Test]
+    public async Task Delete_RepositoryReturnsNull_NotFoundActionResultReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()))
+            .ReturnsAsync(false);
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+        _repository.Verify(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+
+        Assert.That(actionResult, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult as NotFoundObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Delete_NullIdEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+
+        Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Delete_RepositoryThrowsAcquiringCleaningEvent_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
+        _repository.Verify(r => r.DeleteAsync(It.IsAny<CleaningEvent>()), Times.Never);
+    }
+
+    [Test]
+    public async Task Delete_RepositoryThrowsDeletingCleaningEvent_Status500InternalServerErrorReturned()
+    {
+        var identifyRequest = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
+
+        _repository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
+        _repository.Setup(r => r.DeleteAsync(It.IsAny<CleaningEvent>())).Throws<Exception>();
+
+        var actionResult = await _controller.Delete(identifyRequest);
+
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));

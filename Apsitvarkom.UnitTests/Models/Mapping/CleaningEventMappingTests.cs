@@ -23,7 +23,18 @@ public class CleaningEventMappingTests
     }
 
     #region Request mappings
+    [Test]
+    public void ObjectIdentifyRequestToCleaningEvent()
+    {
+        var request = new ObjectIdentifyRequest
+        {
+            Id = Guid.NewGuid()
+        };
 
+        var response = _mapper.Map<CleaningEvent>(request);
+
+        Assert.That(response.Id, Is.EqualTo(request.Id));
+    }
     #endregion
 
     #region Response mappings
