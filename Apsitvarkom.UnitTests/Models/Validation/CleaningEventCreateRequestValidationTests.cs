@@ -1,8 +1,8 @@
-﻿using Apsitvarkom.Models;
-using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.Models.Public;
 using FluentValidation;
 
 namespace Apsitvarkom.UnitTests.Models.Validation;
+
 public class CleaningEventCreateRequestValidationTests
 {
     private static readonly IValidator<CleaningEventCreateRequest> Validator = new CleaningEventCreateRequestValidator();
@@ -12,7 +12,7 @@ public class CleaningEventCreateRequestValidationTests
         new()
         {
             PollutedLocationId = Guid.NewGuid(),
-            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            StartTime = DateTime.UtcNow.AddDays(1),
             Notes = "Prisoners broke a window."
         },
         new()
@@ -27,13 +27,20 @@ public class CleaningEventCreateRequestValidationTests
         new()
         {
             // Invalid missing PollutedLocationId
-            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            StartTime = DateTime.UtcNow.AddDays(1),
             Notes = "Prisoners broke a window."
         },
         new()
         {
             // Invalid missing StartTime
             PollutedLocationId = Guid.NewGuid(),
+            Notes = "Prisoners broke a window."
+        },
+         new()
+        {
+            // Invalid wrong StartTime
+            PollutedLocationId = Guid.NewGuid(),
+            StartTime = DateTime.UtcNow.AddDays(-1),
             Notes = "Prisoners broke a window."
         },
     };

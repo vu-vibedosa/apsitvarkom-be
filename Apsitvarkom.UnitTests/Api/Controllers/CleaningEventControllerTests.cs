@@ -41,44 +41,6 @@ public class CleaningEventControllerTests
         }
     };
 
-    private readonly IEnumerable<PollutedLocation> PollutedLocations = new List<PollutedLocation>
-    {
-        new()
-        {
-            Id = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
-            Location =
-            {
-                Title = "Loc1",
-                Coordinates =
-                {
-                    Longitude = 54,
-                    Latitude = 23
-                }
-            },
-            Radius = 15,
-            Severity = PollutedLocation.SeverityLevel.Moderate,
-            Spotted = DateTime.Parse("2022-09-14T17:35:23Z"),
-            Progress = 42,
-            Notes = "Lorem ipsum",
-            Events = new List<CleaningEvent>
-            {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
-                    StartTime = DateTime.Parse("2023-01-01T00:11:22Z"),
-                    Notes = "So many fireworks leftovers..."
-                },
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
-                    StartTime = DateTime.Parse("2022-12-23T10:11:12Z"),
-                },
-            }
-        }
-    };
-
     [SetUp]
     public void SetUp()
     {
@@ -261,7 +223,7 @@ public class CleaningEventControllerTests
         var cleaningEvent = CleaningEvents.First();
         var createRequest = new CleaningEventCreateRequest
         {
-            PollutedLocationId = PollutedLocations.First().Id,
+            PollutedLocationId = Guid.NewGuid(),
             StartTime = cleaningEvent.StartTime,
             Notes = cleaningEvent.Notes
         };
@@ -288,7 +250,7 @@ public class CleaningEventControllerTests
     }
 
     [Test]
-    public async Task Create_RepositoryThrows_NotExistingPollutedLocationIdProvided_Status500InternalServerErrorReturned()
+    public async Task Create_RepositoryThrows_Status500InternalServerErrorReturned()
     {
         var cleaningEvent = CleaningEvents.First();
         var createRequest = new CleaningEventCreateRequest
@@ -314,7 +276,7 @@ public class CleaningEventControllerTests
     {
         var createRequest = new CleaningEventCreateRequest
         {
-            PollutedLocationId = PollutedLocations.First().Id,
+            PollutedLocationId = Guid.NewGuid(),
             StartTime = null
         };
 

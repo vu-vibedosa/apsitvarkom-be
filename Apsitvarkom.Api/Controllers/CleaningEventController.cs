@@ -14,18 +14,18 @@ public class CleaningEventController : ControllerBase
     private readonly IRepository<CleaningEvent> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
-    private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateRequestValdiator;
+    private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateRequestValidator;
 
     public CleaningEventController(
         IRepository<CleaningEvent> repository, 
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
-        IValidator<CleaningEventCreateRequest> cleaningEventCreateRequestValdiator)
+        IValidator<CleaningEventCreateRequest> cleaningEventCreateRequestValidator)
     {
         _repository = repository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
-        _cleaningEventCreateRequestValdiator = cleaningEventCreateRequestValdiator;
+        _cleaningEventCreateRequestValidator = cleaningEventCreateRequestValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -85,7 +85,7 @@ public class CleaningEventController : ControllerBase
     [HttpPost("Create")]
     public async Task<ActionResult<CleaningEventResponse>> Create(CleaningEventCreateRequest cleaningEventCreateRequest)
     {
-        var validationResult = await _cleaningEventCreateRequestValdiator.ValidateAsync(cleaningEventCreateRequest);
+        var validationResult = await _cleaningEventCreateRequestValidator.ValidateAsync(cleaningEventCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
         var cleaningEventDefaults = new CleaningEvent

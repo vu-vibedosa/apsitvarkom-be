@@ -35,6 +35,26 @@ public class CleaningEventMappingTests
 
         Assert.That(response.Id, Is.EqualTo(request.Id));
     }
+
+    [Test]
+    public void CleaningEventCreateRequestToCleaningEvent()
+    {
+        var createModel = new CleaningEventCreateRequest
+        {
+            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            Notes = "Hello world",
+            PollutedLocationId = Guid.NewGuid()
+        };
+
+        var response = _mapper.Map<CleaningEvent>(createModel);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(response.StartTime, Is.EqualTo(createModel.StartTime));
+            Assert.That(response.Notes, Is.EqualTo(createModel.Notes));
+            Assert.That(response.PollutedLocationId, Is.EqualTo(createModel.PollutedLocationId));
+        });
+    }
     #endregion
 
     #region Response mappings
@@ -56,34 +76,6 @@ public class CleaningEventMappingTests
             Assert.That(response.StartTime, Is.EqualTo(businessLogicObject.StartTime));
             Assert.That(response.Notes, Is.EqualTo(businessLogicObject.Notes));
             Assert.That(response.PollutedLocationId, Is.EqualTo(businessLogicObject.PollutedLocationId));
-        });
-    }
-
-    [Test]
-    public void CleaningEventCreateRequestToCleaningEvent()
-    {
-        var businessLogicObject = new CleaningEvent
-        {
-            Id = Guid.NewGuid(),
-            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
-            Notes = "Hello world",
-            PollutedLocationId = Guid.NewGuid()
-        };
-
-        var createModel = new CleaningEventCreateRequest
-        {
-            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
-            Notes = "Hello world",
-            PollutedLocationId = Guid.NewGuid()
-        };
-
-        var response = _mapper.Map<CleaningEventCreateRequest, CleaningEvent>(createModel, businessLogicObject);
-        Assert.Multiple(() =>
-        {
-            Assert.That(response.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(response.StartTime, Is.EqualTo(createModel.StartTime));
-            Assert.That(response.Notes, Is.EqualTo(createModel.Notes));
-            Assert.That(response.PollutedLocationId, Is.EqualTo(createModel.PollutedLocationId));
         });
     }
     #endregion
