@@ -14,15 +14,18 @@ public class CleaningEventController : ControllerBase
     private readonly IRepository<CleaningEvent> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
+    private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
 
     public CleaningEventController(
-        IRepository<CleaningEvent> repository, 
+        IRepository<CleaningEvent> repository,
         IMapper mapper, 
-        IValidator<ObjectIdentifyRequest> objectIdentifyValidator)
+        IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
+        IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
         _repository = repository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
+        _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,6 +77,46 @@ public class CleaningEventController : ControllerBase
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvent);
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPatch("Update")]
+    public async Task<ActionResult<CleaningEventResponse>> Update(CleaningEventUpdateRequest cleaningEventUpdateRequest)
+    {
+        var validationResult = await _cleaningEventUpdateValidator.ValidateAsync(cleaningEventUpdateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        CleaningEvent? cleaningEvent;
+        try
+        {
+            cleaningEvent = await _repository.GetByPropertyAsync(x => x.Id == cleaningEventUpdateRequest.Id);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (cleaningEvent is null) return NotFound($"Cleaning event with the specified id '{cleaningEventUpdateRequest.Id}' was not found.");
+
+        var mappedEvent = _mapper.Map(cleaningEventUpdateRequest, cleaningEvent);
+        if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<CleaningEventResponse>(mappedEvent);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.UpdateAsync(mappedEvent);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok(response);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
