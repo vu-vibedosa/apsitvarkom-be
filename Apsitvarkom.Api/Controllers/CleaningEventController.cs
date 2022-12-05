@@ -94,23 +94,22 @@ public class CleaningEventController : ControllerBase
     {
         var validationResult = await _cleaningEventCreateValidator.ValidateAsync(cleaningEventCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
-
-        PollutedLocation? location;
+        
+        bool pollutedLocationExists;
         try
         {
-            location = await _pollutedLocationRepository.GetByPropertyAsync(x => x.Id == cleaningEventCreateRequest.PollutedLocationId);
+            pollutedLocationExists = await _pollutedLocationRepository.ExistsByPropertyAsync(x => x.Id == cleaningEventCreateRequest.PollutedLocationId);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        if (location is null) return NotFound($"Polluted location with the specified id '{cleaningEventCreateRequest.PollutedLocationId}' was not found.");
+        if (pollutedLocationExists is false) return NotFound($"Polluted location with the specified id '{cleaningEventCreateRequest.PollutedLocationId}' was not found.");
 
         var cleaningEventDefaults = new CleaningEvent
         {
-            Id = Guid.NewGuid(),
-            PollutedLocationId = location.Id
+            Id = Guid.NewGuid()
         };
 
         var mappedCleaningEvent = _mapper.Map<CleaningEventCreateRequest, CleaningEvent>(cleaningEventCreateRequest, cleaningEventDefaults);
