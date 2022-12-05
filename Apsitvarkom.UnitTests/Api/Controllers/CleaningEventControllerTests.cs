@@ -16,6 +16,7 @@ public class CleaningEventControllerTests
     private CleaningEventController _controller;
     private IMapper _mapper;
     private Mock<IRepository<CleaningEvent>> _repository;
+    private Mock<IPollutedLocationRepository> _pollutedLocationRepository;
 
     private readonly IEnumerable<CleaningEvent> CleaningEvents = new List<CleaningEvent>
     {
@@ -50,10 +51,12 @@ public class CleaningEventControllerTests
         });
         config.AssertConfigurationIsValid();
         _mapper = config.CreateMapper();
-
+        
         _repository = new Mock<IRepository<CleaningEvent>>();
+        _pollutedLocationRepository = new Mock<IPollutedLocationRepository>();
         _controller = new CleaningEventController(
             _repository.Object,
+            _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventCreateRequestValidator(),
@@ -65,6 +68,7 @@ public class CleaningEventControllerTests
     [Test]
     public void Constructor_HappyPath_IsSuccess() => Assert.That(new CleaningEventController(
             _repository.Object,
+            _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventCreateRequestValidator(),
@@ -222,16 +226,25 @@ public class CleaningEventControllerTests
     [Test]
     public async Task Create_RepositoryInsertsOnce_CreatedAtActionResultReturned()
     {
+        var pollutedLocation = new PollutedLocation
+        {
+            Id = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36")
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .ReturnsAsync(pollutedLocation);
+
         var cleaningEvent = CleaningEvents.First();
         var createRequest = new CleaningEventCreateRequest
         {
-            PollutedLocationId = Guid.NewGuid(),
+            PollutedLocationId = pollutedLocation.Id,
             StartTime = cleaningEvent.StartTime,
             Notes = cleaningEvent.Notes
         };
 
         var actionResult = await _controller.Create(createRequest);
 
+        _pollutedLocationRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
         _repository.Verify(r => r.InsertAsync(It.IsAny<CleaningEvent>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<CreatedAtActionResult>());
@@ -252,7 +265,7 @@ public class CleaningEventControllerTests
     }
 
     [Test]
-    public async Task Create_RepositoryThrows_Status500InternalServerErrorReturned()
+    public async Task Create_RepositoryThrows_Status404NotFoundReturned()
     {
         var cleaningEvent = CleaningEvents.First();
         var createRequest = new CleaningEventCreateRequest
@@ -266,11 +279,11 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Create(createRequest);
 
-        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
-        var result = actionResult.Result as StatusCodeResult;
+        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult.Result as NotFoundObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
     }
 
     [Test]
@@ -292,6 +305,28 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
         Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Create_RepositoryThrows_Status500InternalServerErrorReturned()
+    {
+        var createRequest = new CleaningEventCreateRequest
+        {
+            PollutedLocationId = Guid.NewGuid(),
+            StartTime = DateTime.UtcNow.AddDays(1)
+
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
+            .Throws<Exception>();
+
+        var actionResult = await _controller.Create(createRequest);
+
+        Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult.Result as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
     #endregion
 

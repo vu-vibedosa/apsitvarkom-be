@@ -12,6 +12,7 @@ namespace Apsitvarkom.Api.Controllers;
 public class CleaningEventController : ControllerBase
 {
     private readonly IRepository<CleaningEvent> _repository;
+    private readonly IPollutedLocationRepository _pollutedLocationRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
     private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateValidator;
@@ -19,12 +20,14 @@ public class CleaningEventController : ControllerBase
 
     public CleaningEventController(
         IRepository<CleaningEvent> repository,
+        IPollutedLocationRepository pollutedLocationRepository,
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
         IValidator<CleaningEventCreateRequest> cleaningEventCreateValidator,
         IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
         _repository = repository;
+        _pollutedLocationRepository = pollutedLocationRepository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
         _cleaningEventCreateValidator = cleaningEventCreateValidator;
@@ -84,6 +87,7 @@ public class CleaningEventController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost("Create")]
     public async Task<ActionResult<CleaningEventResponse>> Create(CleaningEventCreateRequest cleaningEventCreateRequest)
@@ -91,9 +95,22 @@ public class CleaningEventController : ControllerBase
         var validationResult = await _cleaningEventCreateValidator.ValidateAsync(cleaningEventCreateRequest);
         if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
 
+        PollutedLocation? location;
+        try
+        {
+            location = await _pollutedLocationRepository.GetByPropertyAsync(x => x.Id == cleaningEventCreateRequest.PollutedLocationId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (location is null) return NotFound($"Polluted location with the specified id '{cleaningEventCreateRequest.PollutedLocationId}' was not found.");
+
         var cleaningEventDefaults = new CleaningEvent
         {
-            Id = Guid.NewGuid()
+            Id = Guid.NewGuid(),
+            PollutedLocationId = location.Id
         };
 
         var mappedCleaningEvent = _mapper.Map<CleaningEventCreateRequest, CleaningEvent>(cleaningEventCreateRequest, cleaningEventDefaults);
