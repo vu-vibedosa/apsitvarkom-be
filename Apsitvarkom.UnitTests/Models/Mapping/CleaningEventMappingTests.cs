@@ -37,6 +37,26 @@ public class CleaningEventMappingTests
     }
 
     [Test]
+    public void CleaningEventCreateRequestToCleaningEvent()
+    {
+        var createModel = new CleaningEventCreateRequest
+        {
+            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            Notes = "Hello world",
+            PollutedLocationId = Guid.NewGuid()
+        };
+
+        var response = _mapper.Map<CleaningEvent>(createModel);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(response.StartTime, Is.EqualTo(createModel.StartTime));
+            Assert.That(response.Notes, Is.EqualTo(createModel.Notes));
+            Assert.That(response.PollutedLocationId, Is.EqualTo(createModel.PollutedLocationId));
+        });
+    }
+
+    [Test]
     public void CleaningEventUpdateRequestToPollutedLocation_AllPropertiesNotNull()
     {
         var businessLogicObject = new CleaningEvent

@@ -12,19 +12,25 @@ namespace Apsitvarkom.Api.Controllers;
 public class CleaningEventController : ControllerBase
 {
     private readonly IRepository<CleaningEvent> _repository;
+    private readonly IPollutedLocationRepository _pollutedLocationRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
+    private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateValidator;
     private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
 
     public CleaningEventController(
         IRepository<CleaningEvent> repository,
+        IPollutedLocationRepository pollutedLocationRepository,
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
+        IValidator<CleaningEventCreateRequest> cleaningEventCreateValidator,
         IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
     {
         _repository = repository;
+        _pollutedLocationRepository = pollutedLocationRepository;
         _mapper = mapper;
         _objectIdentifyValidator = objectIdentifyValidator;
+        _cleaningEventCreateValidator = cleaningEventCreateValidator;
         _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
     }
 
@@ -77,6 +83,51 @@ public class CleaningEventController : ControllerBase
         if (mappedEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         return Ok(mappedEvent);
+    }
+
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("Create")]
+    public async Task<ActionResult<CleaningEventResponse>> Create(CleaningEventCreateRequest cleaningEventCreateRequest)
+    {
+        var validationResult = await _cleaningEventCreateValidator.ValidateAsync(cleaningEventCreateRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+        
+        bool pollutedLocationExists;
+        try
+        {
+            pollutedLocationExists = await _pollutedLocationRepository.ExistsByPropertyAsync(x => x.Id == cleaningEventCreateRequest.PollutedLocationId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (pollutedLocationExists is false) return NotFound($"Polluted location with the specified id '{cleaningEventCreateRequest.PollutedLocationId}' was not found.");
+
+        var cleaningEventDefaults = new CleaningEvent
+        {
+            Id = Guid.NewGuid()
+        };
+
+        var mappedCleaningEvent = _mapper.Map<CleaningEventCreateRequest, CleaningEvent>(cleaningEventCreateRequest, cleaningEventDefaults);
+        if (mappedCleaningEvent is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        var response = _mapper.Map<CleaningEventResponse>(mappedCleaningEvent);
+        if (response is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _repository.InsertAsync(mappedCleaningEvent);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
