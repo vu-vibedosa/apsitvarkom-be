@@ -226,7 +226,6 @@ public class CleaningEventControllerTests
     [Test]
     public async Task Create_RepositoryInsertsOnce_CreatedAtActionResultReturned()
     {
-      
         _pollutedLocationRepository.Setup(r => r.ExistsByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()))
             .ReturnsAsync(true);
 
@@ -345,7 +344,6 @@ public class CleaningEventControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
     }
-
     #endregion
 
     #region Update tests
