@@ -133,7 +133,7 @@ public class PollutedLocationMappingTests
     }
 
     [Test]
-    public void PollutedLocationUpdateRequestToPollutedLocation_SomePropertiesNull_KeepsBusinessObjectValues()
+    public void PollutedLocationUpdateRequestToPollutedLocation_NotesNull_NotesSetToNull()
     {
         var businessLogicObject = new PollutedLocation
         {
@@ -171,7 +171,7 @@ public class PollutedLocationMappingTests
             Assert.That(mappedLocation.Location.Title.Lithuanian, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(mappedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
+            Assert.That(mappedLocation.Notes, Is.Null);
             Assert.That(mappedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
             Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));

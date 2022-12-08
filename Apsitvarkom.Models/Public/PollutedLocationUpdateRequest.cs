@@ -19,6 +19,7 @@ public class PollutedLocationUpdateRequestValidator : AbstractValidator<Polluted
     public PollutedLocationUpdateRequestValidator()
     {
        RuleFor(l => l.Id).NotNull();
-       RuleFor(l => l.Radius).GreaterThanOrEqualTo(1);
+       RuleFor(l => l.Radius).NotNull().GreaterThanOrEqualTo(1);
+       RuleFor(l => l.Severity).NotNull();
     }
 }

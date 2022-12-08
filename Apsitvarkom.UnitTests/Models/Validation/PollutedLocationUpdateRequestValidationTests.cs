@@ -34,6 +34,18 @@ public class PollutedLocationUpdateRequestValidatorTests
             Severity = PollutedLocation.SeverityLevel.High,
         },
         new()
+        {
+            // Missing radius
+            Id = Guid.NewGuid(),
+            Severity = PollutedLocation.SeverityLevel.Low,
+        },
+        new()
+        {
+            // Missing severity
+            Id = Guid.NewGuid(),
+            Radius = 1,
+        },
+        new()
         { 
             // Invalid radius
             Id = Guid.NewGuid(),
