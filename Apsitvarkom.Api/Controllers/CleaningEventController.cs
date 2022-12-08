@@ -134,7 +134,7 @@ public class CleaningEventController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpPatch("Update")]
+    [HttpPut("Update")]
     public async Task<ActionResult<CleaningEventResponse>> Update(CleaningEventUpdateRequest cleaningEventUpdateRequest)
     {
         var validationResult = await _cleaningEventUpdateValidator.ValidateAsync(cleaningEventUpdateRequest);
