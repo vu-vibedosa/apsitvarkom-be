@@ -15,7 +15,6 @@ public class PollutedLocationUpdateRequestValidatorTests
             Id = Guid.NewGuid(),
             Radius = 5,
             Severity = PollutedLocation.SeverityLevel.Moderate,
-            Progress = 41,
             Notes = "Prisoners test."
         },
         new()
@@ -23,7 +22,6 @@ public class PollutedLocationUpdateRequestValidatorTests
             Id = Guid.NewGuid(),
             Radius = 12,
             Severity = PollutedLocation.SeverityLevel.Low,
-            Progress = 13,
         },
     };
 
@@ -32,23 +30,13 @@ public class PollutedLocationUpdateRequestValidatorTests
         new()
         {
              // Missing id
-            Progress = 1,
             Radius = 1,
             Severity = PollutedLocation.SeverityLevel.High,
         },
         new()
         { 
-            // Invalid progress
-            Id = Guid.NewGuid(),
-            Progress = 101,
-            Radius = 2,
-            Severity = PollutedLocation.SeverityLevel.Low,
-        },
-        new()
-        { 
             // Invalid radius
             Id = Guid.NewGuid(),
-            Progress = 11,
             Radius = 0,
             Severity = PollutedLocation.SeverityLevel.Low,
         },

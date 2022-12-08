@@ -11,8 +11,6 @@ public class PollutedLocationUpdateRequest
 
     public SeverityLevel? Severity { get; set; }
 
-    public int? Progress { get; set; }
-
     public string? Notes { get; set; }
 }
 
@@ -22,6 +20,5 @@ public class PollutedLocationUpdateRequestValidator : AbstractValidator<Polluted
     {
        RuleFor(l => l.Id).NotNull();
        RuleFor(l => l.Radius).GreaterThanOrEqualTo(1);
-       RuleFor(l => l.Progress).InclusiveBetween(0, 100);
     }
 }
