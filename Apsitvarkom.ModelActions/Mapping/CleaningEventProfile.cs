@@ -22,11 +22,9 @@ public class CleaningEventProfile : Profile
             .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
         CreateMap<CleaningEventCreateRequest, CleaningEvent>()
             .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore())
             .ForMember(x => x.IsFinalized, opt => opt.Ignore());
         CreateMap<CleaningEventUpdateRequest, CleaningEvent>()
             .ForMember(x => x.PollutedLocationId, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore())
             .ForMember(x => x.IsFinalized, opt => opt.Ignore());
     }
 

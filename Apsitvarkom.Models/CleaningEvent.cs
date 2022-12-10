@@ -19,8 +19,4 @@ public class CleaningEvent
 
     /// <summary>Specifies whether the results for the event have already been submitted.</summary>
     public bool IsFinalized { get; set; }
-
-    /// <summary><see cref="Models.PollutedLocation" /> linked to the event.</summary>
-    /// <remarks>Meant only for Entity Framework relationships to be created.</remarks>
-    public PollutedLocation PollutedLocation { get; set; } = null!;
 }
