@@ -82,13 +82,7 @@ public class CleaningEventUpdateRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_UpdateAvailable_ShouldSucceedValidation()
     {
-        var input = new CleaningEventUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
-            Notes = "boop"
-        };
-
+        var input = ValidCleaningEventUpdateRequests.First();
         var cleaningEvent = new CleaningEvent
         {
             Id = (Guid)input.Id!,
@@ -109,13 +103,7 @@ public class CleaningEventUpdateRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_UpdateUnavailable_ShouldFailValidation()
     {
-        var input = new CleaningEventUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
-            Notes = "boop"
-        };
-
+        var input = ValidCleaningEventUpdateRequests.First();
         var cleaningEvent = new CleaningEvent
         {
             Id = (Guid)input.Id!,
@@ -136,16 +124,9 @@ public class CleaningEventUpdateRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_RepositoryThrows_NoErrorsReturned()
     {
-        var input = new CleaningEventUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
-            Notes = "boop"
-        };
-
         _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
 
-        var result = await _validator.ValidateAsync(input);
+        var result = await _validator.ValidateAsync(ValidCleaningEventUpdateRequests.First());
 
         _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
 

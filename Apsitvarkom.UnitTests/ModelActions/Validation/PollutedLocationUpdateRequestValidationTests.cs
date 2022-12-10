@@ -91,13 +91,7 @@ public class PollutedLocationUpdateRequestValidatorTests
     [Test]
     public async Task ValidInputWithRepositoryCall_UpdateAvailable_ShouldSucceedValidation()
     {
-        var input = new PollutedLocationUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            Radius = 12,
-            Severity = PollutedLocation.SeverityLevel.Low,
-        };
-
+        var input = ValidPollutedLocationUpdateRequests.First();
         var pollutedLocation = new PollutedLocation
         {
             Progress = 12
@@ -117,13 +111,7 @@ public class PollutedLocationUpdateRequestValidatorTests
     [Test]
     public async Task ValidInputWithRepositoryCall_UpdateUnavailable_ShouldFailValidation()
     {
-        var input = new PollutedLocationUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            Radius = 12,
-            Severity = PollutedLocation.SeverityLevel.Low,
-        };
-
+        var input = ValidPollutedLocationUpdateRequests.First();
         var pollutedLocation = new PollutedLocation
         {
             Progress = 100
@@ -143,16 +131,9 @@ public class PollutedLocationUpdateRequestValidatorTests
     [Test]
     public async Task ValidInputWithRepositoryCall_RepositoryThrows_NoErrorsReturned()
     {
-        var input = new PollutedLocationUpdateRequest
-        {
-            Id = Guid.NewGuid(),
-            Radius = 12,
-            Severity = PollutedLocation.SeverityLevel.Low,
-        };
-
         _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
 
-        var result = await _validator.ValidateAsync(input);
+        var result = await _validator.ValidateAsync(ValidPollutedLocationUpdateRequests.First());
 
         _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 

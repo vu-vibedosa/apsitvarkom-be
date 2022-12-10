@@ -267,7 +267,7 @@ public class PollutedLocationContextDatabaseTests
         var response = (await dbRepository.GetAllAsync()).ToArray();
 
         Assert.That(response.Length, Is.EqualTo(objectIds.Length));
-        Assert.That(response.Select(x => x.Id), Is.EqualTo(objectIds));
+        Assert.That(response.Select(x => x.Id), Is.EquivalentTo(objectIds));
     }
 
     [Test]

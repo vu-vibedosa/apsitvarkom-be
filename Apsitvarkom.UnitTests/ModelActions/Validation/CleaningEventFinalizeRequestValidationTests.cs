@@ -25,7 +25,7 @@ public class CleaningEventFinalizeRequestValidationTests
         new()
         {
             Id = Guid.NewGuid(),
-            NewProgress = 12
+            NewProgress = 50
         }
     };
 
@@ -74,18 +74,13 @@ public class CleaningEventFinalizeRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_FinalizeAvailable_ShouldSucceedValidation()
     {
-        var input = new CleaningEventFinalizeRequest
-        {
-            Id = Guid.NewGuid(),
-            NewProgress = 20
-        };
-
+        var input = ValidCleaningEventFinalizeRequests.First();
         var pollutedLocation = new PollutedLocation
         {
-            Progress = 15,
+            Progress = (int)input.NewProgress! - 5,
             Events = new List<CleaningEvent>
             {
-                new() { Id = (Guid)input.Id, IsFinalized = false, StartTime = new DateTime(2022, 01, 01) }
+                new() { Id = (Guid)input.Id!, IsFinalized = false, StartTime = new DateTime(2022, 01, 01) }
             }
         };
 
@@ -103,18 +98,13 @@ public class CleaningEventFinalizeRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_EventAlreadyFinalized_ShouldFailValidation()
     {
-        var input = new CleaningEventFinalizeRequest
-        {
-            Id = Guid.NewGuid(),
-            NewProgress = 20
-        };
-
+        var input = ValidCleaningEventFinalizeRequests.First();
         var pollutedLocation = new PollutedLocation
         {
-            Progress = 15,
+            Progress = (int)input.NewProgress! - 5,
             Events = new List<CleaningEvent>
             {
-                new() { Id = (Guid)input.Id, IsFinalized = true, StartTime = new DateTime(2022, 01, 01) }
+                new() { Id = (Guid)input.Id!, IsFinalized = true, StartTime = new DateTime(2022, 01, 01) }
             }
         };
 
@@ -132,18 +122,13 @@ public class CleaningEventFinalizeRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_StartTimeInTheFuture_ShouldFailValidation()
     {
-        var input = new CleaningEventFinalizeRequest
-        {
-            Id = Guid.NewGuid(),
-            NewProgress = 20
-        };
-
+        var input = ValidCleaningEventFinalizeRequests.First();
         var pollutedLocation = new PollutedLocation
         {
-            Progress = 15,
+            Progress = (int)input.NewProgress! - 5,
             Events = new List<CleaningEvent>
             {
-                new() { Id = (Guid)input.Id, IsFinalized = false, StartTime = DateTime.UtcNow + TimeSpan.FromDays(1) }
+                new() { Id = (Guid)input.Id!, IsFinalized = false, StartTime = DateTime.UtcNow + TimeSpan.FromDays(1) }
             }
         };
 
@@ -161,18 +146,13 @@ public class CleaningEventFinalizeRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_ProgressLowerThanPollutedLocations_ShouldFailValidation()
     {
-        var input = new CleaningEventFinalizeRequest
-        {
-            Id = Guid.NewGuid(),
-            NewProgress = 20
-        };
-
+        var input = ValidCleaningEventFinalizeRequests.First();
         var pollutedLocation = new PollutedLocation
         {
-            Progress = 21,
+            Progress = (int)input.NewProgress! + 5,
             Events = new List<CleaningEvent>
             {
-                new() { Id = (Guid)input.Id, IsFinalized = false, StartTime = new DateTime(2022, 01, 01) }
+                new() { Id = (Guid)input.Id!, IsFinalized = false, StartTime = new DateTime(2022, 01, 01) }
             }
         };
 
@@ -190,15 +170,9 @@ public class CleaningEventFinalizeRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_RepositoryThrows_NoErrorsReturned()
     {
-        var input = new CleaningEventFinalizeRequest
-        {
-            Id = Guid.NewGuid(),
-            NewProgress = 20
-        };
-
         _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
 
-        var result = await _validator.ValidateAsync(input);
+        var result = await _validator.ValidateAsync(ValidCleaningEventFinalizeRequests.First());
 
         _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 

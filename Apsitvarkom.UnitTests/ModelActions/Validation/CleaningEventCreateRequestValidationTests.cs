@@ -11,12 +11,12 @@ namespace Apsitvarkom.UnitTests.ModelActions.Validation;
 public class CleaningEventCreateRequestValidationTests
 {
     private IValidator<CleaningEventCreateRequest> _validator;
-    private Mock<IRepository<CleaningEvent>> _repository;
+    private Mock<IPollutedLocationRepository> _repository;
 
     [SetUp]
     public void SetUp()
     {
-        _repository = new Mock<IRepository<CleaningEvent>>();
+        _repository = new Mock<IPollutedLocationRepository>();
         _validator = new CleaningEventCreateRequestValidator(_repository.Object);
     }
 
@@ -85,12 +85,23 @@ public class CleaningEventCreateRequestValidationTests
     public async Task ValidInputWithRepositoryCall_UpdateAvailable_ShouldSucceedValidation()
     {
         var input = ValidCleaningEventCreateRequests.First();
+        var pollutedLocation = new PollutedLocation
+        {
+            Progress = 98,
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    IsFinalized = true
+                }
+            }
+        };
 
-        _repository.Setup(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(false);
+        _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(pollutedLocation);
 
         var result = await _validator.ValidateAsync(input);
 
-        _repository.Verify(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Empty);
@@ -98,15 +109,47 @@ public class CleaningEventCreateRequestValidationTests
     }
 
     [Test]
-    public async Task ValidInputWithRepositoryCall_UpdateUnavailable_ShouldFailValidation()
+    public async Task ValidInputWithRepositoryCall_UpdateUnavailable_NotFinalizedEventAlreadyExists_ShouldFailValidation()
     {
         var input = ValidCleaningEventCreateRequests.First();
+        var pollutedLocation = new PollutedLocation
+        {
+            Progress = 98,
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    IsFinalized = false
+                }
+            }
+        };
 
-        _repository.Setup(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).ReturnsAsync(true);
+        _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(pollutedLocation);
 
         var result = await _validator.ValidateAsync(input);
 
-        _repository.Verify(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Errors, Has.Count.EqualTo(1));
+        Assert.That(result.IsValid, Is.False);
+    }
+
+    [Test]
+    public async Task ValidInputWithRepositoryCall_UpdateUnavailable_PollutedLocationTidiedUp_ShouldFailValidation()
+    {
+        var input = ValidCleaningEventCreateRequests.First();
+        var pollutedLocation = new PollutedLocation
+        {
+            Progress = 100,
+            Events = new List<CleaningEvent>()
+        };
+
+        _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(pollutedLocation);
+
+        var result = await _validator.ValidateAsync(input);
+
+        _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Has.Count.EqualTo(1));
@@ -116,13 +159,11 @@ public class CleaningEventCreateRequestValidationTests
     [Test]
     public async Task ValidInputWithRepositoryCall_RepositoryThrows_NoErrorsReturned()
     {
-        var input = ValidCleaningEventCreateRequests.First();
+        _repository.Setup(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
 
-        _repository.Setup(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>())).Throws<Exception>();
+        var result = await _validator.ValidateAsync(ValidCleaningEventCreateRequests.First());
 
-        var result = await _validator.ValidateAsync(input);
-
-        _repository.Verify(x => x.ExistsByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(x => x.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Errors, Is.Empty);
