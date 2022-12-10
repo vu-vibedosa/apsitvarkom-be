@@ -63,7 +63,7 @@ public class CleaningEventControllerTests
             _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
-            new CleaningEventCreateRequestValidator(),
+            new CleaningEventCreateRequestValidator(_repository.Object),
             new CleaningEventUpdateRequestValidator(_repository.Object),
             new CleaningEventFinalizeRequestValidator(_pollutedLocationRepository.Object)
         );
@@ -76,7 +76,7 @@ public class CleaningEventControllerTests
             _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
-            new CleaningEventCreateRequestValidator(),
+            new CleaningEventCreateRequestValidator(_repository.Object),
             new CleaningEventUpdateRequestValidator(_repository.Object),
             new CleaningEventFinalizeRequestValidator(_pollutedLocationRepository.Object)
     ), Is.Not.Null);
