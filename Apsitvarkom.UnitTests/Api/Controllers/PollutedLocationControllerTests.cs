@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
+using Apsitvarkom.ModelActions.Mapping;
+using Apsitvarkom.ModelActions.Validation;
 using Apsitvarkom.Models;
-using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -149,7 +150,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
                 Assert.That(resultLocation.Notes, Is.EqualTo(location.Notes));
-                Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+                Assert.That(resultLocation.Events, Has.Count.EqualTo(location.Events.Count));
                 for (var j = 0; j < resultLocation.Events.Count; ++j)
                 {
                     Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
@@ -219,7 +220,7 @@ public class PollutedLocationControllerTests
                 Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
                 Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
                 Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-                Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+                Assert.That(resultLocation.Events, Has.Count.EqualTo(location.Events.Count));
                 for (var j = 0; j < resultLocation.Events.Count; ++j)
                 {
                     Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
@@ -254,7 +255,7 @@ public class PollutedLocationControllerTests
 
         var errorList = result.Value as List<string>;
         Assert.That(errorList, Is.Not.Null);
-        Assert.That(errorList.Count, Is.EqualTo(2));
+        Assert.That(errorList, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -313,7 +314,7 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+            Assert.That(resultLocation.Events, Has.Count.EqualTo(location.Events.Count));
             for (var j = 0; j < resultLocation.Events.Count; ++j)
             {
                 Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));
@@ -624,7 +625,7 @@ public class PollutedLocationControllerTests
             Assert.That(resultLocation.Location.Title.Lt, Is.EqualTo(location.Location.Title.Lithuanian));
             Assert.That(resultLocation.Location.Coordinates.Latitude, Is.EqualTo(location.Location.Coordinates.Latitude));
             Assert.That(resultLocation.Location.Coordinates.Longitude, Is.EqualTo(location.Location.Coordinates.Longitude));
-            Assert.That(resultLocation.Events.Count, Is.EqualTo(location.Events.Count));
+            Assert.That(resultLocation.Events, Has.Count.EqualTo(location.Events.Count));
             for (var j = 0; j < resultLocation.Events.Count; ++j)
             {
                 Assert.That(resultLocation.Events[j].PollutedLocationId, Is.EqualTo(location.Events[j].PollutedLocationId));

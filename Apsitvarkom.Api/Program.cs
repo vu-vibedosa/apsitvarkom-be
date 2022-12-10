@@ -1,12 +1,12 @@
 using Apsitvarkom.Configuration;
 using Apsitvarkom.DataAccess;
-using Apsitvarkom.Models.Mapping;
-using Apsitvarkom.Models.Public;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Apsitvarkom.ModelActions.Mapping;
+using Apsitvarkom.ModelActions.Validation;
 using Apsitvarkom.Models;
 
 var builder = WebApplication.CreateBuilder(args);

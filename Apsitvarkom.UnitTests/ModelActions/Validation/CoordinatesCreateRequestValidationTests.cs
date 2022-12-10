@@ -1,13 +1,14 @@
-﻿using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.ModelActions.Validation;
+using Apsitvarkom.Models.Public;
 using FluentValidation;
 
-namespace Apsitvarkom.UnitTests.Models.Validation;
+namespace Apsitvarkom.UnitTests.ModelActions.Validation;
 
-public class CoordinatesResponseValidationTests
+public class CoordinatesCreateRequestValidationTests
 {
-    private static readonly IValidator<CoordinatesResponse> Validator = new CoordinatesResponseValidator();
+    private static readonly IValidator<CoordinatesCreateRequest> Validator = new CoordinatesCreateRequestValidator();
 
-    private static readonly CoordinatesResponse[] ValidCoordinateResponses =
+    private static readonly CoordinatesCreateRequest[] ValidCoordinatesCreateRequest =
     {
         new()
         {
@@ -21,8 +22,17 @@ public class CoordinatesResponseValidationTests
         },
     };
 
-    private static readonly CoordinatesResponse[] InvalidCoordinateResponses =
+    private static readonly CoordinatesCreateRequest[] InvalidCoordinatesCreateRequest =
     {
+        new(),
+        new()
+        {
+            Latitude = null,
+        },
+        new()
+        {
+            Longitude = null,
+        },
         new()
         {
             Latitude = -91,
@@ -46,8 +56,8 @@ public class CoordinatesResponseValidationTests
     };
 
     [Test]
-    [TestCaseSource(nameof(ValidCoordinateResponses))]
-    public async Task ValidInputShouldSucceedValidation(CoordinatesResponse input)
+    [TestCaseSource(nameof(ValidCoordinatesCreateRequest))]
+    public async Task ValidInputShouldSucceedValidation(CoordinatesCreateRequest input)
     {
         var result = await Validator.ValidateAsync(input);
 
@@ -57,8 +67,8 @@ public class CoordinatesResponseValidationTests
     }
 
     [Test]
-    [TestCaseSource(nameof(InvalidCoordinateResponses))]
-    public async Task InvalidInputShouldFailValidation(CoordinatesResponse input)
+    [TestCaseSource(nameof(InvalidCoordinatesCreateRequest))]
+    public async Task InvalidInputShouldFailValidation(CoordinatesCreateRequest input)
     {
         var result = await Validator.ValidateAsync(input);
 

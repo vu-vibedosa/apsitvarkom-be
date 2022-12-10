@@ -1,9 +1,9 @@
-﻿using Apsitvarkom.Models;
-using Apsitvarkom.Models.Mapping;
+﻿using Apsitvarkom.ModelActions.Mapping;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.UnitTests.Models.Mapping;
+namespace Apsitvarkom.UnitTests.ModelActions.Mapping;
 
 public class CleaningEventMappingTests
 {

@@ -1,9 +1,9 @@
-﻿using Apsitvarkom.Models;
-using Apsitvarkom.Models.Mapping;
+﻿using Apsitvarkom.ModelActions.Mapping;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.UnitTests.Models.Mapping;
+namespace Apsitvarkom.UnitTests.ModelActions.Mapping;
 
 public class PollutedLocationMappingTests
 {
@@ -234,7 +234,7 @@ public class PollutedLocationMappingTests
             Assert.That(pollutedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(pollutedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(pollutedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
-            Assert.That(pollutedLocation.Events.Count, Is.EqualTo(businessLogicObject.Events.Count));
+            Assert.That(pollutedLocation.Events, Has.Count.EqualTo(businessLogicObject.Events.Count));
             for (var j = 0; j < pollutedLocation.Events.Count; ++j)
             {
                 Assert.That(pollutedLocation.Events[j].PollutedLocationId, Is.EqualTo(businessLogicObject.Events[j].PollutedLocationId));

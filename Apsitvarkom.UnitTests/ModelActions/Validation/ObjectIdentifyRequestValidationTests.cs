@@ -1,7 +1,8 @@
-﻿using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.ModelActions.Validation;
+using Apsitvarkom.Models.Public;
 using FluentValidation;
 
-namespace Apsitvarkom.UnitTests.Models.Validation;
+namespace Apsitvarkom.UnitTests.ModelActions.Validation;
 
 public class ObjectIdentifyRequestValidationTests
 {
@@ -45,7 +46,7 @@ public class ObjectIdentifyRequestValidationTests
         var result = await Validator.ValidateAsync(input);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Errors.Count, Is.EqualTo(1));
+        Assert.That(result.Errors, Has.Count.EqualTo(1));
         Assert.That(result.IsValid, Is.False);
     }
 }
