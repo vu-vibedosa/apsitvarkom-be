@@ -96,7 +96,7 @@ public class PollutedLocationControllerTests
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
             new ObjectIdentifyRequestValidator(),
-            new PollutedLocationUpdateRequestValidator()
+            new PollutedLocationUpdateRequestValidator(_repository.Object)
         );
     }
 
@@ -109,7 +109,7 @@ public class PollutedLocationControllerTests
             new CoordinatesCreateRequestValidator(),
             new PollutedLocationCreateRequestValidator(new LocationCreateRequestValidator(new CoordinatesCreateRequestValidator())),
             new ObjectIdentifyRequestValidator(),
-            new PollutedLocationUpdateRequestValidator()
+            new PollutedLocationUpdateRequestValidator(_repository.Object)
         ), Is.Not.Null);
     #endregion
 
@@ -551,7 +551,7 @@ public class PollutedLocationControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
@@ -577,7 +577,7 @@ public class PollutedLocationControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
@@ -602,7 +602,7 @@ public class PollutedLocationControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());

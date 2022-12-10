@@ -61,7 +61,7 @@ public class CleaningEventControllerTests
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventCreateRequestValidator(),
-            new CleaningEventUpdateRequestValidator()
+            new CleaningEventUpdateRequestValidator(_repository.Object),
         );
     }
 
@@ -73,7 +73,7 @@ public class CleaningEventControllerTests
             _mapper, 
             new ObjectIdentifyRequestValidator(),
             new CleaningEventCreateRequestValidator(),
-            new CleaningEventUpdateRequestValidator()
+            new CleaningEventUpdateRequestValidator(_repository.Object),
         ), Is.Not.Null);
     #endregion
 
@@ -404,7 +404,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
@@ -430,7 +430,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
@@ -456,7 +456,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
 
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
