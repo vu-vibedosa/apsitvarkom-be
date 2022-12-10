@@ -17,6 +17,7 @@ public class CleaningEventController : ControllerBase
     private readonly IValidator<ObjectIdentifyRequest> _objectIdentifyValidator;
     private readonly IValidator<CleaningEventCreateRequest> _cleaningEventCreateValidator;
     private readonly IValidator<CleaningEventUpdateRequest> _cleaningEventUpdateValidator;
+    private readonly IValidator<CleaningEventFinalizeRequest> _cleaningEventFinalizeValidator;
 
     public CleaningEventController(
         IRepository<CleaningEvent> repository,
@@ -24,7 +25,8 @@ public class CleaningEventController : ControllerBase
         IMapper mapper, 
         IValidator<ObjectIdentifyRequest> objectIdentifyValidator,
         IValidator<CleaningEventCreateRequest> cleaningEventCreateValidator,
-        IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator)
+        IValidator<CleaningEventUpdateRequest> cleaningEventUpdateValidator,
+        IValidator<CleaningEventFinalizeRequest> cleaningEventFinalizeValidator)
     {
         _repository = repository;
         _pollutedLocationRepository = pollutedLocationRepository;
@@ -32,6 +34,7 @@ public class CleaningEventController : ControllerBase
         _objectIdentifyValidator = objectIdentifyValidator;
         _cleaningEventCreateValidator = cleaningEventCreateValidator;
         _cleaningEventUpdateValidator = cleaningEventUpdateValidator;
+        _cleaningEventFinalizeValidator = cleaningEventFinalizeValidator;
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -168,6 +171,45 @@ public class CleaningEventController : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPatch("Finalize")]
+    public async Task<ActionResult> Finalize(CleaningEventFinalizeRequest cleaningEventFinalizeRequest)
+    {
+        var validationResult = await _cleaningEventFinalizeValidator.ValidateAsync(cleaningEventFinalizeRequest);
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+
+        PollutedLocation? pollutedLocation;
+        try
+        {
+            pollutedLocation = await _pollutedLocationRepository.GetByPropertyAsync(x => x.Events.Any(e => e.Id == cleaningEventFinalizeRequest.Id));
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (pollutedLocation is null) return NotFound($"Cleaning event with the specified id '{cleaningEventFinalizeRequest.Id}' was not found.");
+
+        var cleaningEvent = pollutedLocation.Events.Single(x => x.Id == cleaningEventFinalizeRequest.Id);
+
+        pollutedLocation.Progress = (int)cleaningEventFinalizeRequest.NewProgress!;
+        cleaningEvent.IsFinalized = true;
+
+        try
+        {
+            await _pollutedLocationRepository.UpdateAsync(pollutedLocation);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return NoContent();
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]

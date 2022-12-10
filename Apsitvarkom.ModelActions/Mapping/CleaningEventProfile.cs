@@ -22,14 +22,20 @@ public class CleaningEventProfile : Profile
             .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
         CreateMap<CleaningEventCreateRequest, CleaningEvent>()
             .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore());
+            .ForMember(x => x.PollutedLocation, opt => opt.Ignore())
+            .ForMember(x => x.IsFinalized, opt => opt.Ignore());
         CreateMap<CleaningEventUpdateRequest, CleaningEvent>()
             .ForMember(x => x.PollutedLocationId, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore());
+            .ForMember(x => x.PollutedLocation, opt => opt.Ignore())
+            .ForMember(x => x.IsFinalized, opt => opt.Ignore());
     }
 
     private void MapResponses()
     {
-        CreateMap<CleaningEvent, CleaningEventResponse>();
+        CreateMap<CleaningEvent, CleaningEventResponse>()
+            .ForMember(x => x.Status, opt => 
+                opt.MapFrom(x => x.IsFinalized ? CleaningEventResponse.State.Finalized 
+                                                                        : x.StartTime > DateTime.UtcNow ? CleaningEventResponse.State.Foreseen 
+                                                                                                        : CleaningEventResponse.State.Finished));
     }
 }

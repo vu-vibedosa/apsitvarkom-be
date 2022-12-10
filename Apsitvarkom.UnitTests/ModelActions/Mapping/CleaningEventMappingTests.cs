@@ -114,14 +114,18 @@ public class CleaningEventMappingTests
 
     #region Response mappings
     [Test]
-    public void CleaningEventToCleaningEventResponse()
+    [TestCase(true, 0, CleaningEventResponse.State.Finalized)]
+    [TestCase(false, 1, CleaningEventResponse.State.Foreseen)]
+    [TestCase(false, -1, CleaningEventResponse.State.Finished)]
+    public void CleaningEventToCleaningEventResponse(bool isFinalized, int daysFromCurrentDate, CleaningEventResponse.State result)
     {
         var businessLogicObject = new CleaningEvent
         {
             Id = Guid.NewGuid(),
-            StartTime = new DateTime(2022, 9, 16, 21, 43, 31).ToUniversalTime(),
+            StartTime = DateTime.UtcNow.AddDays(daysFromCurrentDate).ToUniversalTime(),
             Notes = "Hello world",
-            PollutedLocationId = Guid.NewGuid()
+            PollutedLocationId = Guid.NewGuid(),
+            IsFinalized = isFinalized
         };
 
         var response = _mapper.Map<CleaningEventResponse>(businessLogicObject);
@@ -131,6 +135,7 @@ public class CleaningEventMappingTests
             Assert.That(response.StartTime, Is.EqualTo(businessLogicObject.StartTime));
             Assert.That(response.Notes, Is.EqualTo(businessLogicObject.Notes));
             Assert.That(response.PollutedLocationId, Is.EqualTo(businessLogicObject.PollutedLocationId));
+            Assert.That(response.Status, Is.EqualTo(result));
         });
     }
     #endregion

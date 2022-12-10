@@ -45,13 +45,15 @@ public class PollutedLocationControllerTests
                     Id = Guid.NewGuid(),
                     PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
                     StartTime = DateTime.Parse("2023-01-01T00:11:22Z"),
-                    Notes = "So many fireworks leftovers..."
+                    Notes = "So many fireworks leftovers...",
+                    IsFinalized = true
                 },
                 new()
                 {
                     Id = Guid.NewGuid(),
                     PollutedLocationId = Guid.Parse("7df570d5-efbb-4bf5-a21c-b9d33dafca36"),
                     StartTime = DateTime.Parse("2022-12-23T10:11:12Z"),
+                    IsFinalized = false
                 },
             }
         },

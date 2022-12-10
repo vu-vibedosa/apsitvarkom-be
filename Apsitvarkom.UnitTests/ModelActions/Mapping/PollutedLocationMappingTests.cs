@@ -209,12 +209,14 @@ public class PollutedLocationMappingTests
                     PollutedLocationId = pollutedLocationId,
                     Id = Guid.NewGuid(),
                     Notes = "Hello NPC",
+                    IsFinalized = true,
                     StartTime = new DateTime(2022, 10, 11, 12, 13, 14).ToUniversalTime(),
                 },
                 new()
                 {
                     PollutedLocationId = pollutedLocationId,
                     Id = Guid.NewGuid(),
+                    IsFinalized = true,
                     StartTime = new DateTime(2022, 11, 12, 13, 14, 15).ToUniversalTime(),
                 }
             }
@@ -241,6 +243,7 @@ public class PollutedLocationMappingTests
                 Assert.That(pollutedLocation.Events[j].Id, Is.EqualTo(businessLogicObject.Events[j].Id));
                 Assert.That(pollutedLocation.Events[j].Notes, Is.EqualTo(businessLogicObject.Events[j].Notes));
                 Assert.That(pollutedLocation.Events[j].StartTime, Is.EqualTo(businessLogicObject.Events[j].StartTime));
+                Assert.That(pollutedLocation.Events[j].Status, Is.EqualTo(CleaningEventResponse.State.Finalized));
             }
         });
     }
