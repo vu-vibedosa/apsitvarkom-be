@@ -9,8 +9,9 @@ public class PollutedLocationCreateRequestValidator : AbstractValidator<Polluted
     {
         RuleFor(l => l.Radius).NotNull().GreaterThanOrEqualTo(1);
         RuleFor(l => l.Severity).NotNull();
-
-        RuleFor(l => l.Location).NotNull();
-        RuleFor(l => l.Location!).SetValidator(locationCreateRequestValidator).When(l => l.Location is not null);
+        RuleFor(l => l.Location).NotNull().DependentRules(() =>
+        {
+            RuleFor(l => l.Location!).SetValidator(locationCreateRequestValidator);
+        });
     }
 }

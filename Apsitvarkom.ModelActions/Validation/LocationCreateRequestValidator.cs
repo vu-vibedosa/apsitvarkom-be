@@ -7,7 +7,9 @@ public class LocationCreateRequestValidator : AbstractValidator<LocationCreateRe
 {
     public LocationCreateRequestValidator(IValidator<CoordinatesCreateRequest> coordinatesCreateRequestValidator)
     {
-        RuleFor(l => l.Coordinates).NotNull();
-        RuleFor(l => l.Coordinates!).SetValidator(coordinatesCreateRequestValidator).When(l => l.Coordinates is not null);
+        RuleFor(l => l.Coordinates).NotNull().DependentRules(() =>
+        {
+            RuleFor(l => l.Coordinates!).SetValidator(coordinatesCreateRequestValidator);
+        });
     }
 }
