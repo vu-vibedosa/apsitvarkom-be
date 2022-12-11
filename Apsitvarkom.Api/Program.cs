@@ -79,7 +79,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    app.UseLogRequestStatistics();
     app.UseSwagger();
     app.UseSwaggerUI();
 
@@ -94,6 +93,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         await DbInitializer.InitializePollutedLocations(pollutedLocationContext);
 }
 
+app.UseExceptionHandling();
 app.UseCors(FrontEndPolicy);
 app.UseAuthorization();
 app.MapControllers();
