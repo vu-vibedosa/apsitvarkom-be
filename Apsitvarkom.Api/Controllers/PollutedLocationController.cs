@@ -163,7 +163,7 @@ public class PollutedLocationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpPatch("Update")]
+    [HttpPut("Update")]
     public async Task<ActionResult<PollutedLocationResponse>> Update(PollutedLocationUpdateRequest pollutedLocationUpdateRequest)
     {
         var validationResult = await _pollutedLocationUpdateValidator.ValidateAsync(pollutedLocationUpdateRequest);

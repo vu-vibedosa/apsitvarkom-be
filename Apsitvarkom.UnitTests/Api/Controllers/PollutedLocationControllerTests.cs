@@ -519,7 +519,6 @@ public class PollutedLocationControllerTests
         var updateRequest = new PollutedLocationUpdateRequest
         {
             Id = Guid.NewGuid(),
-            Progress = 12,
             Radius = 3,
             Severity = PollutedLocation.SeverityLevel.High
         };
@@ -543,7 +542,6 @@ public class PollutedLocationControllerTests
         var updateRequest = new PollutedLocationUpdateRequest
         {
             Id = Guid.NewGuid(),
-            Progress = 12,
             Radius = 3,
             Severity = PollutedLocation.SeverityLevel.High
         };
@@ -569,7 +567,6 @@ public class PollutedLocationControllerTests
         var updateRequest = new PollutedLocationUpdateRequest
         {
             Id = Guid.NewGuid(),
-            Progress = 12,
             Radius = 3,
             Severity = PollutedLocation.SeverityLevel.High
         };

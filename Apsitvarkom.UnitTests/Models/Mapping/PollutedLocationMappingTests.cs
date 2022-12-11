@@ -112,7 +112,6 @@ public class PollutedLocationMappingTests
             Id = businessLogicObject.Id,
             Radius = 7,
             Severity = PollutedLocation.SeverityLevel.Moderate,
-            Progress = 16,
             Notes = "testt"
         };
 
@@ -127,14 +126,14 @@ public class PollutedLocationMappingTests
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
             Assert.That(mappedLocation.Notes, Is.EqualTo(updateModel.Notes));
-            Assert.That(mappedLocation.Progress, Is.EqualTo(updateModel.Progress));
+            Assert.That(mappedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
             Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));
         });
     }
 
     [Test]
-    public void PollutedLocationUpdateRequestToPollutedLocation_SomePropertiesNull_KeepsBusinessObjectValues()
+    public void PollutedLocationUpdateRequestToPollutedLocation_NotesNull_NotesSetToNull()
     {
         var businessLogicObject = new PollutedLocation
         {
@@ -172,7 +171,7 @@ public class PollutedLocationMappingTests
             Assert.That(mappedLocation.Location.Title.Lithuanian, Is.EqualTo(businessLogicObject.Location.Title.Lithuanian));
             Assert.That(mappedLocation.Spotted, Is.EqualTo(businessLogicObject.Spotted));
             Assert.That(mappedLocation.Id, Is.EqualTo(businessLogicObject.Id));
-            Assert.That(mappedLocation.Notes, Is.EqualTo(businessLogicObject.Notes));
+            Assert.That(mappedLocation.Notes, Is.Null);
             Assert.That(mappedLocation.Progress, Is.EqualTo(businessLogicObject.Progress));
             Assert.That(mappedLocation.Radius, Is.EqualTo(updateModel.Radius));
             Assert.That(mappedLocation.Severity, Is.EqualTo(updateModel.Severity));

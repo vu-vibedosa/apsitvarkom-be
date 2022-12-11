@@ -16,6 +16,6 @@ public class CleaningEventUpdateRequestValidator : AbstractValidator<CleaningEve
     public CleaningEventUpdateRequestValidator()
     {
         RuleFor(l => l.Id).NotNull();
-        RuleFor(l => l.StartTime).GreaterThan(DateTime.UtcNow);
+        RuleFor(l => l.StartTime).NotNull().GreaterThan(DateTime.UtcNow);
     }
 }

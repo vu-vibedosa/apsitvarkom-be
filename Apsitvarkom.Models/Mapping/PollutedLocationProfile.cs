@@ -27,14 +27,11 @@ public class PollutedLocationProfile : Profile
             .ForMember(x => x.Events, opt => opt.Ignore());
         CreateMap<ObjectIdentifyRequest, PollutedLocation>(MemberList.None)
             .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
-        CreateMap<PollutedLocationUpdateRequest, PollutedLocation>()
-            .ForMember(x => x.Spotted, opt => opt.Ignore())
-            .ForMember(x => x.Location, opt => opt.Ignore())
-            .ForMember(x => x.Events, opt => opt.Ignore())
-            .ForMember(x => x.Progress, opt => opt.PreCondition(src => src.Progress is not null))
-            .ForMember(x => x.Radius, opt => opt.PreCondition(src => src.Radius is not null))
-            .ForMember(x => x.Severity, opt => opt.PreCondition(src => src.Severity is not null))
-            .ForMember(x => x.Notes, opt => opt.PreCondition(src => src.Notes is not null));
+        CreateMap<PollutedLocationUpdateRequest, PollutedLocation>(MemberList.None)
+            .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id))
+            .ForMember(x => x.Radius, opt => opt.MapFrom(x => x.Radius))
+            .ForMember(x => x.Severity, opt => opt.MapFrom(x => x.Severity))
+            .ForMember(x => x.Notes, opt => opt.MapFrom(x => x.Notes));
     }
 
     private void MapResponses()

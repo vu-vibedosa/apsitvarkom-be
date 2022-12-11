@@ -31,6 +31,12 @@ public class CleaningEventUpdateRequestValidationTests
         },
         new()
         { 
+            // Missing StartTime
+            Id = Guid.NewGuid(),
+            Notes = "boop"
+        },
+        new()
+        { 
             // Invalid StartTime
             Id = Guid.NewGuid(),
             StartTime = DateTime.Parse("2007-03-12T10:11:12Z"),

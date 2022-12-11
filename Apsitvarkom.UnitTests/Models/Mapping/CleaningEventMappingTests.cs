@@ -83,6 +83,33 @@ public class CleaningEventMappingTests
             Assert.That(mappedEvent.StartTime, Is.EqualTo(updateModel.StartTime));
         });
     }
+
+    [Test]
+    public void CleaningEventUpdateRequestToPollutedLocation_NotesNull_NotesSetToNull()
+    {
+        var businessLogicObject = new CleaningEvent
+        {
+            Id = Guid.NewGuid(),
+            PollutedLocationId = Guid.NewGuid(),
+            StartTime = DateTime.Parse("2077-05-12T10:11:12Z"),
+            Notes = "L"
+        };
+
+        var updateModel = new CleaningEventUpdateRequest
+        {
+            Id = businessLogicObject.Id,
+            StartTime = DateTime.Parse("2077-03-12T10:11:12Z"),
+        };
+
+        var mappedEvent = _mapper.Map(updateModel, businessLogicObject);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mappedEvent.Id, Is.EqualTo(businessLogicObject.Id));
+            Assert.That(mappedEvent.Notes, Is.Null);
+            Assert.That(mappedEvent.StartTime, Is.EqualTo(updateModel.StartTime));
+        });
+    }
     #endregion
 
     #region Response mappings
