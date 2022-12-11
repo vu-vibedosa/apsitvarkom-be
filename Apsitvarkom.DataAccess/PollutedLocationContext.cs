@@ -25,14 +25,18 @@ public class PollutedLocationContext : DbContext, IPollutedLocationContext
             v => (PollutedLocation.SeverityLevel)Enum.Parse(typeof(PollutedLocation.SeverityLevel), v)
         );
         var severityLevelsString = string.Join(", ", ((PollutedLocation.SeverityLevel[])Enum.GetValues(typeof(PollutedLocation.SeverityLevel))).Select(p => $"'{p}'"));
-        modelBuilder.Entity<PollutedLocation>()
-            .HasCheckConstraint("CK_PollutedLocation_Radius", "\"Radius\" >= 1")
-            .HasCheckConstraint("CK_PollutedLocation_Progress", "\"Progress\" >= 0 and \"Progress\" <= 100")
-            .HasCheckConstraint("CK_PollutedLocation_Severity", $"\"Severity\" in ({severityLevelsString})")
+        modelBuilder.Entity<PollutedLocation>().ToTable(t =>
+        {
+            t.HasCheckConstraint("CK_PollutedLocation_Radius", "\"Radius\" >= 1");
+            t.HasCheckConstraint("CK_PollutedLocation_Progress", "\"Progress\" >= 0 and \"Progress\" <= 100");
+            t.HasCheckConstraint("CK_PollutedLocation_Severity", $"\"Severity\" in ({severityLevelsString})");
+        })
             .OwnsOne(l => l.Location)
-            .OwnsOne(l => l.Coordinates)
-            .HasCheckConstraint("CK_Coordinates_Latitude", "\"Location_Coordinates_Latitude\" >= -90 and \"Location_Coordinates_Latitude\" <= 90")
-            .HasCheckConstraint("CK_Coordinates_Longitude", "\"Location_Coordinates_Longitude\" >= -180 and \"Location_Coordinates_Longitude\" <= 180");
+            .OwnsOne(l => l.Coordinates).ToTable(t =>
+            {
+                t.HasCheckConstraint("CK_Coordinates_Latitude", "\"Location_Coordinates_Latitude\" >= -90 and \"Location_Coordinates_Latitude\" <= 90");
+                t.HasCheckConstraint("CK_Coordinates_Longitude", "\"Location_Coordinates_Longitude\" >= -180 and \"Location_Coordinates_Longitude\" <= 180");
+            });
         modelBuilder.Entity<PollutedLocation>().OwnsOne(l => l.Location).OwnsOne(l => l.Title);
     }
 }

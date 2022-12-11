@@ -84,7 +84,7 @@ public static class DbInitializer
                 Id = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                 Location =
                 {
-                    Title = new(string.Empty, String.Empty),
+                    Title = new(string.Empty, string.Empty),
                     Coordinates =
                     {
                         Latitude = 54.878315,
