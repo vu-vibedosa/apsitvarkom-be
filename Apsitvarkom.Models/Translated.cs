@@ -37,4 +37,6 @@ public class Translated<T>
             SupportedLanguages.Lithuanian => "lt",
             _ => "en"
         };
+
+    public override string ToString() => $"{SupportedLanguages.English}: {English}, {SupportedLanguages.Lithuanian}: {Lithuanian}";
 }

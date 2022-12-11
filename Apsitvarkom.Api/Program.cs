@@ -9,6 +9,10 @@ using Apsitvarkom.ModelActions.Mapping;
 using Apsitvarkom.ModelActions.Validation;
 using Apsitvarkom.Models;
 using Apsitvarkom.Api.Middleware;
+using Autofac;
+using Autofac.Extras.DynamicProxy;
+using Autofac.Extensions.DependencyInjection;
+using Castle.DynamicProxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,16 +54,26 @@ builder.Services.AddDbContext<PollutedLocationContext>(options => options.UseNpg
 builder.Services.AddScoped<IPollutedLocationRepository, PollutedLocationDatabaseRepository>();
 builder.Services.AddScoped<IRepository<CleaningEvent>, CleaningEventDatabaseRepository>();
 
-builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>(_ => new()
-{
-    Geocoding = builder.Configuration.GetRequiredValue<string>("Geocoding:ApiKey")
-});
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(autoFacBuilder =>
+    {
+        autoFacBuilder.Register(_ => new ApiKeyProvider
+        {
+            Geocoding = builder.Configuration.GetRequiredValue<string>("Geocoding:ApiKey")
+        }).As<IApiKeyProvider>();
+        autoFacBuilder.Register(c => new HttpClient
+            {
+                BaseAddress = new Uri(builder.Configuration.GetRequiredValue<string>("Geocoding:Url"))
+            }).As<HttpClient>();
 
-builder.Services.AddHttpClient<IGeocoder, GoogleGeocoder>(client =>
-{
-    var geocodingApiUrl = builder.Configuration.GetRequiredValue<string>("Geocoding:Url");
-    client.BaseAddress = new Uri(geocodingApiUrl);
-});
+        autoFacBuilder.Register(c => new GoogleGeocoder(c.Resolve<HttpClient>(), c.Resolve<IApiKeyProvider>()))
+            .As<IGeocoder>()
+            .EnableInterfaceInterceptors().InterceptedBy(typeof(GeocoderRequestInterceptor))
+            .InstancePerDependency();
+
+        autoFacBuilder.RegisterType<GeocoderRequestInterceptor>().SingleInstance();
+        autoFacBuilder.RegisterType<GeocoderRequestInterceptorAsync>().As<IAsyncInterceptor>();
+    });
 
 var app = builder.Build();
 

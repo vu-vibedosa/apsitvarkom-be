@@ -17,4 +17,6 @@ public class Coordinates
                       + Math.Sin(deltaLat / 2) * Math.Sin(deltaLat / 2);
         return 2 * earthRadius * Math.Asin(Math.Min(1, Math.Sqrt(havFunc)));
     }
+
+    public override string ToString() => $"{nameof(Latitude)}: {Latitude}, {nameof(Longitude)}: {Longitude}";
 }
