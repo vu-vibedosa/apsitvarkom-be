@@ -41,7 +41,7 @@ builder.Services
 const string FrontEndPolicy = "FrontEndPolicy";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(FrontEndPolicy, policy => policy.WithOrigins(builder.Configuration.GetValue<string>("FrontEndOrigin")).AllowAnyHeader());
+    options.AddPolicy(FrontEndPolicy, policy => policy.WithOrigins(builder.Configuration.GetValue<string>("FrontEndOrigin")).AllowAnyMethod().AllowAnyHeader());
 });
 
 builder.Services.AddScoped<IPollutedLocationContext>(provider => provider.GetRequiredService<PollutedLocationContext>());
