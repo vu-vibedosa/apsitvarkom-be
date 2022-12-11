@@ -5,7 +5,7 @@ namespace Apsitvarkom.Api.Middleware
     public class LogRequestStatisticsMiddleware
     {
         private readonly RequestDelegate _next;
-        private int _currentRequest = 1;
+        private int _currentRequest = 0;
 
         public LogRequestStatisticsMiddleware(RequestDelegate next)
         {
@@ -14,7 +14,7 @@ namespace Apsitvarkom.Api.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var requestId = _currentRequest++;
+            var requestId = Interlocked.Increment(ref _currentRequest);
             var sw = Stopwatch.StartNew();
             Console.WriteLine($"[{requestId}] [{context.Request.Method}] Request URL: {Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(context.Request)}");
 
