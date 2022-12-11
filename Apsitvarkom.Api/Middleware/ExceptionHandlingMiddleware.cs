@@ -1,61 +1,60 @@
 ﻿using System.Net;
 using System.Text.Json;
 
-namespace Apsitvarkom.Api.Middleware
+namespace Apsitvarkom.Api.Middleware;
+
+public class ExceptionHandlingMiddleware
 {
-    public class ExceptionHandlingMiddleware
+    private readonly RequestDelegate _next;
+    private readonly IWebHostEnvironment _environment;
+    private readonly JsonSerializerOptions _options;
+
+    public ExceptionHandlingMiddleware(RequestDelegate next, IWebHostEnvironment environment)
     {
-        private readonly RequestDelegate _next;
-        private readonly IWebHostEnvironment _environment;
-        private readonly JsonSerializerOptions _options;
+        _next = next;
+        _environment = environment;
+        _options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    }
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, IWebHostEnvironment environment)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _environment = environment;
-            _options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (Exception ex)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception ex)
-            {
-                await HandleExceptionAsync(context, ex);
-            }
-        }
-
-        private Task HandleExceptionAsync(HttpContext context, Exception ex)
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var errorMessage = "An internal server error has occurred. If this error persists, please contact product's owners.";
-
-            if (_environment.IsDevelopment())
-            {
-                var exception = new
-                {
-                    Message = ex.Message,
-                    Source = ex.Source,
-                    InnerExceptionMessage = ex.InnerException?.Message,
-                    StackTrace = ex.StackTrace
-                };
-                errorMessage = JsonSerializer.Serialize(exception, _options);
-            }
-
-            return context.Response.WriteAsync(errorMessage);
+            await HandleExceptionAsync(context, ex);
         }
     }
 
-    public static class ExceptionHandlingMiddlewareExtensions
+    private Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app)
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var errorMessage = "An internal server error has occurred. If this error persists, please contact product's owners.";
+
+        if (_environment.IsDevelopment())
         {
-            return app.UseMiddleware<ExceptionHandlingMiddleware>();
+            var exception = new
+            {
+                ex.Message,
+                ex.Source,
+                InnerExceptionMessage = ex.InnerException?.Message,
+                ex.StackTrace
+            };
+            errorMessage = JsonSerializer.Serialize(exception, _options);
         }
+
+        return context.Response.WriteAsync(errorMessage);
+    }
+}
+
+public static class ExceptionHandlingMiddlewareExtensions
+{
+    public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
 }
