@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text.Json;
 
 namespace Apsitvarkom.Api.Middleware
@@ -28,7 +29,7 @@ namespace Apsitvarkom.Api.Middleware
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -37,6 +38,13 @@ namespace Apsitvarkom.Api.Middleware
 
             if (_environment.IsDevelopment())
             {
+                var exception = new
+                {
+                    Message = ex.Message,
+                    Source = ex.Source,
+                    InnerExceptionMessage = ex.InnerException?.Message,
+                    StackTrace = ex.StackTrace
+                };
                 errorMessage = JsonSerializer.Serialize(exception, _options);
             }
 
