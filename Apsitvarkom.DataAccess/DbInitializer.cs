@@ -76,7 +76,7 @@ public static class DbInitializer
                 Radius = 21,
                 Severity = PollutedLocation.SeverityLevel.High,
                 Spotted = DateTime.Parse("2023-03-12T23:41:21Z").ToUniversalTime(),
-                Progress = 80,
+                Progress = 100,
                 Events = new List<CleaningEvent>()
             },
             new()
@@ -98,7 +98,8 @@ public static class DbInitializer
                 Notes = "Apsitvarkom to the moooooon",
                 Events = new List<CleaningEvent>
                 {
-                    FakeCleaningEvents[1]
+                    FakeCleaningEvents[1],
+                    FakeCleaningEvents[7]
                 }
             },
             new()
@@ -201,7 +202,11 @@ public static class DbInitializer
                 Spotted = DateTime.Parse("2022-06-20T11:22:33Z").ToUniversalTime(),
                 Progress = 20,
                 Notes = "The fans made a big mess after the game. Apsitvarkom?",
-                Events = new List<CleaningEvent>()
+                Events = new List<CleaningEvent>
+                {
+                    FakeCleaningEvents[5],
+                    FakeCleaningEvents[6]
+                }
             }
         };
     }
@@ -219,25 +224,47 @@ public static class DbInitializer
             new()
             {
                 Id = Guid.Parse("073d1855-1dba-4ce6-857b-3cfa9f36a1ba"),
-                StartTime = new DateTime(2023, 1, 14, 14, 00, 00).ToUniversalTime(),
-                Notes = "Bring your own trash-bags."
+                StartTime = new DateTime(2023, 12, 14, 14, 00, 00).ToUniversalTime(),
+                Notes = "Bring your own trash-bags.",
+                IsFinalized = false
             },
             new()
             {
                 Id = Guid.Parse("8e8bf1df-e732-409e-976a-d61806ee7c19"),
-                StartTime = new DateTime(2023, 1, 20, 15, 30, 00).ToUniversalTime()
+                StartTime = new DateTime(2023, 11, 20, 15, 30, 00).ToUniversalTime(),
+                IsFinalized = false
             },
             new()
             {
                 Id = Guid.Parse("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
-                StartTime = new DateTime(2022, 12, 20, 16, 00, 00).ToUniversalTime(),
-                Notes = "Apsitvarkom!:)"
+                StartTime = new DateTime(2022, 10, 20, 16, 00, 00).ToUniversalTime(),
+                Notes = "Apsitvarkom!:)",
+                IsFinalized = true
             },
             new()
             {
                 Id = Guid.Parse("5638be6e-773c-405d-a7ef-1f76115ae8c5"),
                 StartTime = new DateTime(2022, 12, 12, 12, 12, 12).ToUniversalTime(),
-                Notes = "Let's finish it once and for all."
+                Notes = "Let's finish it once and for all.",
+                IsFinalized = false
+            },
+            new()
+            {
+                Id = Guid.Parse("2931a606-c344-4ffd-8774-0cc07d859902"),
+                StartTime = new DateTime(2022, 11, 11, 11, 11, 11).ToUniversalTime(),
+                IsFinalized = true
+            },
+            new()
+            {
+                Id = Guid.Parse("26f7eb6b-7e74-4b93-9576-7f81c1bd7b2f"),
+                StartTime = new DateTime(2022, 11, 12, 13, 14, 15).ToUniversalTime(),
+                IsFinalized = true
+            },
+            new()
+            {
+                Id = Guid.Parse("ae248785-2121-4717-b6b2-a53947bb1774"),
+                StartTime = new DateTime(2022, 9, 10, 11, 12, 13).ToUniversalTime(),
+                IsFinalized = true
             }
         };
     }

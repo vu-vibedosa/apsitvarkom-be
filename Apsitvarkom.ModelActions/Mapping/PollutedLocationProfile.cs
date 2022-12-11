@@ -1,7 +1,8 @@
-﻿using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.Models;
+using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.Models.Mapping;
+namespace Apsitvarkom.ModelActions.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class

@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Apsitvarkom.Api.Controllers;
 using Apsitvarkom.DataAccess;
+using Apsitvarkom.ModelActions.Mapping;
+using Apsitvarkom.ModelActions.Validation;
 using Apsitvarkom.Models;
-using Apsitvarkom.Models.Mapping;
 using Apsitvarkom.Models.Public;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -24,21 +25,24 @@ public class CleaningEventControllerTests
         {
             Id = Guid.Parse("3408f21c-90d3-470f-afe2-0b6f51c8e405"),
             PollutedLocationId = Guid.Parse("6f61b9b1-8aea-4b95-ba49-32af5e96fb9c"),
-            StartTime = DateTime.Parse("2026-12-11T10:11:12Z")
+            StartTime = DateTime.Parse("2026-12-11T10:11:12Z"),
+            IsFinalized = false
         },
         new()
         {
             Id = Guid.Parse("2482d7a9-e64c-4159-a570-f51d500f0806"),
             PollutedLocationId = Guid.Parse("548d8c82-2822-482c-a801-76916d4b770d"),
             StartTime = DateTime.Parse("2032-01-01T00:11:22Z"),
-            Notes = "So many fireworks leftovers..."
+            Notes = "So many fireworks leftovers...",
+            IsFinalized = true
         },
         new()
         {
             Id = Guid.Parse("6e18987e-497b-4a35-820f-283321c9a9dd"),
             PollutedLocationId = Guid.Parse("6f61b9b1-8aea-4b95-ba49-32af5e96fb9c"),
             StartTime = DateTime.Parse("2052-12-23T10:11:12Z"),
-            Notes = "The christmas tree caught on fire."
+            Notes = "The christmas tree caught on fire.",
+            IsFinalized = false
         }
     };
 
@@ -59,8 +63,9 @@ public class CleaningEventControllerTests
             _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
-            new CleaningEventCreateRequestValidator(),
-            new CleaningEventUpdateRequestValidator()
+            new CleaningEventCreateRequestValidator(_pollutedLocationRepository.Object),
+            new CleaningEventUpdateRequestValidator(_repository.Object),
+            new CleaningEventFinalizeRequestValidator(_pollutedLocationRepository.Object)
         );
     }
 
@@ -71,9 +76,10 @@ public class CleaningEventControllerTests
             _pollutedLocationRepository.Object,
             _mapper, 
             new ObjectIdentifyRequestValidator(),
-            new CleaningEventCreateRequestValidator(),
-            new CleaningEventUpdateRequestValidator()
-        ), Is.Not.Null);
+            new CleaningEventCreateRequestValidator(_pollutedLocationRepository.Object),
+            new CleaningEventUpdateRequestValidator(_repository.Object),
+            new CleaningEventFinalizeRequestValidator(_pollutedLocationRepository.Object)
+    ), Is.Not.Null);
     #endregion
 
     #region GetAll tests
@@ -107,6 +113,7 @@ public class CleaningEventControllerTests
                 Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
                 Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
                 Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(cleaningEvent.PollutedLocationId));
+                Assert.That(resultEvent.Status, Is.TypeOf<CleaningEventResponse.State>());
             });
         }
     }
@@ -157,6 +164,7 @@ public class CleaningEventControllerTests
             Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
             Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
             Assert.That(resultEvent.PollutedLocationId, Is.EqualTo(cleaningEvent.PollutedLocationId));
+            Assert.That(resultEvent.Status, Is.TypeOf<CleaningEventResponse.State>());
         });
     }
 
@@ -249,13 +257,14 @@ public class CleaningEventControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
 
         Assert.That(result.Value, Is.Not.Null.And.TypeOf<CleaningEventResponse>());
-        var resultLocation = result.Value as CleaningEventResponse;
-        Assert.That(resultLocation, Is.Not.Null);
+        var resultEvent = result.Value as CleaningEventResponse;
+        Assert.That(resultEvent, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(resultLocation.PollutedLocationId, expression: Is.EqualTo(createRequest.PollutedLocationId));
-            Assert.That(resultLocation.StartTime, Is.EqualTo(createRequest.StartTime));
-            Assert.That(resultLocation.Notes, Is.EqualTo(createRequest.Notes));
+            Assert.That(resultEvent.PollutedLocationId, expression: Is.EqualTo(createRequest.PollutedLocationId));
+            Assert.That(resultEvent.StartTime, Is.EqualTo(createRequest.StartTime));
+            Assert.That(resultEvent.Notes, Is.EqualTo(createRequest.Notes));
+            Assert.That(resultEvent.Status, Is.TypeOf<CleaningEventResponse.State>());
         });
     }
 
@@ -403,7 +412,7 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
 
         Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
@@ -429,9 +438,9 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
-
+        
         Assert.That(actionResult.Result, Is.TypeOf<StatusCodeResult>());
         var result = actionResult.Result as StatusCodeResult;
 
@@ -455,9 +464,9 @@ public class CleaningEventControllerTests
 
         var actionResult = await _controller.Update(updateRequest);
 
-        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Once);
+        _repository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<CleaningEvent, bool>>>()), Times.Exactly(2));
         _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Once);
-
+        
         Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var result = actionResult.Result as OkObjectResult;
 
@@ -472,7 +481,151 @@ public class CleaningEventControllerTests
             Assert.That(resultEvent.Id, Is.EqualTo(cleaningEvent.Id));
             Assert.That(resultEvent.StartTime, Is.EqualTo(cleaningEvent.StartTime));
             Assert.That(resultEvent.Notes, Is.EqualTo(cleaningEvent.Notes));
+            Assert.That(resultEvent.Status, Is.TypeOf<CleaningEventResponse.State>());
         });
+    }
+    #endregion
+
+    #region Finalize tests
+    [Test]
+    public async Task Finalize_InvalidRequestEntered_ValidationResultsInBadRequestResponseReturned()
+    {
+        var finalizeRequest = new CleaningEventFinalizeRequest
+        {
+            Id = null
+        };
+
+        var actionResult = await _controller.Finalize(finalizeRequest);
+
+        _repository.Verify(r => r.UpdateAsync(It.IsAny<CleaningEvent>()), Times.Never);
+
+        Assert.That(actionResult, Is.TypeOf<BadRequestObjectResult>());
+        var result = actionResult as BadRequestObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Finalize_RepositoryReturnsNull_NotFoundActionResultReturned()
+    {
+        var finalizeRequest = new CleaningEventFinalizeRequest
+        {
+            Id = Guid.NewGuid(),
+            NewProgress = 50
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync((PollutedLocation?)null);
+
+        var actionResult = await _controller.Finalize(finalizeRequest);
+
+        _pollutedLocationRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Exactly(2));
+
+        Assert.That(actionResult, Is.TypeOf<NotFoundObjectResult>());
+        var result = actionResult as NotFoundObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+        Assert.That(result.Value, Is.Not.Null.And.Not.Empty);
+    }
+
+    [Test]
+    public async Task Finalize_RepositoryThrowsAcquiringPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var finalizeRequest = new CleaningEventFinalizeRequest
+        {
+            Id = Guid.NewGuid(),
+            NewProgress = 50
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).Throws<Exception>();
+
+        var actionResult = await _controller.Finalize(finalizeRequest);
+
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
+        _pollutedLocationRepository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Never);
+    }
+
+    [Test]
+    public async Task Finalize_RepositoryThrowsUpdatingPollutedLocation_Status500InternalServerErrorReturned()
+    {
+        var finalizeRequest = new CleaningEventFinalizeRequest
+        {
+            Id = Guid.NewGuid(),
+            NewProgress = 50
+        };
+
+        var relatedPollutedLocation = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Progress = 12,
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    Id = (Guid)finalizeRequest.Id,
+                    IsFinalized = false,
+                    StartTime = DateTime.UtcNow.AddDays(-1).ToUniversalTime()
+                }
+            }
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(relatedPollutedLocation);
+        _pollutedLocationRepository.Setup(r => r.UpdateAsync(It.Is<PollutedLocation>(x => x.Id == relatedPollutedLocation.Id))).Throws<Exception>();
+
+        var actionResult = await _controller.Finalize(finalizeRequest);
+
+        Assert.That(actionResult, Is.TypeOf<StatusCodeResult>());
+        var result = actionResult as StatusCodeResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
+        _pollutedLocationRepository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
+    }
+
+    [Test]
+    public async Task Finalize_RepositoryGetsAndDeletesOnce_NoContentResultReturned()
+    {
+        var finalizeRequest = new CleaningEventFinalizeRequest
+        {
+            Id = Guid.NewGuid(),
+            NewProgress = 50
+        };
+
+        var relatedPollutedLocation = new PollutedLocation
+        {
+            Id = Guid.NewGuid(),
+            Progress = 12,
+            Events = new List<CleaningEvent>
+            {
+                new()
+                {
+                    Id = (Guid)finalizeRequest.Id,
+                    IsFinalized = false,
+                    StartTime = DateTime.UtcNow.AddDays(-1).ToUniversalTime()
+                }
+            }
+        };
+
+        _pollutedLocationRepository.Setup(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>())).ReturnsAsync(relatedPollutedLocation);
+
+        var actionResult = await _controller.Finalize(finalizeRequest);
+
+        _pollutedLocationRepository.Verify(r => r.UpdateAsync(It.IsAny<PollutedLocation>()), Times.Once);
+        _pollutedLocationRepository.Verify(r => r.GetByPropertyAsync(It.IsAny<Expression<Func<PollutedLocation, bool>>>()), Times.Exactly(2));
+
+        Assert.That(actionResult, Is.TypeOf<NoContentResult>());
+        var result = actionResult as NoContentResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
     }
     #endregion
 

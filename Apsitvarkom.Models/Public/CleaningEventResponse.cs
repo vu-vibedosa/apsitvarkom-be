@@ -9,4 +9,13 @@ public class CleaningEventResponse
     public DateTime StartTime { get; set; }
 
     public string? Notes { get; set; }
+
+    public State Status { get; set; }
+
+    public enum State
+    {
+        Foreseen,
+        Finished,
+        Finalized
+    }
 }

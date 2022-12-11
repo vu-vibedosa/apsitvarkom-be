@@ -1,8 +1,9 @@
-﻿using Apsitvarkom.Models;
+﻿using Apsitvarkom.ModelActions.Validation;
+using Apsitvarkom.Models;
 using Apsitvarkom.Models.Public;
 using FluentValidation;
 
-namespace Apsitvarkom.UnitTests.Models.Validation;
+namespace Apsitvarkom.UnitTests.ModelActions.Validation;
 
 public class PollutedLocationCreateRequestValidationTests
 {
@@ -105,7 +106,7 @@ public class PollutedLocationCreateRequestValidationTests
 
         Assert.That(result, Is.Not.Null);
         // Only 1 thing must error in the invalid input
-        Assert.That(result.Errors.Count, Is.EqualTo(1));
+        Assert.That(result.Errors, Has.Count.EqualTo(1));
         Assert.That(result.IsValid, Is.False);
     }
 }

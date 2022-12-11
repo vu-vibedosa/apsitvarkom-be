@@ -1,7 +1,8 @@
-﻿using Apsitvarkom.Models.Public;
+﻿using Apsitvarkom.Models;
+using Apsitvarkom.Models.Public;
 using AutoMapper;
 
-namespace Apsitvarkom.Models.Mapping;
+namespace Apsitvarkom.ModelActions.Mapping;
 
 /// <summary>
 /// Implements a profile for AutoMapper that allows creating maps required for conversion of class
@@ -21,14 +22,21 @@ public class CleaningEventProfile : Profile
             .ForMember(x => x.Id, opt => opt.MapFrom(x => x.Id));
         CreateMap<CleaningEventCreateRequest, CleaningEvent>()
             .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore());
+            .ForMember(x => x.IsFinalized, opt => opt.Ignore());
         CreateMap<CleaningEventUpdateRequest, CleaningEvent>()
             .ForMember(x => x.PollutedLocationId, opt => opt.Ignore())
-            .ForMember(x => x.PollutedLocation, opt => opt.Ignore());
+            .ForMember(x => x.IsFinalized, opt => opt.Ignore());
     }
 
     private void MapResponses()
     {
-        CreateMap<CleaningEvent, CleaningEventResponse>();
+        CreateMap<CleaningEvent, CleaningEventResponse>()
+            .ForMember(x => x.Status, opt =>
+                opt.MapFrom((cleaningEvent, _) => (cleaningEvent.IsFinalized, cleaningEvent.StartTime) switch
+                {
+                    (true, _) => CleaningEventResponse.State.Finalized,
+                    (false, var startTime) when startTime > DateTime.UtcNow => CleaningEventResponse.State.Foreseen,
+                    _ => CleaningEventResponse.State.Finished
+                }));
     }
 }
