@@ -1,4 +1,5 @@
-﻿using Apsitvarkom.Models;
+﻿using System.Diagnostics;
+using Apsitvarkom.Models;
 using Castle.DynamicProxy;
 
 namespace Apsitvarkom.Api.Middleware;
@@ -21,13 +22,15 @@ public class GeocoderRequestInterceptorAsync : IAsyncInterceptor
         if (methodArguments.IsFixedSize && methodArguments.Length == 1 && methodArguments.Single() is Coordinates coordinates)
             Console.WriteLine($"[{currentRequest}] Method {methodName} was called on coordinates '{coordinates}'.");
 
+        var sw = Stopwatch.StartNew();
+
         invocation.Proceed();
 
         var task = (Task<TResult>)invocation.ReturnValue;
         var result = await task;
 
         if (result is Translated<string> translatedStringResult)
-            Console.WriteLine($"[{currentRequest}] Response: {translatedStringResult}");
+            Console.WriteLine($"[{currentRequest}] Response: {translatedStringResult}. Request took {sw.ElapsedMilliseconds} ms.");
 
         return result;
     }
