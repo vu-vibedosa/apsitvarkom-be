@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Apsitvarkom.ModelActions.Mapping;
 using Apsitvarkom.ModelActions.Validation;
 using Apsitvarkom.Models;
+using Apsitvarkom.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
+    app.UseLogRequestStatistics();
     app.UseSwagger();
     app.UseSwaggerUI();
 
