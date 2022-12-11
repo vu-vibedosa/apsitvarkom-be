@@ -33,7 +33,7 @@ public class PollutedLocationUpdateRequestValidator : AbstractValidator<Polluted
                     return true;
 
                 if (pollutedLocation.Progress == 100)
-                    context.AddFailure("The polluted location is already tidied up.");
+                    context.AddFailure("The polluted location is already cleaned up.");
 
                 return true;
             });

@@ -42,7 +42,7 @@ public class CleaningEventFinalizeRequestValidator : AbstractValidator<CleaningE
                 if (cleaningEvent.StartTime > DateTime.UtcNow)
                     context.AddFailure("The requested cleaning event hasn't yet happened.");
 
-                if (req.NewProgress is not null && pollutedLocation.Progress > req.NewProgress)
+                if (req.NewProgress is not null && req.NewProgress >= 0 && pollutedLocation.Progress > req.NewProgress)
                     context.AddFailure($"New progress value cannot be lower than the current ({pollutedLocation.Progress}).");
 
                 return true;

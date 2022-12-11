@@ -32,7 +32,7 @@ public class CleaningEventCreateRequestValidator : AbstractValidator<CleaningEve
                     return true;
 
                 if (pollutedLocation.Progress == 100)
-                    context.AddFailure("No more events for this polluted location can be created, as it is already tidied up.");
+                    context.AddFailure("No more events for this polluted location can be created, as it is already cleaned up.");
 
                 if (pollutedLocation.Events.Any(x => !x.IsFinalized))
                     context.AddFailure("One active cleaning event for this polluted location already exists.");

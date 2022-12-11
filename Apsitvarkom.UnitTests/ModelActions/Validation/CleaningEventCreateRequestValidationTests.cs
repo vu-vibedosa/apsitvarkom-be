@@ -136,7 +136,7 @@ public class CleaningEventCreateRequestValidationTests
     }
 
     [Test]
-    public async Task ValidInputWithRepositoryCall_UpdateUnavailable_PollutedLocationTidiedUp_ShouldFailValidation()
+    public async Task ValidInputWithRepositoryCall_UpdateUnavailable_PollutedLocationCleanedUp_ShouldFailValidation()
     {
         var input = ValidCleaningEventCreateRequests.First();
         var pollutedLocation = new PollutedLocation

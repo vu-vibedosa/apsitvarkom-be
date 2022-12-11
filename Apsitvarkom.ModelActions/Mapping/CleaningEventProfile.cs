@@ -32,8 +32,9 @@ public class CleaningEventProfile : Profile
     {
         CreateMap<CleaningEvent, CleaningEventResponse>()
             .ForMember(x => x.Status, opt => 
-                opt.MapFrom(x => x.IsFinalized ? CleaningEventResponse.State.Finalized 
-                                                                        : x.StartTime > DateTime.UtcNow ? CleaningEventResponse.State.Foreseen 
-                                                                                                        : CleaningEventResponse.State.Finished));
+                opt.MapFrom(x => 
+                    x.IsFinalized ? CleaningEventResponse.State.Finalized : 
+                    x.StartTime > DateTime.UtcNow ? CleaningEventResponse.State.Foreseen : 
+                    CleaningEventResponse.State.Finished));
     }
 }
