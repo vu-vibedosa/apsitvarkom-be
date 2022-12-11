@@ -31,10 +31,12 @@ public class CleaningEventProfile : Profile
     private void MapResponses()
     {
         CreateMap<CleaningEvent, CleaningEventResponse>()
-            .ForMember(x => x.Status, opt => 
-                opt.MapFrom(x => 
-                    x.IsFinalized ? CleaningEventResponse.State.Finalized : 
-                    x.StartTime > DateTime.UtcNow ? CleaningEventResponse.State.Foreseen : 
-                    CleaningEventResponse.State.Finished));
+            .ForMember(x => x.Status, opt =>
+                opt.MapFrom((cleaningEvent, _) => (cleaningEvent.IsFinalized, cleaningEvent.StartTime) switch
+                {
+                    (true, _) => CleaningEventResponse.State.Finalized,
+                    (false, var startTime) when startTime > DateTime.UtcNow => CleaningEventResponse.State.Foreseen,
+                    _ => CleaningEventResponse.State.Finished
+                }));
     }
 }
