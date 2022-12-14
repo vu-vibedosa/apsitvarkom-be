@@ -72,8 +72,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     var services = scope.ServiceProvider;
     var pollutedLocationContext = services.GetRequiredService<IPollutedLocationContext>();
 
-    // TODO: switch to migrations
-    pollutedLocationContext.Instance.Database.EnsureCreated();
+    pollutedLocationContext.Instance.Database.Migrate();
 
     if (!pollutedLocationContext.PollutedLocations.Any())
         await DbInitializer.InitializePollutedLocations(pollutedLocationContext);
