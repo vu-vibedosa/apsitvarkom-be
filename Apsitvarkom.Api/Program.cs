@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1",
         new OpenApiInfo
         {
-            Title = "Apsitvarkom REST API",
+            Title = "Apsitvarkom RESTful API",
             Version = "v1",
             Contact = new()
             {
