@@ -88,6 +88,8 @@ public class CleaningEventController : ControllerBase
         return Ok(mappedEvent);
     }
 
+    /// <param name="cleaningEventCreateRequest">The `Cleaning Event` to be created has to reference a `Polluted Location` whose progress value is less than 100
+    /// and which has no active `Cleaning Event`s.</param>
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -133,6 +135,7 @@ public class CleaningEventController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
+    /// <param name="cleaningEventUpdateRequest">The `Cleaning Event` to be updated has to be not yet finalized.</param>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -173,6 +176,8 @@ public class CleaningEventController : ControllerBase
         return Ok(response);
     }
 
+    /// <param name="cleaningEventFinalizeRequest">The `Cleaning Event` to be finalized has to be already finished but not yet finalized
+    /// and the new progress value should be higher than the currently referenced `Polluted Location`'s progress value.</param>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
