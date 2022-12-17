@@ -88,8 +88,8 @@ public class CleaningEventController : ControllerBase
         return Ok(mappedEvent);
     }
 
-    /// <param name="cleaningEventCreateRequest">The `Cleaning Event` to be created has to reference a `Polluted Location` whose progress value is less than 100
-    /// and which has no active `Cleaning Event`s.</param>
+    /// <param name="cleaningEventCreateRequest">The `Cleaning Event` to be created has to have a Start Time value in the future, as well as
+    /// reference a `Polluted Location` whose progress value is less than 100 and which has no active `Cleaning Event`s.</param>
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -135,7 +135,7 @@ public class CleaningEventController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
-    /// <param name="cleaningEventUpdateRequest">The `Cleaning Event` to be updated has to be not yet finalized.</param>
+    /// <param name="cleaningEventUpdateRequest">The `Cleaning Event` to be updated has to be not yet finalized as well as have a Start Time value in the future.</param>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
