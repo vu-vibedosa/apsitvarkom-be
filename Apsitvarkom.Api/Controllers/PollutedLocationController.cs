@@ -159,6 +159,7 @@ public class PollutedLocationController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { response.Id }, response);
     }
 
+    /// <param name="pollutedLocationUpdateRequest">The progress of the `Polluted Location` to be updated has to be not equal to 100.</param>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
