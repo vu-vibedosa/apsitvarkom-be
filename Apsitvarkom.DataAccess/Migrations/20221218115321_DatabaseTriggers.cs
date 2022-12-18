@@ -336,7 +336,7 @@ namespace Apsitvarkom.DataAccess.Migrations
             migrationBuilder.Sql("drop function Update_PollutedLocationLocationCoordinatesCannotBeUpdated cascade;");
             migrationBuilder.Sql("drop function Insert_PollutedLocationProgressMustBe0 cascade;");
             migrationBuilder.Sql("drop function Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate cascade;");
-            migrationBuilder.Sql("drop function Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate cascade;");
+            migrationBuilder.Sql("drop function Insert_CleaningEventIsFinalizedMustBeFalse cascade;");
         }
     }
 }
