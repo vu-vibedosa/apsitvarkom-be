@@ -255,6 +255,69 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"PollutedLocations\" " +
                 "for each row " +
                 "execute procedure Update_PollutedLocationLocationCoordinatesCannotBeUpdated();"
+            ); 
+            
+            migrationBuilder.Sql(
+                "create function Insert_PollutedLocationProgressMustBe0() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "new.\"Progress\" <> 0" +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not add polluted location. Its initial progress value must be equal to 0.'; " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Insert_PollutedLocationProgressMustBe0 " +
+                "before insert on \"PollutedLocations\" " +
+                "for each row " +
+                "execute procedure Insert_PollutedLocationProgressMustBe0();"
+            );         
+            
+            migrationBuilder.Sql(
+                "create function Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "new.\"Spotted\" > now() or new.\"Spotted\" + interval '5' minute < now() " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not add polluted location. Its spotted value must be at or around current time.'; " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate " +
+                "before insert on \"PollutedLocations\" " +
+                "for each row " +
+                "execute procedure Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate();"
+            );   
+            
+            migrationBuilder.Sql(
+                "create function Insert_CleaningEventIsFinalizedMustBeFalse() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "new.\"IsFinalized\" = true " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not add cleaning event. It cannot be finalized when initialized.'; " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Insert_CleaningEventIsFinalizedMustBeFalse " +
+                "before insert on \"CleaningEvents\" " +
+                "for each row " +
+                "execute procedure Insert_CleaningEventIsFinalizedMustBeFalse();"
             );
         }
 
@@ -271,6 +334,9 @@ namespace Apsitvarkom.DataAccess.Migrations
             migrationBuilder.Sql("drop function Update_PollutedLocationSpottedCannotBeUpdated cascade;");
             migrationBuilder.Sql("drop function Update_PollutedLocationLocationTitleCannotBeUpdated cascade;");
             migrationBuilder.Sql("drop function Update_PollutedLocationLocationCoordinatesCannotBeUpdated cascade;");
+            migrationBuilder.Sql("drop function Insert_PollutedLocationProgressMustBe0 cascade;");
+            migrationBuilder.Sql("drop function Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate cascade;");
+            migrationBuilder.Sql("drop function Insert_PollutedLocationProgressSpottedMustBeAroundCurrentDate cascade;");
         }
     }
 }

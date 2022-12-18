@@ -34,8 +34,8 @@ public static class DbInitializer
                 },
                 Radius = 5,
                 Severity = PollutedLocation.SeverityLevel.Moderate,
-                Spotted = DateTime.Parse("2019-08-23T14:05:43Z").ToUniversalTime(),
-                Progress = 41,
+                Spotted = DateTime.UtcNow.AddMinutes(-4).ToUniversalTime(),
+                Progress = 0,
                 Notes = "Prisoners broke a window.",
                 Events = new List<CleaningEvent>()
             },
@@ -53,8 +53,8 @@ public static class DbInitializer
                 },
                 Radius = 1,
                 Severity = PollutedLocation.SeverityLevel.Low,
-                Spotted = DateTime.Parse("2023-04-13T07:16:55Z").ToUniversalTime(),
-                Progress = 13,
+                Spotted = DateTime.UtcNow.AddMinutes(-3).ToUniversalTime(),
+                Progress = 0,
                 Notes = "A lot of cigarettes waste on the pavement.",
                 Events = new List<CleaningEvent>
                 {
@@ -75,8 +75,8 @@ public static class DbInitializer
                 },
                 Radius = 21,
                 Severity = PollutedLocation.SeverityLevel.High,
-                Spotted = DateTime.Parse("2023-03-12T23:41:21Z").ToUniversalTime(),
-                Progress = 100,
+                Spotted = DateTime.UtcNow.AddMinutes(-2).ToUniversalTime(),
+                Progress = 0,
                 Events = new List<CleaningEvent>()
             },
             new()
@@ -93,8 +93,8 @@ public static class DbInitializer
                 },
                 Radius = 11,
                 Severity = PollutedLocation.SeverityLevel.Low,
-                Spotted = DateTime.Parse("2023-11-11T11:11:11Z").ToUniversalTime(),
-                Progress = 11,
+                Spotted = DateTime.UtcNow.AddMinutes(-1).ToUniversalTime(),
+                Progress = 0,
                 Notes = "Apsitvarkom to the moooooon",
                 Events = new List<CleaningEvent>
                 {
@@ -115,7 +115,7 @@ public static class DbInitializer
                 },
                 Radius = 150,
                 Severity = PollutedLocation.SeverityLevel.Low,
-                Spotted = DateTime.Parse("2023-07-11T02:13:14Z").ToUniversalTime(),
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
                 Progress = 0,
                 Notes = "After the celebration of the latest Euroleague trophy, Zalgiris fans have left the grass trashy.",
                 Events = new List<CleaningEvent>
@@ -137,7 +137,7 @@ public static class DbInitializer
                 },
                 Radius = 10,
                 Severity = PollutedLocation.SeverityLevel.High,
-                Spotted = DateTime.Parse("2023-01-01T04:00:01Z").ToUniversalTime(),
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
                 Progress = 0,
                 Notes = "The Vilnius Castle has slipped off the mountain.",
                 Events = new List<CleaningEvent>
@@ -159,8 +159,8 @@ public static class DbInitializer
                 },
                 Radius = 50,
                 Severity = PollutedLocation.SeverityLevel.Low,
-                Spotted = DateTime.Parse("2022-06-08T01:12:23Z").ToUniversalTime(),
-                Progress = 80,
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
+                Progress = 0,
                 Notes = "Couldn't manage to grab all the beer cans I found on the beach.",
                 Events = new List<CleaningEvent>()
             },
@@ -178,7 +178,7 @@ public static class DbInitializer
                 },
                 Radius = 200,
                 Severity = PollutedLocation.SeverityLevel.Low,
-                Spotted = DateTime.Parse("2023-04-01T13:14:15Z").ToUniversalTime(),
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
                 Progress = 0,
                 Notes = "Maybe we should tidy this up as the tourists see this place first of our whole city.",
                 Events = new List<CleaningEvent>
@@ -200,8 +200,8 @@ public static class DbInitializer
                 },
                 Radius = 50,
                 Severity = PollutedLocation.SeverityLevel.Moderate,
-                Spotted = DateTime.Parse("2022-06-20T11:22:33Z").ToUniversalTime(),
-                Progress = 20,
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
+                Progress = 0,
                 Notes = "The fans made a big mess after the game. Apsitvarkom?",
                 Events = new List<CleaningEvent>
                 {
