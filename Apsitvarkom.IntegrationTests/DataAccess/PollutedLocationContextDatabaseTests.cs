@@ -72,7 +72,8 @@ public class PollutedLocationContextDatabaseTests
             Assert.That(response.Location.Coordinates.Longitude, Is.EqualTo(dbRow.Location.Coordinates.Longitude));
             Assert.That(response.Radius, Is.EqualTo(dbRow.Radius));
             Assert.That(response.Severity, Is.EqualTo(dbRow.Severity));
-            Assert.That(response.Spotted, Is.EqualTo(dbRow.Spotted));
+            Assert.That(response.Spotted, Is.LessThan(dbRow.Spotted.AddSeconds(1)));
+            Assert.That(response.Spotted, Is.GreaterThan(dbRow.Spotted.AddSeconds(-1)));
             Assert.That(response.Progress, Is.EqualTo(dbRow.Progress));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
             Assert.That(response.Events.Select(x => x.Id), Is.EqualTo(dbRow.Events.Select(x => x.Id)));
@@ -285,7 +286,8 @@ public class PollutedLocationContextDatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(response.Id, Is.EqualTo(dbRow.Id));
-            Assert.That(response.StartTime, Is.EqualTo(dbRow.StartTime));
+            Assert.That(response.StartTime, Is.LessThan(dbRow.StartTime.AddSeconds(1)));
+            Assert.That(response.StartTime, Is.GreaterThan(dbRow.StartTime.AddSeconds(-1)));
             Assert.That(response.Notes, Is.EqualTo(dbRow.Notes));
         });
     }
