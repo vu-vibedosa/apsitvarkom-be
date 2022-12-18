@@ -29,7 +29,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"PollutedLocations\" " +
                 "for each row " +
                 "execute procedure Update_PollutedLocationAlreadyCleanedUp();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Update_PollutedLocationProgressDecreased() " +
@@ -50,7 +50,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"PollutedLocations\" " +
                 "for each row " +
                 "execute procedure Update_PollutedLocationProgressDecreased();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Update_CleaningEventIsFinalized() " +
@@ -71,7 +71,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"CleaningEvents\" " +
                 "for each row " +
                 "execute procedure Update_CleaningEventIsFinalized();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Update_CleaningEventNotFinished_TriedToBeFinalized() " +
@@ -93,7 +93,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"CleaningEvents\" " +
                 "for each row " +
                 "execute procedure Update_CleaningEventNotFinished_TriedToBeFinalized();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Insert_CannotInsertCleaningEventsForCleanedUpPollutedLocations() " +
@@ -115,7 +115,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before insert on \"CleaningEvents\" " +
                 "for each row " +
                 "execute procedure Insert_CannotInsertCleaningEventsForCleanedUpPollutedLocations();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Insert_CannotInsertCleaningEventsIfPollutedLocationHasActiveCleaningEventAlready() " +
@@ -137,7 +137,7 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before insert on \"CleaningEvents\" " +
                 "for each row " +
                 "execute procedure Insert_CannotInsertCleaningEventsIfPollutedLocationHasActiveCleaningEventAlready();"
-                );
+            );
 
             migrationBuilder.Sql(
                 "create function Alter_CannotSetCleaningEventStartTimeInThePast() " +
@@ -163,7 +163,99 @@ namespace Apsitvarkom.DataAccess.Migrations
                 "before update on \"CleaningEvents\" " +
                 "for each row " +
                 "execute procedure Alter_CannotSetCleaningEventStartTimeInThePast();"
-                );
+            );
+
+            migrationBuilder.Sql(
+                "create function Update_CleaningEventPollutedLocationIdCannotBeChanged() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "\"CleaningEvents\".\"PollutedLocationId\" <> new.\"PollutedLocationId\" from \"CleaningEvents\" " +
+                   "where \"CleaningEvents\".\"Id\" = new.\"Id\" " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not change PollutedLocationId. This property is read-only. If you want to change it, re-create the Cleaning Event.'; " +
+                   "end if; " +
+                   "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Update_CleaningEventPollutedLocationIdCannotBeChanged " +
+                "before update on \"CleaningEvents\" " +
+                "for each row " +
+                "execute procedure Update_CleaningEventPollutedLocationIdCannotBeChanged();"
+            );
+
+            migrationBuilder.Sql(
+                "create function Update_PollutedLocationSpottedCannotBeUpdated() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "\"PollutedLocations\".\"Spotted\" <> new.\"Spotted\" from \"PollutedLocations\" " +
+                   "where \"PollutedLocations\".\"Id\" = new.\"Id\" " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not change Spotted. This property is read-only. If you want to change it, re-create the Polluted Location.';  " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Update_PollutedLocationSpottedCannotBeUpdated " +
+                "before update on \"PollutedLocations\" " +
+                "for each row " +
+                "execute procedure Update_PollutedLocationSpottedCannotBeUpdated();"
+            );            
+            
+            migrationBuilder.Sql(
+                "create function Update_PollutedLocationLocationTitleCannotBeUpdated() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "\"PollutedLocations\".\"Location_Title_English\" <> new.\"Location_Title_English\" or" +
+                   "\"PollutedLocations\".\"Location_Title_Lithuanian\" <> new.\"Location_Title_Lithuanian\"" +
+                   " from \"PollutedLocations\" " +
+                   "where \"PollutedLocations\".\"Id\" = new.\"Id\" " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not change Location_Title. This property is read-only. If you want to change it, re-create the Polluted Location.';  " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Update_PollutedLocationLocationTitleCannotBeUpdated " +
+                "before update on \"PollutedLocations\" " +
+                "for each row " +
+                "execute procedure Update_PollutedLocationLocationTitleCannotBeUpdated();"
+            );           
+            
+            migrationBuilder.Sql(
+                "create function Update_PollutedLocationLocationCoordinatesCannotBeUpdated() " +
+                "returns trigger as " +
+                "$$ begin " +
+                   "if ( " +
+                   "select " +
+                   "\"PollutedLocations\".\"Location_Coordinates_Latitude\" <> new.\"Location_Coordinates_Latitude\" or" +
+                   "\"PollutedLocations\".\"Location_Coordinates_Longitude\" <> new.\"Location_Coordinates_Longitude\"" +
+                   " from \"PollutedLocations\" " +
+                   "where \"PollutedLocations\".\"Id\" = new.\"Id\" " +
+                   ") " +
+                   "then " +
+                   "raise exception 'Could not change Location_Coordinates. This property is read-only. If you want to change it, re-create the Polluted Location.';  " +
+                   "end if; " +
+                "return new; " +
+                "end; $$ " +
+                "language plpgsql; " +
+
+                "create trigger Update_PollutedLocationLocationCoordinatesCannotBeUpdated " +
+                "before update on \"PollutedLocations\" " +
+                "for each row " +
+                "execute procedure Update_PollutedLocationLocationCoordinatesCannotBeUpdated();"
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -175,6 +267,10 @@ namespace Apsitvarkom.DataAccess.Migrations
             migrationBuilder.Sql("drop function Insert_CannotInsertCleaningEventsForCleanedUpPollutedLocations cascade;");
             migrationBuilder.Sql("drop function Insert_CannotInsertCleaningEventsIfPollutedLocationHasActiveCleaningEventAlready cascade;");
             migrationBuilder.Sql("drop function Alter_CannotSetCleaningEventStartTimeInThePast cascade;");
+            migrationBuilder.Sql("drop function Update_CleaningEventPollutedLocationIdCannotBeChanged cascade;");
+            migrationBuilder.Sql("drop function Update_PollutedLocationSpottedCannotBeUpdated cascade;");
+            migrationBuilder.Sql("drop function Update_PollutedLocationLocationTitleCannotBeUpdated cascade;");
+            migrationBuilder.Sql("drop function Update_PollutedLocationLocationCoordinatesCannotBeUpdated cascade;");
         }
     }
 }
