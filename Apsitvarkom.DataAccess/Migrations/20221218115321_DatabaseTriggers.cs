@@ -140,12 +140,12 @@ namespace Apsitvarkom.DataAccess.Migrations
             );
 
             migrationBuilder.Sql(
-                @"create function Alter_CannotSetCleaningEventStartTimeInThePast() 
+                @"create function Insert_CannotSetCleaningEventStartTimeInThePast() 
                 returns trigger as 
                 $$ begin 
                    if ( 
                    select 
-                   new.""StartTime"" < now() 
+                   new.""StartTime"" < now()
                    ) 
                    then 
                    raise exception 'Could not set cleaning event start time in the past.'; 
@@ -157,12 +157,29 @@ namespace Apsitvarkom.DataAccess.Migrations
                 create trigger Insert_CannotSetCleaningEventStartTimeInThePast 
                 before insert on ""CleaningEvents"" 
                 for each row 
-                execute procedure Alter_CannotSetCleaningEventStartTimeInThePast(); 
+                execute procedure Insert_CannotSetCleaningEventStartTimeInThePast();"
+            );
+
+            migrationBuilder.Sql(
+                @"create function Update_CannotSetCleaningEventStartTimeInThePast() 
+                returns trigger as 
+                $$ begin 
+                   if ( 
+                   select 
+                   new.""StartTime"" < now() from ""CleaningEvents"" 
+                   where ""CleaningEvents"".""Id"" = new.""Id"" and ""CleaningEvents"".""StartTime"" <> new.""StartTime""
+                   ) 
+                   then 
+                   raise exception 'Could not set cleaning event start time in the past.'; 
+                   end if; 
+                   return new; 
+                end; $$ 
+                language plpgsql; 
 
                 create trigger Update_CannotSetCleaningEventStartTimeInThePast 
                 before update on ""CleaningEvents"" 
                 for each row 
-                execute procedure Alter_CannotSetCleaningEventStartTimeInThePast();"
+                execute procedure Update_CannotSetCleaningEventStartTimeInThePast();"
             );
 
             migrationBuilder.Sql(
@@ -321,6 +338,7 @@ namespace Apsitvarkom.DataAccess.Migrations
             );
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("drop function Update_PollutedLocationAlreadyCleanedUp cascade;");
@@ -329,7 +347,8 @@ namespace Apsitvarkom.DataAccess.Migrations
             migrationBuilder.Sql("drop function Update_CleaningEventNotFinished_TriedToBeFinalized cascade;");
             migrationBuilder.Sql("drop function Insert_CannotInsertCleaningEventsForCleanedUpPollutedLocations cascade;");
             migrationBuilder.Sql("drop function Insert_CannotInsertCleaningEventsIfPollutedLocationHasActiveCleaningEventAlready cascade;");
-            migrationBuilder.Sql("drop function Alter_CannotSetCleaningEventStartTimeInThePast cascade;");
+            migrationBuilder.Sql("drop function Insert_CannotSetCleaningEventStartTimeInThePast cascade;");
+            migrationBuilder.Sql("drop function Update_CannotSetCleaningEventStartTimeInThePast cascade;");
             migrationBuilder.Sql("drop function Update_CleaningEventPollutedLocationIdCannotBeChanged cascade;");
             migrationBuilder.Sql("drop function Update_PollutedLocationSpottedCannotBeUpdated cascade;");
             migrationBuilder.Sql("drop function Update_PollutedLocationLocationTitleCannotBeUpdated cascade;");

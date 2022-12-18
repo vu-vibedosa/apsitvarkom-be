@@ -257,7 +257,7 @@ public static class DbInitializer
             new()
             {
                 Id = Guid.Parse("0d9374dc-0d28-4b7c-86bf-4cc36e848604"),
-                StartTime = DateTime.UtcNow.AddDays(31).ToUniversalTime(),
+                StartTime = DateTime.UtcNow.AddMinutes(0.5).ToUniversalTime(),
                 Notes = "Apsitvarkom!:)",
                 IsFinalized = false
             },
@@ -271,7 +271,7 @@ public static class DbInitializer
             new()
             {
                 Id = Guid.Parse("2931a606-c344-4ffd-8774-0cc07d859902"),
-                StartTime = DateTime.UtcNow.AddDays(1.5).ToUniversalTime(),
+                StartTime = DateTime.UtcNow.AddMinutes(5).ToUniversalTime(),
                 IsFinalized = false
             }
         };
