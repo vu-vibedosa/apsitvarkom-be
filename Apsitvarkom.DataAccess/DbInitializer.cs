@@ -25,7 +25,7 @@ public static class DbInitializer
                 Id = Guid.Parse("02f16033-232b-42e4-bfe7-1f9a223a1446"),
                 Location =
                 {
-                    Title = new("Lukiskes prison", "Lukiškių kalėjimas"),
+                    Title = new("Lukiškių skg. 6, 01108 Vilnius, Lithuania", "Lukiškių skg. 6, 01108 Vilnius, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.691452,
@@ -36,7 +36,7 @@ public static class DbInitializer
                 Severity = PollutedLocation.SeverityLevel.Moderate,
                 Spotted = DateTime.UtcNow.AddMinutes(-4).ToUniversalTime(),
                 Progress = 0,
-                Notes = "Prisoners broke a window.",
+                Notes = "Prisoners shattered a window.",
                 Events = new List<CleaningEvent>()
             },
             new()
@@ -44,7 +44,7 @@ public static class DbInitializer
                 Id = Guid.Parse("461911ac-ff85-41f8-860a-be0240f0653f"),
                 Location =
                 {
-                    Title = new("VU faculty of mathematics and informatics", "VU, matematikos ir informatikos fakultetas"),
+                    Title = new("VU, matematikos ir informatikos fakultetas, Naugarduko g. 24, 03225 Vilnius, Lithuania", "VU, matematikos ir informatikos fakultetas, Naugarduko g. 24, 03225 Vilnius, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.675369,
@@ -66,7 +66,7 @@ public static class DbInitializer
                 Id = Guid.Parse("b2ed322d-331b-4f28-9dbf-4a71dce7504e"),
                 Location =
                 {
-                    Title = new("Didlaukis st. 47", "Didlaukio g. 47"),
+                    Title = new("Didlaukio g. 47, 08303 Vilnius, Lithuania", "Didlaukio g. 47, 08303 Vilnius, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.728796,
@@ -84,7 +84,7 @@ public static class DbInitializer
                 Id = Guid.Parse("bdd6bfe1-85ec-4de5-b0e3-2e5480ef1ee0"),
                 Location =
                 {
-                    Title = new(string.Empty, string.Empty),
+                    Title = new("S. Darius and S. Girėnas Airport, Veiverių g. 132, 46337 Kaunas, Lithuania", "S.Dariaus ir S.Girėno aerodromas, Veiverių g. 132, 46337 Kaunas, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.878315,
@@ -106,7 +106,7 @@ public static class DbInitializer
                 Id = Guid.Parse("65f52593-8507-4474-a522-188a2dc53208"),
                 Location =
                 {
-                    Title = new("Zalgiris arena", "Žalgirio arena"),
+                    Title = new("Karaliaus Mindaugo pr. 50, 44307 Kaunas, Lithuania", "Karaliaus Mindaugo pr. 50, 44307 Kaunas, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.891692,
@@ -128,7 +128,7 @@ public static class DbInitializer
                 Id = Guid.Parse("d37c6b91-6363-44ce-99a8-2f15287cc5ab"),
                 Location =
                 {
-                    Title = new("Gediminas Tower", "Gedimino pilis"),
+                    Title = new("Arsenalo g. 5, 01143 Vilnius, Lithuania", "Arsenalo g. 5, 01143 Vilnius, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 54.686762,
@@ -150,7 +150,7 @@ public static class DbInitializer
                 Id = Guid.Parse("151757e9-fce3-4bb3-93db-08b93d71245e"),
                 Location =
                 {
-                    Title = new("Beach of Panevezys", "Panevėžio paplūdimys"),
+                    Title = new("Pajuostės pl. 27b, 36102 Panevėžys, Lithuania", "Pajuostės pl. 27b, 36102 Panevėžys, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 55.730551,
@@ -169,7 +169,7 @@ public static class DbInitializer
                 Id = Guid.Parse("9de943d3-3ac6-4c55-adcf-fc6aa79b0597"),
                 Location =
                 {
-                    Title = new("Cruise Ship Terminal of Klaipeda", "Klaipėdos kruizinių laivų terminalas"),
+                    Title = new("Senoji perkėla (Šiaurinis ragas), 93100 Klaipėda, Lithuania", "Senoji perkėla (Šiaurinis ragas), 93100 Klaipėda, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 55.705656,
@@ -191,7 +191,7 @@ public static class DbInitializer
                 Id = Guid.Parse("dc1513da-a60b-49e5-adba-d0aeed77f125"),
                 Location =
                 {
-                    Title = new("Mazeikiai Central Stadium", "Mažeikių miesto centrinis stadionas"),
+                    Title = new("Sodininkų g. 20, 89327 Mažeikiai, Lithuania", "Sodininkų g. 5, 89327 Mažeikiai, Lietuva"),
                     Coordinates =
                     {
                         Latitude = 56.293939,
@@ -207,6 +207,25 @@ public static class DbInitializer
                 {
                     FakeCleaningEvents[1]
                 }
+            },
+            new()
+            {
+                Id = Guid.Parse("872c1fd2-c640-4bb3-bab4-74cdfb2a53cd"),
+                Location =
+                {
+                    Title = new("Vydūno g. 19, 74122 Jurbarkas, Lithuania", "Vydūno g. 21, 74122 Jurbarkas, Lietuva"),
+                    Coordinates =
+                    {
+                        Latitude = 55.0793004,
+                        Longitude = 22.7563897
+                    }
+                },
+                Radius = 50,
+                Severity = PollutedLocation.SeverityLevel.Low,
+                Spotted = DateTime.UtcNow.ToUniversalTime(),
+                Progress = 0,
+                Notes = "So much confetti laying around after the town event.",
+                Events = new List<CleaningEvent>()
             }
         };
     }
